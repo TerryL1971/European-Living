@@ -1,3 +1,4 @@
+// src/main.tsx
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -7,8 +8,8 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* 👇 Important: basename must match your GitHub repo name */}
-    <BrowserRouter basename="/European-Living">
+    {/* No basename here since you're on a custom domain */}
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/destinations/:id" element={<DestinationDetails />} />
