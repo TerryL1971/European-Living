@@ -7,7 +7,8 @@ import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    {/* 👇 Important: basename must match your GitHub repo name */}
+    <BrowserRouter basename="/European-Living">
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/destinations/:id" element={<DestinationDetails />} />
