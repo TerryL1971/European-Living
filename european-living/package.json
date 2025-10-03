@@ -21,7 +21,7 @@
     "react-leaflet": "^5.0.0",
     "react-router-dom": "^7.9.3"
   },
-   "homepage": "https://terryl1971.github.io/European-Living",
+  "homepage": "https://terryl1971.github.io/European-Living",
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@tailwindcss/vite": "^4.1.13",
