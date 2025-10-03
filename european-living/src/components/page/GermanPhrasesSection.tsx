@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 
 export default function GermanPhrasesSection() {
   const [activeCategory, setActiveCategory] = useState("greetings");
-  const [flippedCards, setFlippedCards] = useState<{ [key: number]: boolean }>({});
+  const [flippedCards, setFlippedCards] = useState<{ [key: string]: boolean }>({});
 
   // Toggle flip state for a card
-  const handleFlip = (idx: number) => {
-    setFlippedCards((prev) => ({ ...prev, [idx]: !prev[idx] }));
+  const handleFlip = (id: string) => {
+    setFlippedCards((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -18,13 +18,13 @@ export default function GermanPhrasesSection() {
           Essential German Phrases
         </h2>
 
-        {/* Category Tabs */}
-        <div className="flex justify-center gap-4 mb-10 flex-wrap">
+        {/* ✅ Category Tabs */}
+        <div className="flex justify-center gap-4 mb-10 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap ${
                 activeCategory === cat.id
                   ? "bg-brand-blue text-white"
                   : "bg-white text-brand-blue border border-brand-blue hover:bg-brand-light"
@@ -35,16 +35,18 @@ export default function GermanPhrasesSection() {
           ))}
         </div>
 
-        {/* Phrase Cards - Scrollable */}
-        <div className="max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+        {/* ✅ Phrase Cards - Scrollable */}
+        <div className="max-h-[600px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-400">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {phrases[activeCategory].map((phrase, idx) => {
-              const flipped = flippedCards[idx] || false;
+            {phrases[activeCategory]?.map((phrase, idx) => {
+              const key = `${activeCategory}-${idx}`;
+              const flipped = flippedCards[key] || false;
+
               return (
                 <div
-                  key={idx}
+                  key={key}
                   className="relative w-full h-40 [perspective:1000px] cursor-pointer"
-                  onClick={() => handleFlip(idx)}
+                  onClick={() => handleFlip(key)}
                 >
                   <div
                     className={`relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] ${
@@ -73,7 +75,11 @@ export default function GermanPhrasesSection() {
                   </div>
                 </div>
               );
-            })}
+            }) || (
+              <p className="col-span-full text-center text-gray-500">
+                No phrases available for this category.
+              </p>
+            )}
           </div>
         </div>
       </div>

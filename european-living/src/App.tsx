@@ -1,8 +1,8 @@
-import HeroSection from "./components/page/Hero";
-import DestinationsSection from "./components/page/DestinationsSection";
+import HeroSection from "./components/page/HeroSection";
+import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
-import Services from "./components/page/Serivces";
+import Services from "./components/page/Services";
 import Footer from "./components/page/Footer";
 
 
@@ -14,7 +14,7 @@ export default function App() {
       <FeaturesSection />
       <GermanPhrasesSection />
       <Services />
-      <Footer />
+      <Footer /> 
     </div>
   );
 }
