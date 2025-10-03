@@ -4,7 +4,7 @@ export const destinations = [
     id: "berlin",
     name: "Berlin",
     description: "The vibrant capital of Germany, rich with history and culture.",
-    image: "https://unsplash.com/photos/time-lapse-photography-of-vehicle-at-the-road-in-between-the-building-at-nighttime-aerial-photography-iPOZf3tQfHA",
+    image: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?auto=format&fit=crop&w=1200&q=80",
   },
   {
     id: "munich",

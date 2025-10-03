@@ -1,58 +1,42 @@
-// src/components/page/DestinationDetails.tsx
-import { useParams, Link } from "react-router-dom";
+// src/pages/DestinationDetails.tsx
+import React from "react";
+import { useParams } from "react-router-dom";
 import { destinations } from "../../data/destinations";
 
-export default function DestinationDetails() {
-  const { id } = useParams<{ id: string }>();
-  const destination = destinations.find((d) => d.id === id);
+const DestinationDetails: React.FC = () => {
+  const { city } = useParams<{ city: string }>();
+  const destination = destinations.find((d) => d.id === city);
 
   if (!destination) {
-    return (
-      <div className="max-w-4xl mx-auto py-20 text-center">
-        <h2 className="text-2xl font-bold text-red-600">Destination not found</h2>
-        <Link to="/" className="text-brand-blue underline">
-          Back to Home
-        </Link>
-      </div>
-    );
+    return <p>Destination not found.</p>;
   }
 
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-5xl mx-auto px-6">
-        <img
-          src={destination.image}
-          alt={destination.name}
-          className="w-full h-80 object-cover rounded-xl mb-8 shadow-lg"
-        />
+    <div className="container mx-auto px-4 py-12">
+      <h1 className="text-4xl font-bold mb-6">{destination.name}</h1>
+      <img
+        src={destination.image}
+        alt={destination.name}
+        className="w-full max-h-96 object-cover rounded-lg shadow mb-6"
+      />
+      <p className="text-lg mb-6">{destination.description}</p>
 
-        <h1 className="text-4xl font-bold text-brand-blue mb-4">{destination.name}</h1>
-        <p className="text-lg text-gray-700 mb-6">{destination.description}</p>
-
-        <div className="grid md:grid-cols-2 gap-10">
-          <div>
-            <h2 className="text-2xl font-semibold text-brand-blue mb-2">Things to Do</h2>
-            <ul className="list-disc list-inside text-gray-600">
-              <li>Popular landmarks</li>
-              <li>Local experiences</li>
-              <li>Food & nightlife</li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="text-2xl font-semibold text-brand-blue mb-2">Hotels & Stays</h2>
-            <p className="text-gray-600">(Later: integrate Booking.com or Airbnb API)</p>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="p-6 border rounded-lg shadow">
+          <h2 className="text-2xl font-semibold mb-4">Hotels</h2>
+          <p>🔍 Coming soon: Search for hotels in {destination.name}</p>
         </div>
-
-        <div className="mt-10">
-          <Link
-            to="/"
-            className="inline-block bg-brand-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-gold transition"
-          >
-            ← Back to Destinations
-          </Link>
+        <div className="p-6 border rounded-lg shadow">
+          <h2 className="text-2xl font-semibold mb-4">Transport</h2>
+          <p>🚆 Coming soon: Book trains, buses, and flights</p>
+        </div>
+        <div className="p-6 border rounded-lg shadow">
+          <h2 className="text-2xl font-semibold mb-4">Restaurants</h2>
+          <p>🍴 Coming soon: Find the best places to eat</p>
         </div>
       </div>
-    </section>
+    </div>
   );
-}
+};
+
+export default DestinationDetails;
