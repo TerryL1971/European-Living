@@ -1,7 +1,9 @@
+// src/components/page/DestinationDetails.tsx
 import { useParams, Link } from "react-router-dom";
 import { destinations } from "../../data/destinations";
 
-export default function DestinationDetails() {
+import React from "react";
+export default function DestinationDetails(): React.ReactElement {
   const { id } = useParams();
   const destination = destinations.find((d) => d.id === id);
 
@@ -9,78 +11,46 @@ export default function DestinationDetails() {
     return (
       <div className="max-w-4xl mx-auto py-20 text-center">
         <h2 className="text-2xl font-bold text-red-600">Destination not found</h2>
-        <Link to="/" className="text-brand-blue underline">
-          Back to Home
-        </Link>
+        <Link to="/" className="text-brand-blue underline">Back to Home</Link>
       </div>
     );
   }
 
-  return (
-    <section className="bg-white py-20">
-      <div className="max-w-5xl mx-auto px-6">
-        <img
-          src={destination.image}
-          alt={destination.name}
-          className="w-full h-80 object-cover rounded-xl mb-8 shadow-lg"
-        />
-        <h1 className="text-4xl font-bold text-brand-blue mb-4">
-          {destination.name}
-        </h1>
-        <p className="text-lg text-gray-700 mb-6">{destination.description}</p>
+  const omioUrl = `https://www.omio.com/search?departure=&arrival=${encodeURIComponent(destination.shortName ?? destination.name)}`;
+  const bookingUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination.shortName ?? destination.name)}`;
 
-        {/* Placeholder sections */}
-        <div className="grid md:grid-cols-2 gap-10">
-          <div>
-            <h2 className="text-2xl font-semibold text-brand-blue mb-2">
-              Things to Do
-            </h2>
-            <ul className="list-disc list-inside text-gray-600">
-              <li>Popular landmarks</li>
-              <li>Local experiences</li>
-              <li>Food & nightlife</li>
+  return (
+    <main className="bg-white py-12">
+      <div className="max-w-5xl mx-auto px-4">
+        <img src={destination.image} alt={destination.name} className="w-full h-96 object-cover rounded-xl shadow-md mb-6" />
+        <h1 className="text-3xl font-bold text-brand-blue mb-3">{destination.name}</h1>
+        <p className="text-gray-700 mb-4">{destination.description}</p>
+
+        {destination.bestTime && (
+          <p className="mb-4">
+            <strong>Best time to visit: </strong>{destination.bestTime}
+          </p>
+        )}
+
+        {destination.travelTips && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+            <h3 className="font-semibold text-lg mb-2">Travel tips</h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              {destination.travelTips.map((t, i) => <li key={i}>{t}</li>)}
             </ul>
           </div>
+        )}
 
-          <div>
-            <h2 className="text-2xl font-semibold text-brand-blue mb-2">
-              Hotels & Stays
-            </h2>
-            <p className="text-gray-600">
-              (Later: integrate Booking.com or Airbnb API)
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <h2 className="text-2xl font-semibold text-brand-blue mb-2">
-            Route Planner
-          </h2>
-          <p className="text-gray-600 mb-4">
-            (Later: integrate Google Maps directions)
-          </p>
-          <iframe
-            title="map"
-            src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(
-              destination.name
-            )}`}
-            width="100%"
-            height="400"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-          />
-        </div>
-
-        <div className="mt-10">
-          <Link
-            to="/"
-            className="inline-block bg-brand-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-gold transition"
-          >
-            ← Back to Destinations
-          </Link>
+        <div className="flex gap-3 flex-wrap">
+          <a className="bg-brand-blue text-white px-4 py-2 rounded-lg hover:bg-brand-gold transition" href={omioUrl} target="_blank" rel="noopener noreferrer">
+            Find transport (Omio)
+          </a>
+          <a className="bg-gray-100 px-4 py-2 rounded-lg hover:bg-gray-200 transition" href={bookingUrl} target="_blank" rel="noopener noreferrer">
+            Search hotels (Booking)
+          </a>
+          <Link to="/" className="text-gray-600 underline self-center">← Back to Home</Link>
         </div>
       </div>
-    </section>
+    </main>
   );
 }
