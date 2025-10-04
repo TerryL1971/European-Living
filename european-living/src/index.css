@@ -90,3 +90,11 @@ body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; 
 /* Small helpers */
 .center { text-align:center; }
 .btn { display:inline-block; padding:10px 14px; background:var(--brand-blue); color:#fff; border-radius:10px; text-decoration:none; }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

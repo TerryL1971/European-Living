@@ -10,24 +10,19 @@ interface Destination {
 
 export default function DestinationCard({ destination }: { destination: Destination }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition">
+    <Link
+      to={`/destinations/${destination.id}`}
+      className="flex-none w-72 bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300"
+    >
       <img
         src={destination.image}
         alt={destination.name}
-        className="w-full h-56 object-cover"
+        className="w-full h-48 object-cover rounded-t-xl"
       />
-      <div className="p-6">
-        <h2 className="text-2xl font-semibold text-brand-blue mb-2">
-          {destination.name}
-        </h2>
-        <p className="text-gray-600 mb-4">{destination.description}</p>
-        <Link
-          to={`/destinations/${destination.id}`}
-          className="inline-block bg-brand-blue text-white px-4 py-2 rounded-lg font-semibold hover:bg-brand-gold transition"
-        >
-          View Details →
-        </Link>
+      <div className="p-4">
+        <h3 className="text-xl font-semibold text-brand-blue">{destination.name}</h3>
+        <p className="text-gray-600 text-sm mt-2 line-clamp-3">{destination.description}</p>
       </div>
-    </div>
+    </Link>
   );
 }
