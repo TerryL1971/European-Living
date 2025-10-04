@@ -132,3 +132,43 @@ html {
 /* small scrollbar style (optional) */
 .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 999px; }
+
+/* Magazine / prose styles (simple) */
+.prose {
+  line-height: 1.7;
+  color: #111827;
+  font-size: 1rem;
+  max-width: 65ch;
+}
+
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.08);
+  margin: 1.25rem 0;
+}
+
+/* inline-photo class if you prefer to style images inserted directly by HTML in content */
+.inline-photo {
+  display: block;
+  margin: 1.25rem auto;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* responsive adjustments for prose */
+@media (min-width: 1024px) {
+  .prose.prose-lg {
+    font-size: 1.05rem;
+  }
+}
+
+/* small utility to keep link color consistent */
+.text-brand-blue { color: #1d4ed8; }
+.bg-brand-blue { background: #1d4ed8; color: #fff; }
+.bg-brand-gold { background: #f59e0b; color: #fff; }
+
+.prose strong {
+  color: var(--brand-blue);
+}
