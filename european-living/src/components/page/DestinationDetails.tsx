@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { destinations } from "../../data/destinations";
-import type { Destination } from "../../data/destinations";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 
-export default function DestinationDetails(): JSX.Element {
-  // ✅ useParams returns Record<string, string | undefined>
+export default function DestinationDetails() {
   const { id } = useParams<{ id?: string }>();
   const destination = destinations.find((d) => d.id === id);
 
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Vite: path must be relative to *this file*, not starting with "/"
-  const contentFiles = import.meta.glob("../../data/content/*.md", {
-    as: "raw",
-  }) as Record<string, () => Promise<string>>;
+  const contentFiles = useMemo(
+    () =>
+      import.meta.glob("../../data/content/*.md", {
+        query: "?raw",
+        import: "default",
+      }) as Record<string, () => Promise<string>>,
+    []
+  );
 
   useEffect(() => {
     if (!destination?.contentFile) {
@@ -28,7 +30,6 @@ export default function DestinationDetails(): JSX.Element {
 
     setLoading(true);
 
-    // Vite stores relative paths like "../../data/content/berlin.md"
     const targetPath = `../../data/content/${destination.contentFile}`;
     const importer = contentFiles[targetPath];
 
@@ -46,9 +47,8 @@ export default function DestinationDetails(): JSX.Element {
         setMarkdown(null);
       })
       .finally(() => setLoading(false));
-  }, [destination]);
+  }, [destination, contentFiles]);
 
-  // ✅ Safety check
   if (!destination) {
     return (
       <div className="max-w-4xl mx-auto py-20 text-center">
@@ -69,7 +69,9 @@ export default function DestinationDetails(): JSX.Element {
           className="w-full h-80 object-cover rounded-xl mb-6 shadow"
         />
 
-        <h1 className="text-3xl font-bold text-brand-blue mb-2">{destination.name}</h1>
+        <h1 className="text-3xl font-bold text-brand-blue mb-2">
+          {destination.name}
+        </h1>
         <p className="text-gray-700 mb-4">{destination.description}</p>
 
         {destination.travelTips?.length ? (

@@ -6,23 +6,35 @@ export default function DestinationsSection() {
   return (
     <section id="destinations" className="bg-brand-cream py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold text-brand-blue">Popular Destinations</h2>
-          <p className="text-gray-600 mt-2 max-w-2xl mx-auto">
-            Click a destination to explore things to do, hotels, and transport options.
-          </p>
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-brand-blue mb-8">
+          Popular Destinations
+        </h2>
+
+        {/* Scrollable container — show two rows of cards and let user scroll */}
+        <div className="overflow-y-auto max-h-[36rem] px-2">
+          <div
+            className="
+              grid gap-6
+              grid-cols-1
+              sm:grid-cols-2
+              md:grid-cols-3
+              xl:grid-cols-4
+              justify-items-center
+            "
+          >
+            {destinations.map((dest) => (
+              <div key={dest.id} className="w-full">
+                <DestinationCard destination={dest} />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {destinations.map((d) => (
-            <DestinationCard key={d.id} destination={d} />
-          ))}
-        </div>
-
-        <div className="text-center mt-8">
+        {/* optional CTA */}
+        <div className="mt-8 text-center">
           <a
-            href="#destinations"
-            className="inline-block bg-brand-blue text-white px-6 py-2 rounded-xl hover:bg-brand-gold transition"
+            href="#"
+            className="inline-block bg-brand-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-gold transition"
           >
             View All Destinations
           </a>
