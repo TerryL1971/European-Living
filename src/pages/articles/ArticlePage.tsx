@@ -1,31 +1,49 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-// Sample article data — you can replace this with fetched content or markdown import
 const articles = [
   {
-    slug: "registering-your-residence",
-    title: "How to Register Your Residence in Germany",
+    slug: "transportation",
+    title: "Transportation Made Simple",
     content: `
-      If you’re moving to Germany, one of the first things you’ll need to do
-      is register your address (Anmeldung). This must be done within 14 days
-      of moving into your new home.
-
-      To register, bring your passport, rental contract, and confirmation from
-      your landlord (Wohnungsgeberbestätigung) to the local Bürgeramt.
-    `,
+Getting around Europe is easy once you understand the transport systems.
+Learn how to use trains, buses, flights, and car rentals efficiently.
+Discover regional passes and apps that help you plan every leg of your journey.`,
   },
   {
-    slug: "getting-health-insurance",
-    title: "Understanding Health Insurance in Germany",
+    slug: "accommodation",
+    title: "Accommodation Assistance",
     content: `
-      Germany has one of the most comprehensive healthcare systems in the world.
-      You’ll need to choose between public (gesetzliche) and private (private)
-      health insurance.
-
-      Most employees are automatically enrolled in public insurance. Freelancers
-      and high earners can opt for private plans.
-    `,
+Find tips for booking hotels, hostels, and short-term apartments.
+Learn how to compare platforms like Booking.com and Airbnb, and avoid common tourist traps.`,
+  },
+  {
+    slug: "services",
+    title: "English-Speaking Services",
+    content: `
+Need a doctor, lawyer, or mechanic who speaks English?
+This guide helps you find trusted professionals in major German and European cities.`,
+  },
+  {
+    slug: "phrases",
+    title: "Essential German Phrases",
+    content: `
+Learn essential German words and phrases for greetings, dining, shopping, and emergencies.
+Perfect for newcomers or travelers who want to connect with locals.`,
+  },
+  {
+    slug: "budgeting",
+    title: "Budgeting & Payments",
+    content: `
+Understand how to manage money, use ATMs, and send international transfers in Europe.
+We cover bank account setup, digital wallets, and currency exchange tips.`,
+  },
+  {
+    slug: "etiquette",
+    title: "Cultural Etiquette",
+    content: `
+Learn the unspoken social rules that help you blend in — from tipping to punctuality.
+Avoid awkward moments and impress locals with your cultural awareness.`,
   },
 ];
 
@@ -34,8 +52,8 @@ export default function ArticlePage() {
   const [article, setArticle] = useState<{ title: string; content: string } | null>(null);
 
   useEffect(() => {
-    const foundArticle = articles.find((a) => a.slug === slug);
-    setArticle(foundArticle || null);
+    const found = articles.find((a) => a.slug === slug);
+    setArticle(found || null);
   }, [slug]);
 
   if (!article) {
@@ -59,10 +77,8 @@ export default function ArticlePage() {
     <div className="min-h-screen bg-white">
       <div className="max-w-3xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-bold mb-6 text-brand-blue">{article.title}</h1>
-        <div className="prose prose-lg max-w-none text-gray-800">
-          {article.content.split("\n").map((p, i) =>
-            p.trim() ? <p key={i}>{p}</p> : null
-          )}
+        <div className="prose prose-lg max-w-none text-gray-800 whitespace-pre-line">
+          {article.content}
         </div>
 
         <div className="mt-12 flex flex-col sm:flex-row gap-4">
