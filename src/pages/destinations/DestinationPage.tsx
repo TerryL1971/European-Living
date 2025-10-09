@@ -23,7 +23,7 @@ export default function DestinationPage() {
         setLoading(true);
         try {
           // Dynamic import of markdown files
-          const module = await import(`../../data/content/${destination.contentFile}?raw`);
+          const module = await import(`../../data/content/${destination.contentFile}.md?raw`);
           setContent(module.default);
         } catch (err) {
           console.error("Error loading content:", err);
