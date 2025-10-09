@@ -6,7 +6,7 @@ export interface Destination {
   country?: string;
   description: string;
   image: string;       // path in public/images/...
-  contentFile?: string; // markdown filename in src/data/content/, e.g. "berlin.md"
+  contentFile?: string; // markdown filename in src/data/content/, e.g. "berlin"
   lat?: number;
   lng?: number;
   travelTips?: string[];
@@ -20,7 +20,7 @@ export const destinations: Destination[] = [
     country: "Germany",
     description: "The vibrant capital of Germany, rich with history and culture.",
     image: "/images/berlin.jpg",
-    contentFile: "berlin.md",
+    contentFile: "berlin",
     lat: 52.52,
     lng: 13.405,
     travelTips: [
@@ -35,7 +35,7 @@ export const destinations: Destination[] = [
     country: "Germany",
     description: "Bavarian charm with easy train connections and English-friendly atmosphere.",
     image: "/images/munich.jpg",
-    contentFile: "munich.md",
+    contentFile: "munich",
     lat: 48.1351,
     lng: 11.5820,
   },
@@ -46,7 +46,7 @@ export const destinations: Destination[] = [
     country: "France",
     description: "City of Light — museums, cafés, and iconic architecture.",
     image: "/images/paris.jpg",
-    contentFile: "paris.md",
+    contentFile: "paris",
     lat: 48.8566,
     lng: 2.3522,
   },
@@ -57,7 +57,7 @@ export const destinations: Destination[] = [
     country: "Netherlands",
     description: "Picturesque canals and world-class museums with excellent English support.",
     image: "/images/amsterdam.jpg",
-    contentFile: "amsterdam.md",
+    contentFile: "amsterdam",
     lat: 52.3676,
     lng: 4.9041,
   },
@@ -68,7 +68,7 @@ export const destinations: Destination[] = [
     country: "Czech Republic",
     description: "Fairy-tale architecture, historic squares, and budget-friendly prices.",
     image: "/images/prague.jpg",
-    contentFile: "prague.md",
+    contentFile: "prague",
     lat: 50.0755,
     lng: 14.4378,
   },
@@ -90,7 +90,7 @@ export const destinations: Destination[] = [
     country: "Italy",
     description: "Ancient ruins, vibrant piazzas, and unforgettable food.",
     image: "/images/rome.jpg",
-    contentFile: "rome.md",
+    contentFile: "rome",
     lat: 41.9028,
     lng: 12.4964,
   },
@@ -101,7 +101,7 @@ export const destinations: Destination[] = [
     country: "Spain",
     description: "Gaudí architecture, beaches, and tapas culture.",
     image: "/images/barcelona.jpg",
-    contentFile: "barcelona.md",
+    contentFile: "barcelona",
     lat: 41.3851,
     lng: 2.1734,
   },
@@ -112,7 +112,7 @@ export const destinations: Destination[] = [
     country: "Portugal",
     description: "Hilly streets, trams, and seafood by the Tagus.",
     image: "/images/lisbon.jpg",
-    contentFile: "lisbon.md",
+    contentFile: "lisbon.",
     lat: 38.7223,
     lng: -9.1393,
   },
@@ -123,7 +123,7 @@ export const destinations: Destination[] = [
     country: "Hungary",
     description: "Thermal baths, riverside views, and historic architecture.",
     image: "/images/budapest.jpg",
-    contentFile: "budapest.md",
+    contentFile: "budapest",
     lat: 47.4979,
     lng: 19.0402,
   },
