@@ -1,4 +1,4 @@
-import { features } from "@/data/features";
+import { features } from "../../data/features";
 import { Link } from "react-router-dom";
 
 export default function FeaturesSection() {

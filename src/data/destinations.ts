@@ -14,6 +14,17 @@ export interface Destination {
 
 export const destinations: Destination[] = [
   {
+  id: "stuttgart",
+  name: "Stuttgart",
+  shortName: "Stuttgart",
+  country: "Germany",
+  description: "Mercedes-Benz and Porsche museums, vineyards, and Swabian culture in Baden-Württemberg.",
+  image: "/images/stuttgart.jpg",
+  contentFile: "stuttgart",
+  lat: 48.7758,
+  lng: 9.1829,  
+  },
+  {
     id: "berlin",
     name: "Berlin",
     shortName: "Berlin",
