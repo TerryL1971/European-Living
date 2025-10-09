@@ -19,7 +19,7 @@ export const destinations: Destination[] = [
   shortName: "Stuttgart",
   country: "Germany",
   description: "Mercedes-Benz and Porsche museums, vineyards, and Swabian culture in Baden-Württemberg.",
-  image: "/images/stuttgart.jpg",
+  image: "/images/stuttgart-schlossplatz.jpg",
   contentFile: "stuttgart",
   lat: 48.7758,
   lng: 9.1829,  
