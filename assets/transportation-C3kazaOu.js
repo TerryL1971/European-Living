@@ -60,7 +60,7 @@ Germany has one of the best public transport systems in the world. Major cities 
 ## FlixBus & Blablacar - Budget Options
 
 ### FlixBus
-The cheapest way to travel between cities.
+**The cheapest way to travel between cities.**
 - Book at flixbus.com or via app
 - Prices start at €5-10 for intercity routes
 - Free WiFi and power outlets on board
