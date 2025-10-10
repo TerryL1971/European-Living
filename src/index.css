@@ -285,7 +285,7 @@ html { scroll-behavior: smooth; }
   color: var(--brand-bg-alt);
 }
 
-..prose {
+.prose {
   line-height: 1.8;
   color: #374151;
 }
