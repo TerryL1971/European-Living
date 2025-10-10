@@ -1,71 +1,60 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import { features } from "../../data/features";
+import { ArrowLeft } from "lucide-react";
 
-const articles = [
-  {
-    slug: "transportation",
-    title: "Transportation Made Simple",
-    content: `
-Getting around Europe is easy once you understand the transport systems.
-Learn how to use trains, buses, flights, and car rentals efficiently.
-Discover regional passes and apps that help you plan every leg of your journey.`,
-  },
-  {
-    slug: "accommodation",
-    title: "Accommodation Assistance",
-    content: `
-Find tips for booking hotels, hostels, and short-term apartments.
-Learn how to compare platforms like Booking.com and Airbnb, and avoid common tourist traps.`,
-  },
-  {
-    slug: "services",
-    title: "English-Speaking Services",
-    content: `
-Need a doctor, lawyer, or mechanic who speaks English?
-This guide helps you find trusted professionals in major German and European cities.`,
-  },
-  {
-    slug: "phrases",
-    title: "Essential German Phrases",
-    content: `
-Learn essential German words and phrases for greetings, dining, shopping, and emergencies.
-Perfect for newcomers or travelers who want to connect with locals.`,
-  },
-  {
-    slug: "budgeting",
-    title: "Budgeting & Payments",
-    content: `
-Understand how to manage money, use ATMs, and send international transfers in Europe.
-We cover bank account setup, digital wallets, and currency exchange tips.`,
-  },
-  {
-    slug: "etiquette",
-    title: "Cultural Etiquette",
-    content: `
-Learn the unspoken social rules that help you blend in — from tipping to punctuality.
-Avoid awkward moments and impress locals with your cultural awareness.`,
-  },
-];
+// Preload all markdown files as raw text
+const articles = import.meta.glob("../../data/content/*.md", {
+  query: "?raw",
+  import: "default",
+});
 
 export default function ArticlePage() {
-  const { slug } = useParams<{ slug: string }>();
-  const [article, setArticle] = useState<{ title: string; content: string } | null>(null);
+  const { id } = useParams<{ id: string }>();
+  const [content, setContent] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    const found = articles.find((a) => a.slug === slug);
-    setArticle(found || null);
-  }, [slug]);
+    if (!id) {
+      setError(true);
+      return;
+    }
 
-  if (!article) {
+    const feature = features.find((f) => f.id === id);
+    if (!feature) {
+      setError(true);
+      return;
+    }
+
+    const filePath = `../../data/content/${feature.id}.md`;
+    const loader = articles[filePath];
+
+    if (loader) {
+      loader()
+        .then((mod) => setContent(mod))
+        .catch((err) => {
+          console.error("Error loading article:", err);
+          setError(true);
+        });
+    } else {
+      console.error("File not found in import.meta.glob:", filePath);
+      setError(true);
+    }
+  }, [id]);
+
+  if (error || !content) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 text-gray-800 px-4">
+      <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
         <h1 className="text-3xl font-bold mb-4">Article not found</h1>
-        <p className="mb-6 text-center text-gray-600">
+        <p className="text-gray-600 mb-6">
           The article you’re looking for doesn’t exist or may have been moved.
         </p>
         <Link
           to="/"
-          className="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-white hover:text-red-600 transition-colors"
+          className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
         >
           Back to Home
         </Link>
@@ -73,28 +62,54 @@ export default function ArticlePage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-3xl mx-auto px-6 py-16">
-        <h1 className="text-4xl font-bold mb-6 text-brand-blue">{article.title}</h1>
-        <div className="prose prose-lg max-w-none text-gray-800 whitespace-pre-line">
-          {article.content}
-        </div>
+  const feature = features.find((f) => f.id === id);
 
-        <div className="mt-12 flex flex-col sm:flex-row gap-4">
-          <Link
-            to="/"
-            className="bg-gray-100 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-200 transition-colors"
-          >
-            ← Back to Home
-          </Link>
-          <Link
-            to="/#contact"
-            className="bg-red-600 text-white px-6 py-3 rounded-xl shadow-md hover:bg-white hover:text-red-600 transition-colors text-center"
-          >
-            Contact Us for Help
-          </Link>
+  return (
+    <div className="container mx-auto px-6 py-16 max-w-4xl">
+      {/* Back Button */}
+      <div className="mb-10">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition"
+        >
+          <ArrowLeft size={20} />
+          <span>Back to All Articles</span>
+        </Link>
+      </div>
+
+      {/* Article Header */}
+      {feature && (
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-3">
+            {feature.title}
+          </h1>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            {feature.description}
+          </p>
+          <div className="mt-6 flex justify-center">
+            <feature.icon className="w-12 h-12 text-blue-600" />
+          </div>
         </div>
+      )}
+
+      {/* Markdown Content */}
+      <article className="prose prose-lg md:prose-xl prose-blue mx-auto prose-headings:font-semibold prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-700">
+        <ReactMarkdown
+          children={content}
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw]}
+        />
+      </article>
+
+      {/* Back Button at Bottom */}
+      <div className="mt-12 flex justify-center">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          <ArrowLeft size={20} />
+          <span>Back</span>
+        </Link>
       </div>
     </div>
   );

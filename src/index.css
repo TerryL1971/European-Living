@@ -284,3 +284,20 @@ html { scroll-behavior: smooth; }
   background-color: var(--brand-dark);
   color: var(--brand-bg-alt);
 }
+
+.prose {
+  line-height: 1.8;
+}
+
+.prose h2 {
+  margin-top: 2em;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.3em;
+}
+
+.prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1em;
+  color: #555;
+  font-style: italic;
+}

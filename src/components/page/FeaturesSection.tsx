@@ -1,14 +1,18 @@
+import { Card, CardContent } from "../../components/ui/card";
+import { motion } from "framer-motion";
 import { features } from "../../data/features";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function FeaturesSection() {
+  const navigate = useNavigate();
+
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold mb-4 text-brand-blue">
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
           Travel Tips & Essentials
         </h2>
-        <p className="text-lg text-gray-600 mb-12">
+        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
           Helpful guides, how-tos and quick reads to travel smarter.
         </p>
 
@@ -16,19 +20,23 @@ export default function FeaturesSection() {
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
-              <Link
-                key={feature.slug}
-                to={`/articles/${feature.slug}`}
-                className="bg-white p-8 rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-1 text-left"
+              <motion.div
+                key={feature.id}
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                onClick={() => navigate(`/articles/${feature.id}`)}
+                className="cursor-pointer"
               >
-                <div className="flex items-center justify-center w-14 h-14 bg-red-100 rounded-xl mb-6 mx-auto">
-                  <Icon className="text-red-600 w-7 h-7" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </Link>
+                <Card className="hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200">
+                  <CardContent className="p-6 flex flex-col items-center text-center">
+                    <Icon className="w-10 h-10 text-blue-600 mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      {feature.title}
+                    </h3>
+                    <p className="text-gray-600">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </div>

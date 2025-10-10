@@ -7,47 +7,64 @@ import {
   Plane,
 } from "lucide-react";
 
-export const features = [
+// Define the Feature type to keep TypeScript strict and ESLint happy
+export interface Feature {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  image?: string;
+  articlePath: string;
+}
+
+// Export all feature data
+export const features: Feature[] = [
   {
-    slug: "transportation",
-    title: "Transportation Made Simple",
+    id: "transportation",
+    title: "Transportation",
     description:
-      "Step-by-step guides for trains, buses, flights, and car rentals across Europe.",
+      "Navigate Europe's cities with ease — from buses and trains to local travel apps.",
     icon: Bus,
+    articlePath: "/data/content/transportation.md",
   },
   {
-    slug: "accommodation",
-    title: "Accommodation Assistance",
+    id: "accommodations",
+    title: "Accommodations",
     description:
-      "Find the best hotels, hostels, and apartments near must-see attractions.",
+      "Learn how to find the best short- and long-term stays across Europe.",
     icon: Hotel,
+    articlePath: "/data/content/accommodations.md",
   },
   {
-    slug: "services",
-    title: "English-Speaking Services",
+    id: "services",
+    title: "Essential Services",
     description:
-      "Directory of English-speaking doctors, lawyers, and businesses in major cities.",
+      "Settle in with utilities, internet, healthcare, and everyday essentials.",
     icon: Handshake,
+    articlePath: "/data/content/services.md",
   },
   {
-    slug: "phrases",
-    title: "Essential German Phrases",
+    id: "phrases",
+    title: "Useful Phrases",
     description:
-      "Learn key German phrases with pronunciation to make your travels smoother.",
+      "Master must-know expressions to communicate confidently wherever you go.",
     icon: Languages,
+    articlePath: "/data/content/phrases.md",
   },
   {
-    slug: "budgeting",
-    title: "Budgeting & Payments",
+    id: "budgeting",
+    title: "Budgeting & Costs",
     description:
-      "Understand banking, currency conversion, and digital payments across Europe.",
+      "Plan your finances and understand the real cost of living in Europe.",
     icon: PiggyBank,
+    articlePath: "/data/content/budgeting.md",
   },
   {
-    slug: "etiquette",
-    title: "Cultural Etiquette",
+    id: "etiquette",
+    title: "Culture & Etiquette",
     description:
-      "Do’s and don’ts when traveling or living in Europe — blend in like a local.",
+      "Get to know European customs, greetings, and social norms to blend in easily.",
     icon: Plane,
+    articlePath: "/data/content/etiquette.md",
   },
 ];

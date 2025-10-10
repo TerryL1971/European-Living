@@ -31,7 +31,7 @@ function App() {
       />
 
       {/* ✅ Dynamic Article Route */}
-      <Route path="/articles/:slug" element={<ArticlePage />} />
+      <Route path="/articles/:id" element={<ArticlePage />} />
 
       {/* ✅ Dynamic Destination Route */}
       <Route path="/destinations/:id" element={<DestinationPage />} />
