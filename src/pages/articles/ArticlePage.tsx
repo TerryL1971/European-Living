@@ -6,7 +6,7 @@ import remarkGfm from "remark-gfm";
 import { features } from "../../data/features";
 import { ArrowLeft } from "lucide-react";
 
-// Preload all markdown files as raw text
+// ✅ Load all markdown files as raw text (Vite 6+ syntax)
 const articles = import.meta.glob("../../data/content/*.md", {
   query: "?raw",
   import: "default",
@@ -34,7 +34,14 @@ export default function ArticlePage() {
 
     if (loader) {
       loader()
-        .then((mod) => setContent(mod))
+        .then((mod: unknown) => {
+          if (typeof mod === "string") {
+            setContent(mod);
+          } else {
+            console.error("Unexpected module type:", typeof mod);
+            setError(true);
+          }
+        })
         .catch((err) => {
           console.error("Error loading article:", err);
           setError(true);
@@ -44,6 +51,8 @@ export default function ArticlePage() {
       setError(true);
     }
   }, [id]);
+
+  const feature = features.find((f) => f.id === id);
 
   if (error || !content) {
     return (
@@ -62,11 +71,9 @@ export default function ArticlePage() {
     );
   }
 
-  const feature = features.find((f) => f.id === id);
-
   return (
     <div className="container mx-auto px-6 py-16 max-w-4xl">
-      {/* Back Button */}
+      {/* 🔙 Top Back Button */}
       <div className="mb-10">
         <Link
           to="/"
@@ -77,7 +84,7 @@ export default function ArticlePage() {
         </Link>
       </div>
 
-      {/* Article Header */}
+      {/* 📰 Article Header */}
       {feature && (
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">
@@ -92,7 +99,7 @@ export default function ArticlePage() {
         </div>
       )}
 
-      {/* Markdown Content */}
+      {/* 📄 Markdown Content */}
       <article className="prose prose-lg md:prose-xl prose-blue mx-auto prose-headings:font-semibold prose-headings:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-700">
         <ReactMarkdown
           children={content}
@@ -101,7 +108,7 @@ export default function ArticlePage() {
         />
       </article>
 
-      {/* Back Button at Bottom */}
+      {/* 🔙 Bottom Back Button */}
       <div className="mt-12 flex justify-center">
         <Link
           to="/"
