@@ -23,7 +23,15 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
     const sections: Section[] = [];
     const lines = content.split("\n");
     let currentSection: Section | null = null;
-    let contentBuffer: string[] = []; // Explicitly type as string[]
+    let contentBuffer: string[] = [];
+
+    const saveCurrentSection = () => {
+      if (currentSection) {
+        currentSection.content = contentBuffer.join("\n").trim();
+        sections.push(currentSection);
+        contentBuffer = [];
+      }
+    };
 
     lines.forEach((line) => {
       const h2Match = line.match(/^##\s+(.+)$/);
@@ -31,11 +39,7 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
 
       if (h2Match || h3Match) {
         // Save previous section
-        if (currentSection !== null) {
-          currentSection.content = contentBuffer.join("\n").trim();
-          sections.push(currentSection);
-          contentBuffer = []; // Reset buffer
-        }
+        saveCurrentSection();
 
         // Start new section
         const title = h2Match ? h2Match[1] : h3Match![1];
@@ -43,16 +47,13 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
         const id = title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
 
         currentSection = { id, title, content: "", level };
-      } else if (currentSection !== null) {
+      } else if (currentSection) {
         contentBuffer.push(line);
       }
     });
 
     // Don't forget the last section
-    if (currentSection !== null) {
-      currentSection.content = contentBuffer.join("\n").trim();
-      sections.push(currentSection);
-    }
+    saveCurrentSection();
 
     return sections;
   };
