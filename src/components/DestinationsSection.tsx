@@ -12,7 +12,7 @@ export default function DestinationsSection() {
   );
 
   return (
-    <section className="min-h-screen bg-[#f7f7ec] py-10 px-4">
+    <section id="destinations" className="min-h-screen bg-[#f7f7ec] py-10 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header + Search */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">

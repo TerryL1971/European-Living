@@ -1,71 +1,51 @@
+// src/pages/articles/ArticlePage.tsx
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
 import { features } from "../../data/features";
-import { ArrowLeft } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
-const articles = import.meta.glob("../../data/content/*.md", {
-  query: "?raw",
-  import: "default",
-});
+type ArticleParams = {
+  slug: string;
+};
 
 export default function ArticlePage() {
-  const { id } = useParams<{ id: string }>();
-  const [content, setContent] = useState<string>("");
-  const [error, setError] = useState<boolean>(false);
-  const [scrollProgress, setScrollProgress] = useState<number>(0);
+  const { slug } = useParams<ArticleParams>();
+  const article = features.find((feature) => feature.id === slug);
+
+  const [content, setContent] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+
+  // ✅ Import all markdown files once at top-level (so ESLint won't complain)
+  const markdownFiles = import.meta.glob("../../data/content/*.md", { as: "raw" });
 
   useEffect(() => {
-    if (!id) {
+    if (!article) return;
+
+    const fileKey = `../../data/content/${article.id}.md`;
+    const loader = markdownFiles[fileKey];
+
+    if (!loader) {
       setError(true);
       return;
     }
 
-    const feature = features.find((f) => f.id === id);
-    if (!feature) {
-      setError(true);
-      return;
-    }
+    loader()
+      .then((text: string) => setContent(text))
+      .catch(() => setError(true));
+  }, [article, markdownFiles]); // ✅ include markdownFiles to satisfy ESLint
 
-    const filePath = `../../data/content/${feature.id}.md`;
-    const loader = articles[filePath];
-
-    if (loader) {
-      loader()
-        .then((mod) => setContent(mod as string))
-        .catch((err) => {
-          console.error("Error loading article:", err);
-          setError(true);
-        });
-    } else {
-      console.error("File not found in import.meta.glob:", filePath);
-      setError(true);
-    }
-  }, [id]);
-
-  // 📈 Reading progress bar
-  useEffect(() => {
-    const handleScroll = () => {
-      const totalHeight = document.body.scrollHeight - window.innerHeight;
-      const progress = (window.scrollY / totalHeight) * 100;
-      setScrollProgress(progress);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  if (error || !content) {
+  if (!article) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
-        <h1 className="text-3xl font-bold mb-4">Article not found</h1>
+      <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          Article Not Found
+        </h2>
         <p className="text-gray-600 mb-6">
-          The article you’re looking for doesn’t exist or may have been moved.
+          We couldn’t find the article you’re looking for.
         </p>
         <Link
           to="/"
-          className="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           Back to Home
         </Link>
@@ -73,87 +53,36 @@ export default function ArticlePage() {
     );
   }
 
-  const feature = features.find((f) => f.id === id);
+  const Icon = article.icon;
 
   return (
-    <div className="relative bg-gray-50 min-h-screen">
-      {/* Progress bar */}
-      <div
-        className="fixed top-0 left-0 h-1 bg-blue-600 z-50 transition-all duration-200"
-        style={{ width: `${scrollProgress}%` }}
-      />
-
-      <div className="container mx-auto px-6 py-16 max-w-4xl">
-        {/* Back Button */}
-        <div className="mb-10">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 transition"
-          >
-            <ArrowLeft size={20} />
-            <span>Back to All Articles</span>
-          </Link>
+    <div className="min-h-screen bg-white py-12 px-6">
+      <div className="max-w-3xl mx-auto">
+        <div className="flex items-center gap-3 mb-6">
+          <Icon className="w-10 h-10 text-blue-600" />
+          <h1 className="text-3xl font-bold text-gray-900">{article.title}</h1>
         </div>
 
-        {/* Article Header */}
-        {feature && (
-          <div className="text-center mb-12">
-            <div className="mb-4 flex justify-center">
-              <feature.icon className="w-14 h-14 text-blue-600" />
-            </div>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
-              {feature.title}
-            </h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              {feature.description}
-            </p>
+        <p className="text-gray-700 leading-relaxed mb-8">
+          {article.description}
+        </p>
+
+        {error ? (
+          <p className="text-red-600">Error loading article content.</p>
+        ) : content ? (
+          <div className="prose max-w-none">
+            <ReactMarkdown>{content}</ReactMarkdown>
           </div>
+        ) : (
+          <p className="text-gray-500">Loading article...</p>
         )}
 
-        {/* Markdown Content */}
-        <article
-          className="
-            prose 
-            prose-blue 
-            prose-lg 
-            md:prose-xl 
-            mx-auto 
-            prose-headings:font-bold 
-            prose-headings:text-gray-900 
-            prose-h1:text-3xl 
-            prose-h2:text-2xl 
-            prose-h3:text-xl 
-            prose-p:text-gray-700 
-            prose-strong:text-gray-900 
-            prose-a:text-blue-600 
-            hover:prose-a:text-blue-800
-            prose-img:rounded-xl
-            prose-img:shadow-md
-            prose-li:marker:text-blue-600
-            prose-blockquote:border-l-4
-            prose-blockquote:border-blue-500
-            prose-blockquote:bg-blue-50
-            prose-blockquote:p-4
-            prose-blockquote:rounded-lg
-            prose-blockquote:italic
-          "
-        >
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeRaw]}
-          >
-            {content}
-          </ReactMarkdown>
-        </article>
-
-        {/* Back Button at Bottom */}
-        <div className="mt-16 flex justify-center">
+        <div className="mt-10">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
-            <ArrowLeft size={20} />
-            <span>Back</span>
+            ← Back to Articles
           </Link>
         </div>
       </div>
