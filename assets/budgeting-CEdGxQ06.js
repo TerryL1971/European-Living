@@ -1,6 +1,4 @@
-const n=`## 5. \`src/data/content/budgeting.md\`
-\`\`\`markdown
-# Budgeting & Payments
+const n=`# Budgeting & Payments
 
 Understanding money management in Germany is crucial for a smooth transition. Here's everything you need to know about banking, payments, and managing your finances.
 
