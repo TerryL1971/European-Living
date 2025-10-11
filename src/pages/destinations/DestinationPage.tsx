@@ -6,6 +6,8 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { destinations } from "../../data/destinations";
 import type { Destination } from "../../data/destinations";
+import TableOfContents from "../../components/TableOfContents";
+import CollapsibleContent from "../../components/CollapsibleContent";
 
 export default function DestinationPage() {
   const { id } = useParams<{ id: string }>();
@@ -22,7 +24,6 @@ export default function DestinationPage() {
       if (destination?.contentFile) {
         setLoading(true);
         try {
-          // Dynamic import of markdown files
           const module = await import(`../../data/content/${destination.contentFile}.md?raw`);
           setContent(module.default);
         } catch (err) {
@@ -56,7 +57,7 @@ export default function DestinationPage() {
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <button
           onClick={() => navigate(-1)}
           className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline mb-6 block font-medium"
@@ -64,55 +65,99 @@ export default function DestinationPage() {
           ← Back to Destinations
         </button>
 
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-          <img
-            src={destination.image}
-            alt={destination.name}
-            className="w-full h-64 object-cover"
-          />
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content */}
+          <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden">
+            <img
+              src={destination.image}
+              alt={destination.name}
+              className="w-full h-64 object-cover"
+            />
 
-          <div className="p-6">
-            <div className="mb-4">
-              <h1 className="text-3xl font-bold text-[var(--brand-dark)] mb-2">
-                {destination.name}
-              </h1>
-              <p className="text-[var(--brand-dark)] opacity-70">{destination.country}</p>
-            </div>
-
-            {loading ? (
-              <p className="text-[var(--brand-dark)] opacity-80">Loading content...</p>
-            ) : content ? (
-              <div className="prose prose-lg max-w-none text-[var(--brand-dark)] mb-6">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  rehypePlugins={[rehypeRaw, rehypeSanitize]}
-                >
-                  {content}
-                </ReactMarkdown>
+            <div className="p-4 sm:p-6">
+              <div className="mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--brand-dark)] mb-2">
+                  {destination.name}
+                </h1>
+                <p className="text-[var(--brand-dark)] opacity-70">{destination.country}</p>
               </div>
-            ) : (
-              <p className="text-[var(--brand-dark)] opacity-80 mb-6">
-                {destination.description ||
-                  "Discover everything this wonderful destination has to offer. From historical landmarks to modern attractions, there's something for everyone."}
-              </p>
-            )}
 
-            <div className="flex gap-4">
-              <button
-                onClick={() => navigate("/")}
-                className="bg-[var(--brand-primary)] text-white px-5 py-2 rounded-lg shadow hover:bg-[var(--brand-dark)] transition"
-              >
-                Back Home
-              </button>
+              {loading ? (
+                <p className="text-[var(--brand-dark)] opacity-80">Loading content...</p>
+              ) : content ? (
+                <>
+                  {/* Mobile: Collapsible Sections */}
+                  <div className="lg:hidden mb-6">
+                    <CollapsibleContent content={content} />
+                  </div>
 
-              <button
-                onClick={() => navigate("/contact")}
-                className="bg-[var(--brand-dark)] text-white px-5 py-2 rounded-lg shadow hover:bg-[var(--brand-black)] transition"
-              >
-                Contact for Help
-              </button>
+                  {/* Desktop: Full Content */}
+                  <div className="hidden lg:block prose prose-lg max-w-none text-[var(--brand-dark)] mb-6">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw, rehypeSanitize]}
+                      components={{
+                        h2: ({ children, ...props }) => {
+                          const text = String(children);
+                          const id = text
+                            .toLowerCase()
+                            .replace(/[^\w\s-]/g, "")
+                            .replace(/\s+/g, "-");
+                          return (
+                            <h2 id={id} className="text-2xl font-bold text-[var(--brand-dark)] mt-8 mb-4" {...props}>
+                              {children}
+                            </h2>
+                          );
+                        },
+                        h3: ({ children, ...props }) => {
+                          const text = String(children);
+                          const id = text
+                            .toLowerCase()
+                            .replace(/[^\w\s-]/g, "")
+                            .replace(/\s+/g, "-");
+                          return (
+                            <h3 id={id} className="text-xl font-semibold text-[var(--brand-dark)] mt-6 mb-3" {...props}>
+                              {children}
+                            </h3>
+                          );
+                        },
+                      }}
+                    >
+                      {content}
+                    </ReactMarkdown>
+                  </div>
+                </>
+              ) : (
+                <p className="text-[var(--brand-dark)] opacity-80 mb-6">
+                  {destination.description ||
+                    "Discover everything this wonderful destination has to offer. From historical landmarks to modern attractions, there's something for everyone."}
+                </p>
+              )}
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => navigate("/")}
+                  className="bg-[var(--brand-primary)] text-white px-5 py-2 rounded-lg shadow hover:bg-[var(--brand-dark)] transition"
+                >
+                  Back Home
+                </button>
+
+                <button
+                  onClick={() => navigate("/contact")}
+                  className="bg-[var(--brand-dark)] text-white px-5 py-2 rounded-lg shadow hover:bg-[var(--brand-black)] transition"
+                >
+                  Contact for Help
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Desktop: Table of Contents Sidebar */}
+          {content && (
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+              <TableOfContents content={content} />
+            </aside>
+          )}
         </div>
       </div>
     </div>
