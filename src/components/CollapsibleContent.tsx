@@ -19,39 +19,45 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
   // Parse markdown into sections
-  const sections: Section[] = [];
-  const lines = content.split("\n");
-  let currentSection: Section | null = null;
-  let contentBuffer: string[] = [];
+  const parseSections = (): Section[] => {
+    const sections: Section[] = [];
+    const lines = content.split("\n");
+    let currentSection: Section | null = null;
+    let contentBuffer: string[] = []; // Explicitly type as string[]
 
-  lines.forEach((line, index) => {
-    const h2Match = line.match(/^##\s+(.+)$/);
-    const h3Match = line.match(/^###\s+(.+)$/);
+    lines.forEach((line) => {
+      const h2Match = line.match(/^##\s+(.+)$/);
+      const h3Match = line.match(/^###\s+(.+)$/);
 
-    if (h2Match || h3Match) {
-      // Save previous section
-      if (currentSection) {
-        currentSection.content = contentBuffer.join("\n").trim();
-        sections.push(currentSection);
+      if (h2Match || h3Match) {
+        // Save previous section
+        if (currentSection !== null) {
+          currentSection.content = contentBuffer.join("\n").trim();
+          sections.push(currentSection);
+          contentBuffer = []; // Reset buffer
+        }
+
+        // Start new section
+        const title = h2Match ? h2Match[1] : h3Match![1];
+        const level = h2Match ? 2 : 3;
+        const id = title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+
+        currentSection = { id, title, content: "", level };
+      } else if (currentSection !== null) {
+        contentBuffer.push(line);
       }
+    });
 
-      // Start new section
-      const title = h2Match ? h2Match[1] : h3Match![1];
-      const level = h2Match ? 2 : 3;
-      const id = title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
-
-      currentSection = { id, title, content: "", level };
-      contentBuffer = [];
-    } else if (currentSection) {
-      contentBuffer.push(line);
+    // Don't forget the last section
+    if (currentSection !== null) {
+      currentSection.content = contentBuffer.join("\n").trim();
+      sections.push(currentSection);
     }
-  });
 
-  // Don't forget the last section
-  if (currentSection) {
-    currentSection.content = contentBuffer.join("\n").trim();
-    sections.push(currentSection);
-  }
+    return sections;
+  };
+
+  const sections = parseSections();
 
   const toggleSection = (id: string) => {
     setExpandedSections((prev) => {
