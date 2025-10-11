@@ -45,7 +45,7 @@ export default function Services() {
     <section id="services" className="relative bg-white py-20">
       {/* Background image */}
       <div className="absolute inset-0 bg-[url('/images/services.jpg')] bg-cover bg-center" />
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/10" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -65,7 +65,7 @@ export default function Services() {
             return (
               <div
                 key={category.id}
-                className="bg-white/50 backdrop-blur-lg border border-brand-gold rounded-xl p-6 hover:bg-white/20 transition-all"
+                className="bg-white/20 backdrop-blur-lg border border-brand-gold rounded-xl p-6 hover:bg-white/20 transition-all"
               >
                 <div className="flex items-center gap-3 mb-3">
                   <Icon className="w-6 h-6 text-brand-gold" />
@@ -83,7 +83,7 @@ export default function Services() {
         </div>
 
         {/* CTA for Full Guide */}
-        <div className="text-center bg-white/50 backdrop-blur-lg border border-brand-gold rounded-xl p-8">
+        <div className="text-center bg-white/20 backdrop-blur-lg border border-brand-gold rounded-xl p-8">
           <h3 className="text-2xl font-bold text-white mb-4">
             Need More Help Finding Services?
           </h3>
