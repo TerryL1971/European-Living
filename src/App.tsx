@@ -7,6 +7,7 @@ import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
 import Services from "./components/page/Services";
+// import EnglishSpeakingServices from "./components/page/EnglishSpeakingServices";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import ArticlePage from "./pages/articles/ArticlePage";
@@ -58,7 +59,7 @@ function App() {
               <DestinationsSection />
               <FeaturesSection />
               <GermanPhrasesSection />
-              <Services />
+              <Services /> 
               <ContactSection />
               <Footer />
             </>
