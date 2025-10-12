@@ -1,12 +1,21 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import { plugin as markdown, Mode } from "vite-plugin-markdown";
 
-// ✅ Clean working setup for React 19 + TailwindCSS v4
 export default defineConfig({
-  assetsInclude: ["**/*.md"],
-  plugins: [
-    react(),
-    tailwindcss(), // <-- No arguments! New Tailwind plugin works automatically
-  ],
+  base: "/",
+  plugins: [react(), tailwindcss(), markdown({ mode: [Mode.HTML] })],
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-markdown': ['react-markdown', 'remark-gfm', 'rehype-raw', 'rehype-sanitize'],
+          'vendor-ui': ['framer-motion', 'lucide-react'],
+        },
+      },
+    },
+  },
 });

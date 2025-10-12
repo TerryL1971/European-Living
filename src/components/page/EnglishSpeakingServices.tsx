@@ -48,13 +48,18 @@ const serviceCategories = [
 
 export default function EnglishSpeakingServices() {
   return (
-    <section id="services" className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="services" className="relative bg-white py-20">
+      {/* Background Image */}
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506784983877-45594efa4cbe?q=80&w=2400&auto=format&fit=crop')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-black/10" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             English-Speaking Services
           </h2>
-          <p className="text-lg text-[var(--brand-dark)] opacity-70 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-200 max-w-3xl mx-auto">
             Connect with trusted professionals who speak English. From doctors to lawyers to home repairs,
             we've curated a directory of expat-friendly service providers across Germany.
           </p>
@@ -104,7 +109,7 @@ export default function EnglishSpeakingServices() {
         </div>
 
         {/* CTA for Full Services Guide */}
-        <div className="mt-12 text-center bg-[var(--brand-primary)] bg-opacity-10 rounded-xl p-8">
+        <div className="mt-12 text-center bg-white rounded-xl p-8 shadow-lg">
           <h3 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
             Want the Complete Services Directory?
           </h3>
@@ -116,7 +121,7 @@ export default function EnglishSpeakingServices() {
             to="/articles/services"
             className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
           >
-            Read Full Services Guide
+            Read Full Services Guide →
           </Link>
         </div>
       </div>
