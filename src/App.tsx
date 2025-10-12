@@ -6,7 +6,6 @@ import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
-import Services from "./components/page/Services";
 import EnglishSpeakingServices from "./components/page/EnglishSpeakingServices";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
@@ -47,6 +46,9 @@ function App() {
     <>
       {/* 🔵 Global Reading Progress Bar */}
       <ReadingProgress />
+      
+      {/* ✅ GLOBAL HEADER - Shows on all pages */}
+      <Header />
 
       <Routes>
         {/* ✅ Homepage */}
@@ -54,14 +56,24 @@ function App() {
           path="/"
           element={
             <>
-              <Header />
-              <HeroSection />
-              <DestinationsSection />
-              <FeaturesSection />
-              <GermanPhrasesSection />
-              <EnglishSpeakingServices />
-              <Services /> 
-              <ContactSection />
+              <div id="home">
+                <HeroSection />
+              </div>
+              <div id="destinations">
+                <DestinationsSection />
+              </div>
+              <div id="tips">
+                <FeaturesSection />
+              </div>
+              <div id="phrases">
+                <GermanPhrasesSection />
+              </div>
+              <div id="services">
+                <EnglishSpeakingServices />
+              </div>
+              <div id="contact">
+                <ContactSection />
+              </div>
               <Footer />
             </>
           }
@@ -73,6 +85,9 @@ function App() {
         {/* ✅ Dynamic Destination Route */}
         <Route path="/destinations/:id" element={<DestinationPage />} />
       </Routes>
+      
+      {/* ✅ GLOBAL FOOTER - Shows on all pages */}
+      <Footer />
     </>
   );
 }
