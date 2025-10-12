@@ -8,13 +8,17 @@ export default function FeaturesSection() {
   const navigate = useNavigate();
 
   return (
-    <section id="tips" className="py-16 bg-white">
+    <section
+      id="tips"
+      // Slightly darker neutral tone for visual separation
+      className="py-16 bg-[var(--brand-bg-alt)]"
+    >
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
+        <h2 className="text-3xl font-bold text-center mb-6 text-[var(--brand-dark)]">
           Travel Tips & Essentials
         </h2>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12">
-          Helpful guides, how-tos and quick reads to travel smarter.
+        <p className="text-center text-[var(--brand-dark)]/70 max-w-2xl mx-auto mb-12">
+          Helpful guides, how-tos, and quick reads to travel smarter.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -28,13 +32,15 @@ export default function FeaturesSection() {
                 onClick={() => navigate(`/articles/${feature.id}`)}
                 className="cursor-pointer"
               >
-                <Card className="hover:shadow-xl transition-shadow duration-300 rounded-2xl border border-gray-200">
+                <Card className="bg-[var(--brand-light)] border border-[var(--border)] hover:border-[var(--brand-primary)] transition-all duration-300 rounded-2xl shadow-md hover:shadow-xl">
                   <CardContent className="p-6 flex flex-col items-center text-center">
-                    <Icon className="w-10 h-10 text-blue-600 mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    <Icon className="w-10 h-10 text-[var(--brand-primary)] mb-4" />
+                    <h3 className="text-lg font-semibold text-[var(--brand-dark)] mb-2">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600">{feature.description}</p>
+                    <p className="text-[var(--brand-dark)]/70">
+                      {feature.description}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>

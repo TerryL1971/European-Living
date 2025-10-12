@@ -8,7 +8,7 @@ interface DestinationCardProps {
 
 export default function DestinationCard({ destination }: DestinationCardProps) {
   return (
-    <Card className="overflow-hidden shadow-md bg-[#f4f5f0] border border-[#9da586]/30 rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
+    <Card className="overflow-hidden shadow-md bg-brand-bg border border-[#9da586]/30 rounded-2xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300">
       <img
         src={destination.image}
         alt={destination.name}

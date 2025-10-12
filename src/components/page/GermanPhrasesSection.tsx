@@ -12,9 +12,9 @@ export default function GermanPhrasesSection() {
   };
 
   return (
-    <section id="phrases" className="bg-brand-light py-20">
+    <section id="phrases" className="bg-[var(--brand-bg)] py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-brand-blue mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-[var(--brand-dark)] mb-12">
           Essential German Phrases
         </h2>
 
@@ -24,10 +24,10 @@ export default function GermanPhrasesSection() {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap border ${
                 activeCategory === cat.id
-                  ? "bg-brand-blue text-white"
-                  : "bg-white text-brand-blue border border-brand-blue hover:bg-brand-light"
+                  ? "bg-[var(--brand-primary)] text-[var(--brand-light)] border-[var(--brand-primary)]"
+                  : "bg-white text-[var(--brand-dark)] border-[var(--brand-dark)] hover:bg-[var(--brand-bg-alt)]"
               }`}
             >
               {cat.icon} {cat.name}
@@ -55,7 +55,7 @@ export default function GermanPhrasesSection() {
                   >
                     {/* Front */}
                     <div className="absolute inset-0 bg-white shadow-lg rounded-xl border border-gray-200 flex flex-col items-center justify-center [backface-visibility:hidden]">
-                      <p className="text-lg font-semibold text-brand-blue">{phrase.german}</p>
+                      <p className="text-lg font-semibold text-[var(--brand-dark)]">{phrase.german}</p>
                       <p className="text-gray-600 italic">{phrase.english}</p>
 
                       {/* Flip Indicator (↺) */}
@@ -69,8 +69,10 @@ export default function GermanPhrasesSection() {
                     </div>
 
                     {/* Back */}
-                    <div className="absolute inset-0 bg-brand-light shadow-lg rounded-xl border border-gray-200 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
-                      <p className="text-lg font-bold text-brand-blue">{phrase.pronunciation}</p>
+                    <div className="absolute inset-0 bg-[var(--brand-bg-alt)] shadow-lg rounded-xl border border-gray-200 flex items-center justify-center [transform:rotateY(180deg)] [backface-visibility:hidden]">
+                      <p className="text-lg font-bold text-[var(--brand-primary)]">
+                        {phrase.pronunciation}
+                      </p>
                     </div>
                   </div>
                 </div>
