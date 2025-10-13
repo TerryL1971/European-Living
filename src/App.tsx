@@ -11,6 +11,7 @@ import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import ArticlePage from "./pages/articles/ArticlePage";
 import DestinationPage from "./pages/destinations/DestinationPage";
+import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
 
 // ✅ Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -84,9 +85,11 @@ function App() {
 
         {/* ✅ Dynamic Destination Route */}
         <Route path="/destinations/:id" element={<DestinationPage />} />
+
+        {/* ✅ Dynamic Businesses Route */}
+        <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
-      
-      {/* ✅ GLOBAL FOOTER - Shows on all pages */}
+
       <Footer />
     </>
   );
