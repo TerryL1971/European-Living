@@ -34,7 +34,7 @@ export interface Business {
   englishFluency?: "fluent" | "conversational" | "basic";
   verified?: boolean;
   featured?: boolean;
-  featuredTier?: string;
+  featuredtier?: string;
   baseDistance?: string;
   notes?: string;
   status?: "active" | "pending" | "inactive";
@@ -63,7 +63,7 @@ function mapRecordToBusiness(record: Airtable.Record<FieldSet>): Business {
     englishFluency: (get("EnglishFluency") as "fluent" | "conversational" | "basic") || undefined,
     verified: (get("Verified") as boolean) || false,
     featured: (get("Featured") as boolean) || false,
-    featuredTier: (get("FeaturedTier") as string) || undefined,
+    featuredtier: (get("FeaturedTier") as string) || undefined,
     baseDistance: (get("BaseDistance") as string) || undefined,
     notes: (get("Notes") as string) || undefined,
     status: (get("Status") as "active" | "pending" | "inactive") || undefined,
