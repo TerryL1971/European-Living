@@ -1,89 +1,73 @@
-// src/services/supabase.ts
+// src/services/businessService.ts
 import { supabase } from "./supabaseClient";
 
-export type Business = {
+export interface Business {
   id: string;
   name: string;
+  category: string;
   description?: string;
-  location?: string;
+  location: string;
   address?: string;
-  category?: string;
   phone?: string;
   email?: string;
   website?: string;
-  imageUrl?: string;
+  englishFluency?: "fluent" | "conversational" | "basic";
   verified?: boolean;
   featured?: boolean;
-  englishFluency?: string;
+  featuredTier?: "free" | "verified" | "featured" | "sponsored";
   baseDistance?: string;
   notes?: string;
+  imageUrl?: string;
+  status?: "active" | "pending" | "inactive";
   createdAt?: string;
-};
+  updatedAt?: string;
+}
 
-export type Review = {
+export interface Review {
   id: string;
   businessId: string;
   authorName: string;
   rating: number;
   comment?: string;
   createdAt?: string;
-};
+}
 
-// ✅ Get all businesses
+// ---------------- Queries ----------------
+
 export async function getBusinesses(): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
     .select("*")
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching businesses:", error);
-    return [];
-  }
-  return data as Business[];
+    .eq("status", "active");
+  if (error) throw error;
+  return data ?? [];
 }
 
-// ✅ Get featured businesses
 export async function getFeaturedBusinesses(): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
     .select("*")
     .eq("featured", true)
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching featured businesses:", error);
-    return [];
-  }
-  return data as Business[];
+    .eq("status", "active");
+  if (error) throw error;
+  return data ?? [];
 }
 
-// ✅ Get a single business by ID
 export async function getBusinessById(id: string): Promise<Business | null> {
   const { data, error } = await supabase
     .from("businesses")
     .select("*")
     .eq("id", id)
-    .single();
-
-  if (error) {
-    console.error("Error fetching business:", error);
-    return null;
-  }
-  return data as Business;
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 }
 
-// ✅ Get reviews for a business
 export async function getReviewsByBusiness(businessId: string): Promise<Review[]> {
   const { data, error } = await supabase
     .from("reviews")
     .select("*")
-    .eq("businessId", businessId)
-    .order("createdAt", { ascending: false });
-
-  if (error) {
-    console.error("Error fetching reviews:", error);
-    return [];
-  }
-  return data as Review[];
+    .eq("business_id", businessId);
+  if (error) throw error;
+  return data ?? [];
 }

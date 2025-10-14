@@ -1,6 +1,12 @@
+// src/pages/businesses/BusinessDetailPage.tsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getBusinessById, getReviewsByBusiness, Business, Review } from "../../services/supabase";
+import {
+  getBusinessById,
+  getReviewsByBusiness,
+  Business,
+  Review,
+} from "../../services/businessServices";
 import { Star, MapPin, Phone, Mail, Globe, ArrowLeft } from "lucide-react";
 
 export default function BusinessDetailPage() {
@@ -13,8 +19,9 @@ export default function BusinessDetailPage() {
   useEffect(() => {
     async function loadData() {
       if (!id) return;
-      
+
       try {
+        // Fetch business and reviews in parallel
         const [bizData, reviewData] = await Promise.all([
           getBusinessById(id),
           getReviewsByBusiness(id),
@@ -27,6 +34,7 @@ export default function BusinessDetailPage() {
         setLoading(false);
       }
     }
+
     loadData();
   }, [id]);
 
@@ -56,9 +64,10 @@ export default function BusinessDetailPage() {
     );
   }
 
-  const avgRating = reviews.length > 0
-    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-    : 0;
+  const avgRating =
+    reviews.length > 0
+      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      : 0;
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
@@ -72,13 +81,14 @@ export default function BusinessDetailPage() {
         </button>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {business.image_url && (
+          {/* image (use placeholder if missing) */}
+          <div className="w-full h-64 bg-gray-100">
             <img
-              src={business.image_url}
-              alt={business.name}
+              src={business.imageUrl ?? "/images/placeholder.png"}
+              alt={business.name ?? "Business"}
               className="w-full h-64 object-cover"
             />
-          )}
+          </div>
 
           <div className="p-8">
             <div className="flex items-start justify-between mb-4">
@@ -107,7 +117,9 @@ export default function BusinessDetailPage() {
                       <Star
                         key={i}
                         className={`w-5 h-5 ${
-                          i < avgRating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                          i < Math.round(avgRating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
                         }`}
                       />
                     ))}
@@ -128,9 +140,13 @@ export default function BusinessDetailPage() {
                   <div>
                     <p className="font-semibold text-[var(--brand-dark)]">Location</p>
                     <p className="text-gray-600">{business.location}</p>
-                    {business.address && <p className="text-sm text-gray-500">{business.address}</p>}
-                    {business.base_distance && (
-                      <p className="text-sm text-[var(--brand-primary)]">{business.base_distance}</p>
+                    {business.address && (
+                      <p className="text-sm text-gray-500">{business.address}</p>
+                    )}
+                    {business.baseDistance && (
+                      <p className="text-sm text-[var(--brand-primary)]">
+                        {business.baseDistance}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -140,7 +156,10 @@ export default function BusinessDetailPage() {
                     <Phone className="w-5 h-5 text-[var(--brand-primary)]" />
                     <div>
                       <p className="font-semibold text-[var(--brand-dark)]">Phone</p>
-                      <a href={`tel:${business.phone}`} className="text-[var(--brand-primary)] hover:underline">
+                      <a
+                        href={`tel:${business.phone}`}
+                        className="text-[var(--brand-primary)] hover:underline"
+                      >
                         {business.phone}
                       </a>
                     </div>
@@ -154,7 +173,10 @@ export default function BusinessDetailPage() {
                     <Mail className="w-5 h-5 text-[var(--brand-primary)]" />
                     <div>
                       <p className="font-semibold text-[var(--brand-dark)]">Email</p>
-                      <a href={`mailto:${business.email}`} className="text-[var(--brand-primary)] hover:underline">
+                      <a
+                        href={`mailto:${business.email}`}
+                        className="text-[var(--brand-primary)] hover:underline"
+                      >
                         {business.email}
                       </a>
                     </div>
@@ -178,10 +200,16 @@ export default function BusinessDetailPage() {
                   </div>
                 )}
 
-                <div>
-                  <p className="font-semibold text-[var(--brand-dark)]">English Fluency</p>
-                  <p className="text-gray-600 capitalize">{business.english_fluency}</p>
-                </div>
+                {business.englishFluency && (
+                  <div>
+                    <p className="font-semibold text-[var(--brand-dark)]">
+                      English Fluency
+                    </p>
+                    <p className="text-gray-600 capitalize">
+                      {business.englishFluency}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -193,7 +221,7 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Reviews Section */}
+            {/* Reviews */}
             <div className="border-t pt-8">
               <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">
                 Reviews from Military Families
@@ -205,7 +233,7 @@ export default function BusinessDetailPage() {
                     <div key={review.id} className="bg-[var(--brand-bg)] rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <p className="font-semibold text-[var(--brand-dark)]">
-                          {review.author_name}
+                          {review.authorName}
                         </p>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
@@ -218,10 +246,14 @@ export default function BusinessDetailPage() {
                           ))}
                         </div>
                       </div>
-                      <p className="text-[var(--brand-dark)] opacity-80">{review.comment}</p>
-                      <p className="text-xs text-gray-500 mt-2">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </p>
+                      {review.comment && (
+                        <p className="text-[var(--brand-dark)] opacity-80">{review.comment}</p>
+                      )}
+                      {review.createdAt && (
+                        <p className="text-xs text-gray-500 mt-2">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
