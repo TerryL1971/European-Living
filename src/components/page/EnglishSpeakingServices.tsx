@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBusinesses, getFeaturedBusinesses, Business } from "../../services/supabase";
+import { getBusinesses, getFeaturedBusinesses, Business } from "../../services/businessServices";
 
 const serviceCategories = [
   {
