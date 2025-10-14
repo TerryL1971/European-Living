@@ -6,12 +6,13 @@ import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
-import EnglishSpeakingServices from "./components/page/EnglishSpeakingServices";
+import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection"; // ✅ NEW
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import ArticlePage from "./pages/articles/ArticlePage";
 import DestinationPage from "./pages/destinations/DestinationPage";
 import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
+import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage"; // ✅ NEW
 
 // ✅ Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -70,12 +71,11 @@ function App() {
                 <GermanPhrasesSection />
               </div>
               <div id="services">
-                <EnglishSpeakingServices />
+                <ServicesCategoriesSection /> {/* ✅ CHANGED - Only shows category cards */}
               </div>
               <div id="contact">
                 <ContactSection />
               </div>
-              <Footer />
             </>
           }
         />
@@ -86,8 +86,11 @@ function App() {
         {/* ✅ Dynamic Destination Route */}
         <Route path="/destinations/:id" element={<DestinationPage />} />
 
-        {/* ✅ Dynamic Businesses Route */}
-        <Route path="/businesses/:id" element={<BusinessDetailPage />} />
+        {/* ✅ NEW - Service Category Route (shows businesses in a category) */}
+        <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
+
+        {/* ✅ Dynamic Business Detail Route */}
+        <Route path="/business/:id" element={<BusinessDetailPage />} />
       </Routes>
 
       <Footer />
