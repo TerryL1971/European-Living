@@ -81,14 +81,20 @@ export default function BusinessDetailPage() {
         </button>
 
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-          {/* image (use placeholder if missing) */}
-          <div className="w-full h-64 bg-gray-100">
-            <img
-              src={business.imageUrl ?? "/images/placeholder.png"}
-              alt={business.name ?? "Business"}
-              className="w-full h-64 object-cover"
-            />
-          </div>
+          {/* Only show image if it exists */}
+          {business.imageUrl && (
+            <div className="w-full h-64 bg-gray-100">
+              <img
+                src={business.imageUrl}
+                alt={business.name ?? "Business"}
+                className="w-full h-64 object-cover"
+                onError={(e) => {
+                  // Hide image container if image fails to load
+                  e.currentTarget.parentElement!.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
 
           <div className="p-8">
             <div className="flex items-start justify-between mb-4">

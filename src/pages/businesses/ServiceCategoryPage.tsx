@@ -89,6 +89,19 @@ export default function ServiceCategoryPage() {
                 key={business.id}
                 className="mb-8 bg-[var(--brand-primary)] bg-opacity-95 rounded-xl p-8 shadow-xl"
               >
+                {business.imageUrl && (
+                  <div className="mb-4 rounded-lg overflow-hidden">
+                    <img
+                      src={business.imageUrl}
+                      alt={business.name}
+                      className="w-full h-48 object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3 mb-4">
                   <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-sm font-bold">
                     ⭐ FEATURED

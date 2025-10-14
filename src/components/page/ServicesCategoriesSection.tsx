@@ -1,266 +1,211 @@
-// src/pages/businesses/ServiceCategoryPage.tsx
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getBusinesses, getFeaturedBusinesses, Business } from "../../services/businessServices";
-import { ArrowLeft, MapPin, Phone, Globe } from "lucide-react";
+// src/components/page/ServicesCategoriesSection.tsx
+import {
+  Stethoscope,
+  Scale,
+  Wrench,
+  GraduationCap,
+  Briefcase,
+  Car,
+  Utensils,
+  ShoppingBag,
+  Home,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getBusinesses, Business } from "../../services/businessServices";
 
-const categoryTitles: Record<string, string> = {
-  automotive: "Automotive Services",
-  healthcare: "Healthcare",
-  restaurants: "Restaurants & Dining",
-  shopping: "Shopping",
-  "home-services": "Home Services",
-  "real-estate": "Real Estate",
-  legal: "Legal Services",
-  education: "Education",
-  business: "Business Services",
-};
+const serviceCategories = [
+  {
+    id: "automotive",
+    title: "Automotive Services",
+    icon: Car,
+    description: "Car dealers, mechanics, and auto services that work with Americans",
+  },
+  {
+    id: "healthcare",
+    title: "Healthcare",
+    icon: Stethoscope,
+    description: "English-speaking doctors, dentists, and specialists near USAG Stuttgart",
+  },
+  {
+    id: "restaurants",
+    title: "Restaurants & Dining",
+    icon: Utensils,
+    description: "English-friendly restaurants in Sindelfingen, Böblingen, and Vaihingen",
+  },
+  {
+    id: "shopping",
+    title: "Shopping",
+    icon: ShoppingBag,
+    description: "Stores and shops with English-speaking staff",
+  },
+  {
+    id: "home-services",
+    title: "Home Services",
+    icon: Wrench,
+    description: "Plumbers, electricians, and handymen who work with American families",
+  },
+  {
+    id: "real-estate",
+    title: "Real Estate",
+    icon: Home,
+    description: "Housing agents familiar with American military housing needs",
+  },
+  {
+    id: "legal",
+    title: "Legal Services",
+    icon: Scale,
+    description: "Lawyers who understand SOFA status and military regulations",
+  },
+  {
+    id: "education",
+    title: "Education",
+    icon: GraduationCap,
+    description: "International schools and tutors for military families",
+  },
+  {
+    id: "business",
+    title: "Business Services",
+    icon: Briefcase,
+    description: "Tax advisors and accountants familiar with US/German requirements",
+  },
+];
 
-export default function ServiceCategoryPage() {
-  const { categoryId } = useParams<{ categoryId: string }>();
-  const navigate = useNavigate();
-  const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
-  const [featuredBusinesses, setFeaturedBusinesses] = useState<Business[]>([]);
+export default function ServicesCategoriesSection() {
+  const [allBusinesses, setAllBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
-      if (!categoryId) return;
-
       try {
-        const [allBusinesses, featured] = await Promise.all([
-          getBusinesses(),
-          getFeaturedBusinesses(),
-        ]);
-
-        // Filter businesses by category
-        const filtered = allBusinesses.filter((b) => b.category === categoryId);
-        setCategoryBusinesses(filtered);
-
-        // Filter featured by category
-        const featuredInCategory = featured.filter((b) => b.category === categoryId);
-        setFeaturedBusinesses(featuredInCategory);
+        const businesses = await getBusinesses();
+        console.log("✅ Businesses loaded:", businesses);
+        console.log("✅ Business count:", businesses.length);
+        setAllBusinesses(businesses);
       } catch (error) {
-        console.error("Error loading businesses:", error);
+        console.error("❌ Error loading businesses:", error);
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, [categoryId]);
+  }, []);
+
+  const getBusinessCount = (categoryId: string) =>
+    allBusinesses.filter((b) => b.category === categoryId).length;
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
-        <p className="text-[var(--brand-dark)]">Loading businesses...</p>
-      </div>
+      <section id="services" className="relative bg-white py-20">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-[var(--brand-dark)]">Loading services...</p>
+        </div>
+      </section>
     );
   }
 
-  const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
-
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to All Services
-        </button>
+    <section id="services" className="relative bg-white py-20">
+      <div className="absolute inset-0 bg-[url('/images/services.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-black/10" />
 
-        <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
-            {categoryTitle}
-          </h1>
-          <p className="text-lg text-[var(--brand-dark)] opacity-80">
-            {categoryBusinesses.length} {categoryBusinesses.length === 1 ? "business" : "businesses"}{" "}
-            near USAG Stuttgart
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
+            English-Speaking Services Near USAG Stuttgart
+          </h2>
+          <p className="text-lg text-[var(--brand-dark)] opacity-80 max-w-3xl mx-auto">
+            Personally verified businesses in Sindelfingen, Böblingen, and Vaihingen that welcome
+            American military families. All businesses are within 20 minutes of Panzer, Patch, or
+            Kelly Barracks.
           </p>
         </div>
 
-        {/* Featured Businesses */}
-        {featuredBusinesses.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">Featured</h2>
-            {featuredBusinesses.map((business) => (
-              <div
-                key={business.id}
-                className="mb-8 bg-[var(--brand-primary)] bg-opacity-95 rounded-xl p-8 shadow-xl"
+        {/* Category Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+          {serviceCategories.map((category) => {
+            const Icon = category.icon;
+            const count = getBusinessCount(category.id);
+
+            return (
+              <Link
+                key={category.id}
+                to={count > 0 ? `/services/${category.id}` : "#"}
+                className={`bg-[var(--brand-bg)] rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all ${
+                  count > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
+                }`}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-sm font-bold">
-                    ⭐ FEATURED
-                  </span>
-                  {business.verified && (
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      ✓ VERIFIED
-                    </span>
-                  )}
-                  {business.englishFluency && (
-                    <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase">
-                      {business.englishFluency} English
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-2xl font-bold text-white mb-2">{business.name}</h3>
-                <p className="text-white opacity-90 mb-4">{business.description}</p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-white mb-4">
-                  <div>
-                    <p>
-                      <strong>📍 Location:</strong> {business.location}
-                    </p>
-                    {business.address && <p className="ml-5 opacity-80">{business.address}</p>}
-                    {business.baseDistance && (
-                      <p>
-                        <strong>🚗 Distance:</strong> {business.baseDistance}
-                      </p>
-                    )}
+                  <div className="bg-[var(--brand-primary)] p-3 rounded-lg">
+                    <Icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    {business.phone && (
-                      <p>
-                        <strong>📞 Phone:</strong>{" "}
-                        <a
-                          href={`tel:${business.phone}`}
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          {business.phone}
-                        </a>
-                      </p>
-                    )}
-                    {business.email && (
-                      <p>
-                        <strong>✉️ Email:</strong>{" "}
-                        <a
-                          href={`mailto:${business.email}`}
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          {business.email}
-                        </a>
-                      </p>
-                    )}
-                    {business.website && (
-                      <p>
-                        <strong>🌐 Website:</strong>{" "}
-                        <a
-                          href={business.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          Visit Site
-                        </a>
-                      </p>
-                    )}
+                    <h3 className="text-xl font-bold text-[var(--brand-dark)]">{category.title}</h3>
+                    <p className="text-sm text-[var(--brand-dark)] opacity-60">
+                      {count} {count === 1 ? "business" : "businesses"}
+                    </p>
                   </div>
                 </div>
 
-                {business.notes && (
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <p className="text-white text-sm">
-                      <strong>💡 Insider Tip:</strong> {business.notes}
-                    </p>
+                <p className="text-[var(--brand-dark)] opacity-70 mb-4">{category.description}</p>
+
+                {count > 0 ? (
+                  <div className="w-full bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-dark)] transition font-medium text-center">
+                    View {count} {count === 1 ? "Business" : "Businesses"}
+                  </div>
+                ) : (
+                  <div className="w-full bg-gray-300 text-gray-600 py-2 px-4 rounded-lg font-medium text-center">
+                    Coming Soon
                   </div>
                 )}
+              </Link>
+            );
+          })}
+        </div>
 
-                <Link
-                  to={`/businesses/${business.id}`}
-                  className="mt-4 inline-block bg-white text-[var(--brand-primary)] px-6 py-2 rounded-lg hover:bg-gray-100 transition font-semibold"
-                >
-                  View Full Details & Reviews
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* All Businesses in Category */}
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">All Businesses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {categoryBusinesses.map((business) => (
-              <div
-                key={business.id}
-                className="bg-white rounded-lg p-6 border border-gray-200 shadow-md hover:shadow-lg transition"
+        {/* CTA Sections */}
+        <div className="bg-[var(--brand-dark)] rounded-xl p-8 mb-8 shadow-xl">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold text-white mb-4">
+              Do You Own a Business Near USAG Stuttgart?
+            </h3>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+              If your business serves American military families and you speak English, we'd love to
+              feature you in our directory.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                to="/#contact"
+                className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-gold)] hover:text-[var(--brand-dark)] transition font-semibold"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="text-xl font-bold text-[var(--brand-dark)] mb-1">
-                      {business.name}
-                    </h4>
-                    <p className="text-sm text-gray-600">{business.location}</p>
-                  </div>
-                  {business.verified && (
-                    <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                      ✓ VERIFIED
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-[var(--brand-dark)] opacity-80 mb-4">{business.description}</p>
-
-                <div className="space-y-2 text-sm mb-4">
-                  {business.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <a
-                        href={`tel:${business.phone}`}
-                        className="text-[var(--brand-primary)] hover:underline"
-                      >
-                        {business.phone}
-                      </a>
-                    </div>
-                  )}
-                  {business.website && (
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <a
-                        href={business.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--brand-primary)] hover:underline"
-                      >
-                        Visit Website
-                      </a>
-                    </div>
-                  )}
-                  {business.baseDistance && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <span className="text-[var(--brand-dark)]">{business.baseDistance}</span>
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  to={`/businesses/${business.id}`}
-                  className="block w-full text-center bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-dark)] transition font-medium"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
+                List Your Business
+              </Link>
+              <a
+                href="mailto:info@european-living.live?subject=Business Listing Inquiry"
+                className="inline-block bg-white text-[var(--brand-dark)] px-8 py-3 rounded-lg hover:bg-gray-100 transition font-semibold"
+              >
+                Email Us
+              </a>
+            </div>
           </div>
         </div>
 
-        {categoryBusinesses.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-[var(--brand-dark)] opacity-60 mb-4">
-              No businesses found in this category yet.
-            </p>
-            <Link
-              to="/"
-              className="inline-block bg-[var(--brand-primary)] text-white px-6 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
-            >
-              Browse Other Categories
-            </Link>
-          </div>
-        )}
+        <div className="text-center bg-white rounded-xl p-8 shadow-lg">
+          <h3 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
+            Need More Help Finding Services?
+          </h3>
+          <p className="text-[var(--brand-dark)] opacity-80 mb-6 max-w-2xl mx-auto">
+            Check out our comprehensive guide with tips for finding English-speaking professionals
+            throughout Germany.
+          </p>
+          <Link
+            to="/articles/services"
+            className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
+          >
+            Read Full Services Guide →
+          </Link>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

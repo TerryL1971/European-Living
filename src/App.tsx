@@ -90,7 +90,7 @@ function App() {
         <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
 
         {/* ✅ Dynamic Business Detail Route */}
-        <Route path="/business/:id" element={<BusinessDetailPage />} />
+        <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
 
       <Footer />
