@@ -20,7 +20,9 @@ export interface Business {
   notes?: string;
   imageUrl?: string;
   status?: "active" | "pending" | "inactive";
-  basesServed?: string[]; // NEW: Array of base identifiers
+  basesServed?: string[];
+  latitude?: number;
+  longitude?: number;
   createdAt?: string;
   updatedAt?: string;
 }
