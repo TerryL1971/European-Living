@@ -2,8 +2,9 @@
 import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getBusinessesByBase, getFeaturedBusinessesByBase, Business } from "../../services/businessServices";
-import { ArrowLeft, MapPin, Phone, Globe } from "lucide-react";
-import { getBaseById } from "../../data/bases";
+import { ArrowLeft, MapPin } from "lucide-react";
+import { getBaseById, BASES } from "../../data/bases";
+import BusinessCardWithMap from "../../components/BusinessCardWithMap";
 
 const categoryTitles: Record<string, string> = {
   automotive: "Automotive Services",
@@ -19,12 +20,17 @@ const categoryTitles: Record<string, string> = {
 
 export default function ServiceCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const baseId = searchParams.get("base") || "stuttgart";
   const navigate = useNavigate();
   const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
   const [featuredBusinesses, setFeaturedBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Handle base change
+  const handleBaseChange = (newBaseId: string) => {
+    setSearchParams({ base: newBaseId });
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -64,219 +70,100 @@ export default function ServiceCategoryPage() {
   const currentBase = getBaseById(baseId);
 
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
-      <div className="max-w-7xl mx-auto">
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to All Services
-        </button>
+    <div className="min-h-screen bg-[var(--brand-bg)]">
+      {/* Base Selector - Sticky at top */}
+      <div className="bg-[var(--brand-primary)] text-white py-4 sticky top-0 z-40 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <MapPin className="w-5 h-5" />
+              <div>
+                <p className="text-xs opacity-80">Your Base</p>
+                <p className="font-semibold">{currentBase?.name || "Select a base"}</p>
+              </div>
+            </div>
 
-        <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
-            {categoryTitle}
-          </h1>
-          <p className="text-lg text-[var(--brand-dark)] opacity-80">
-            {categoryBusinesses.length} {categoryBusinesses.length === 1 ? "business" : "businesses"}{" "}
-            near {currentBase?.name || "your base"}
-          </p>
+            <div className="flex items-center gap-2">
+              <label htmlFor="base-select" className="text-sm opacity-80 hidden sm:block">
+                Change Base:
+              </label>
+              <select
+                id="base-select"
+                value={baseId}
+                onChange={(e) => handleBaseChange(e.target.value)}
+                className="bg-white text-[var(--brand-dark)] px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+              >
+                {BASES.map((base) => (
+                  <option key={base.id} value={base.id}>
+                    {base.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Mobile-friendly base info */}
+          <div className="mt-2 text-xs opacity-80 hidden sm:block">
+            {currentBase?.location} • Serving {currentBase?.nearbyTowns.join(", ")}
+          </div>
         </div>
+      </div>
 
-        {/* Featured Businesses */}
-        {featuredBusinesses.length > 0 && (
+      {/* Content */}
+      <div className="py-12 px-4">
+        <div className="max-w-7xl mx-auto">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to All Services
+          </button>
+
           <div className="mb-12">
-            <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">Featured</h2>
-            {featuredBusinesses.map((business) => (
-              <div
-                key={business.id}
-                className="mb-8 bg-[var(--brand-primary)] bg-opacity-95 rounded-xl p-8 shadow-xl"
-              >
-                {business.imageUrl && (
-                  <div className="mb-4 rounded-lg overflow-hidden">
-                    <img
-                      src={business.imageUrl}
-                      alt={business.name}
-                      className="w-full h-48 object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-sm font-bold">
-                    ⭐ FEATURED
-                  </span>
-                  {business.verified && (
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      ✓ VERIFIED
-                    </span>
-                  )}
-                  {business.englishFluency && (
-                    <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase">
-                      {business.englishFluency} English
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-2xl font-bold text-white mb-2">{business.name}</h3>
-                <p className="text-white opacity-90 mb-4">{business.description}</p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-white mb-4">
-                  <div>
-                    <p>
-                      <strong>📍 Location:</strong> {business.location}
-                    </p>
-                    {business.address && <p className="ml-5 opacity-80">{business.address}</p>}
-                    {business.baseDistance && (
-                      <p>
-                        <strong>🚗 Distance:</strong> {business.baseDistance}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    {business.phone && (
-                      <p>
-                        <strong>📞 Phone:</strong>{" "}
-                        <a
-                          href={`tel:${business.phone}`}
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          {business.phone}
-                        </a>
-                      </p>
-                    )}
-                    {business.email && (
-                      <p>
-                        <strong>✉️ Email:</strong>{" "}
-                        <a
-                          href={`mailto:${business.email}`}
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          {business.email}
-                        </a>
-                      </p>
-                    )}
-                    {business.website && (
-                      <p>
-                        <strong>🌐 Website:</strong>{" "}
-                        <a
-                          href={business.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline hover:text-[var(--brand-gold)]"
-                        >
-                          Visit Site
-                        </a>
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {business.notes && (
-                  <div className="bg-white/10 rounded-lg p-4">
-                    <p className="text-white text-sm">
-                      <strong>💡 Insider Tip:</strong> {business.notes}
-                    </p>
-                  </div>
-                )}
-
-                <Link
-                  to={`/businesses/${business.id}`}
-                  className="mt-4 inline-block bg-white text-[var(--brand-primary)] px-6 py-2 rounded-lg hover:bg-gray-100 transition font-semibold"
-                >
-                  View Full Details & Reviews
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* All Businesses in Category */}
-        <div>
-          <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">All Businesses</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {categoryBusinesses.map((business) => (
-              <div
-                key={business.id}
-                className="bg-white rounded-lg p-6 border border-gray-200 shadow-md hover:shadow-lg transition"
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h4 className="text-xl font-bold text-[var(--brand-dark)] mb-1">
-                      {business.name}
-                    </h4>
-                    <p className="text-sm text-gray-600">{business.location}</p>
-                  </div>
-                  {business.verified && (
-                    <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                      ✓ VERIFIED
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-[var(--brand-dark)] opacity-80 mb-4">{business.description}</p>
-
-                <div className="space-y-2 text-sm mb-4">
-                  {business.phone && (
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <a
-                        href={`tel:${business.phone}`}
-                        className="text-[var(--brand-primary)] hover:underline"
-                      >
-                        {business.phone}
-                      </a>
-                    </div>
-                  )}
-                  {business.website && (
-                    <div className="flex items-center gap-2">
-                      <Globe className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <a
-                        href={business.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[var(--brand-primary)] hover:underline"
-                      >
-                        Visit Website
-                      </a>
-                    </div>
-                  )}
-                  {business.baseDistance && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[var(--brand-primary)]" />
-                      <span className="text-[var(--brand-dark)]">{business.baseDistance}</span>
-                    </div>
-                  )}
-                </div>
-
-                <Link
-                  to={`/businesses/${business.id}`}
-                  className="block w-full text-center bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-dark)] transition font-medium"
-                >
-                  View Details
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {categoryBusinesses.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-[var(--brand-dark)] opacity-60 mb-4">
-              No businesses found in this category yet.
+            <h1 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
+              {categoryTitle}
+            </h1>
+            <p className="text-lg text-[var(--brand-dark)] opacity-80">
+              {categoryBusinesses.length} {categoryBusinesses.length === 1 ? "business" : "businesses"}{" "}
+              near {currentBase?.name || "your base"}
             </p>
-            <Link
-              to="/"
-              className="inline-block bg-[var(--brand-primary)] text-white px-6 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
-            >
-              Browse Other Categories
-            </Link>
           </div>
-        )}
+
+          {/* Featured Businesses */}
+          {featuredBusinesses.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">Featured</h2>
+              {featuredBusinesses.map((business) => (
+                <BusinessCardWithMap key={business.id} business={business} featured={true} />
+              ))}
+            </div>
+          )}
+
+          {/* All Businesses in Category */}
+          <div>
+            <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">All Businesses</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {categoryBusinesses.map((business) => (
+                <BusinessCardWithMap key={business.id} business={business} featured={false} />
+              ))}
+            </div>
+          </div>
+
+          {categoryBusinesses.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-[var(--brand-dark)] opacity-60 mb-4">
+                No businesses found in this category yet for {currentBase?.name}.
+              </p>
+              <Link
+                to="/"
+                className="inline-block bg-[var(--brand-primary)] text-white px-6 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
+              >
+                Browse Other Categories
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

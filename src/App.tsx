@@ -8,7 +8,6 @@ import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
 import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
-import BaseSelector from "./components/page/BaseSelector";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import ArticlePage from "./pages/articles/ArticlePage";
@@ -45,13 +44,12 @@ const ReadingProgress = () => {
 };
 
 export default function App() {
-  const [selectedBase, setSelectedBase] = useState(DEFAULT_BASE);
+  const [selectedBase] = useState(DEFAULT_BASE);
 
   return (
     <>
       <ReadingProgress />
       <Header />
-      <BaseSelector selectedBase={selectedBase} onBaseChange={setSelectedBase} />
       
       <Routes>
         <Route
@@ -62,6 +60,7 @@ export default function App() {
               <DestinationsSection />
               <FeaturesSection />
               <GermanPhrasesSection />
+              {/* Pass selectedBase - user can change it on category pages */}
               <ServicesCategoriesSection selectedBase={selectedBase} />
               <ContactSection />
             </>
@@ -69,6 +68,7 @@ export default function App() {
         />
         <Route path="/articles/:slug" element={<ArticlePage />} />
         <Route path="/destinations/:id" element={<DestinationPage />} />
+        {/* BaseSelector will be shown inside ServiceCategoryPage */}
         <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>

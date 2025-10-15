@@ -1,7 +1,8 @@
 // src/components/BusinessCardWithMap.tsx
-import { MapPin, Phone, Globe, Navigation } from "lucide-react";
+import { Phone, Globe, Navigation, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Business } from "../services/businessServices";
+import MapView from "./MapView";
 
 interface BusinessCardWithMapProps {
   business: Business;
@@ -19,16 +20,8 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
     return null;
   };
 
-  // Generate static map image URL (Google Maps Static API)
-  const getStaticMapUrl = () => {
-    if (business.latitude && business.longitude) {
-      return `https://maps.googleapis.com/maps/api/staticmap?center=${business.latitude},${business.longitude}&zoom=14&size=400x200&markers=color:red%7C${business.latitude},${business.longitude}&key=YOUR_GOOGLE_MAPS_API_KEY`;
-    }
-    return null;
-  };
-
   const directionsUrl = getDirectionsUrl();
-  const mapUrl = getStaticMapUrl();
+  const hasLocation = business.latitude && business.longitude;
 
   if (featured) {
     // Featured business card (larger, more prominent)
@@ -42,7 +35,7 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
               <img
                 src={business.imageUrl}
                 alt={business.name}
-                className="w-full h-48 object-cover"
+                className="w-full h-64 object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
@@ -50,22 +43,27 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
             </div>
           )}
 
-          {/* Map */}
-          {business.latitude && business.longitude && (
-            <div className="rounded-lg overflow-hidden bg-white relative">
-              {mapUrl ? (
-                <img src={mapUrl} alt="Location map" className="w-full h-48 object-cover" />
-              ) : (
-                <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
-                  <MapPin className="w-12 h-12 text-gray-400" />
-                </div>
-              )}
+          {/* Interactive Leaflet Map */}
+          {hasLocation && (
+            <div className="relative rounded-lg overflow-hidden">
+              <MapView
+                center={[business.latitude!, business.longitude!]}
+                zoom={15}
+                height="h-64"
+                markers={[
+                  {
+                    position: [business.latitude!, business.longitude!],
+                    title: business.name,
+                    description: business.address,
+                  },
+                ]}
+              />
               {directionsUrl && (
                 <a
                   href={directionsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute bottom-2 right-2 bg-[var(--brand-primary)] text-white px-4 py-2 rounded-lg shadow-lg hover:bg-[var(--brand-dark)] transition flex items-center gap-2 text-sm font-semibold"
+                  className="absolute bottom-4 right-4 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-2 rounded-lg shadow-lg hover:bg-yellow-400 transition flex items-center gap-2 text-sm font-semibold z-[1000]"
                 >
                   <Navigation className="w-4 h-4" />
                   Directions
@@ -164,6 +162,17 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
               Get Directions
             </a>
           )}
+          {business.website && (
+            <a
+              href={business.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/20 text-white px-6 py-2 rounded-lg hover:bg-white/30 transition font-semibold flex items-center gap-2"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Visit Website
+            </a>
+          )}
         </div>
       </div>
     );
@@ -172,29 +181,33 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
   // Regular business card (compact)
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-md hover:shadow-lg transition">
-      {/* Image and Map */}
-      <div className="grid grid-cols-2 gap-2 mb-4">
+      {/* Image and Map Grid */}
+      <div className="grid grid-cols-2 gap-3 mb-4">
         {business.imageUrl && (
           <div className="rounded-lg overflow-hidden">
             <img
               src={business.imageUrl}
               alt={business.name}
-              className="w-full h-32 object-cover"
+              className="w-full h-40 object-cover"
               onError={(e) => {
                 e.currentTarget.parentElement!.style.display = "none";
               }}
             />
           </div>
         )}
-        {business.latitude && business.longitude && (
-          <div className="rounded-lg overflow-hidden bg-gray-100 relative">
-            {mapUrl ? (
-              <img src={mapUrl} alt="Map" className="w-full h-32 object-cover" />
-            ) : (
-              <div className="w-full h-32 bg-gray-200 flex items-center justify-center">
-                <MapPin className="w-8 h-8 text-gray-400" />
-              </div>
-            )}
+        {hasLocation && (
+          <div className="rounded-lg overflow-hidden">
+            <MapView
+              center={[business.latitude!, business.longitude!]}
+              zoom={14}
+              height="h-40"
+              markers={[
+                {
+                  position: [business.latitude!, business.longitude!],
+                  title: business.name,
+                },
+              ]}
+            />
           </div>
         )}
       </div>
@@ -236,7 +249,7 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
               href={business.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--brand-primary)] hover:underline"
+              className="text-[var(--brand-primary)] hover:underline truncate"
             >
               Visit Website
             </a>
@@ -250,7 +263,7 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
           to={`/businesses/${business.id}`}
           className="flex-1 text-center bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-dark)] transition font-medium text-sm"
         >
-          View Details
+          Details
         </Link>
         {directionsUrl && (
           <a

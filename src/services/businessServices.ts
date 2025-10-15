@@ -23,6 +23,7 @@ export interface Business {
   basesServed?: string[];
   latitude?: number;
   longitude?: number;
+  googleMapsUrl?: string; // NEW
   createdAt?: string;
   updatedAt?: string;
 }
@@ -56,6 +57,9 @@ interface BusinessRow {
   image_url?: string;
   status?: string;
   bases_served?: string[]; // NEW
+  latitude?: number;
+  longitude?: number;
+  google_maps_url?: string; // NEW
   created_at?: string;
   updated_at?: string;
 }
@@ -90,6 +94,9 @@ function mapBusinessRow(row: BusinessRow): Business {
     imageUrl: row.image_url,
     status: row.status as Business["status"],
     basesServed: row.bases_served, // NEW
+    latitude: row.latitude,
+    longitude: row.longitude,
+    googleMapsUrl: row.google_maps_url, // NEW
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
