@@ -6,7 +6,7 @@ export default function ContactSection() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <section className="bg-[#f7f7ec] py-16 px-6 text-[#131312]">
+    <section className="bg-[var(--brand-bg)] py-16 px-6 text-[#131312]">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl font-semibold mb-4 tracking-tight">
           Get in Touch
@@ -20,7 +20,7 @@ export default function ContactSection() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-10">
           <a
             href="mailto:info@europeanliving.com"
-            className="flex items-center gap-2 bg-[#9da586] text-[#f7f7ec] px-5 py-3 rounded-xl hover:bg-[#131312] transition"
+            className="flex items-center gap-2 bg-[var(--brand-button)] text-[#f7f7ec] px-5 py-3 rounded-xl hover:bg-[#131312] transition"
           >
             <Mail size={20} />
             info@europeanliving.com
@@ -30,7 +30,7 @@ export default function ContactSection() {
             href="https://wa.me/4915165227520"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-[#131312] text-[#f4f5f0] px-5 py-3 rounded-xl hover:bg-[#9da586] transition"
+            className="flex items-center gap-2 bg-[var(--brand-dark)] text-[#f4f5f0] px-5 py-3 rounded-xl hover:bg-[#9da586] transition"
           >
             <MessageCircle size={20} />
             Chat on WhatsApp
@@ -40,7 +40,7 @@ export default function ContactSection() {
         {/* Toggle Button */}
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-[#9da586] text-[#f7f7ec] px-6 py-3 rounded-xl font-medium hover:bg-[#131312] hover:text-[#f4f5f0] transition"
+          className="bg-[var(--brand-button)] text-[#f7f7ec] px-6 py-3 rounded-xl font-medium hover:bg-[#131312] hover:text-[#f4f5f0] transition"
         >
           {showForm ? "Close Form" : "Ask a Question"}
         </button>

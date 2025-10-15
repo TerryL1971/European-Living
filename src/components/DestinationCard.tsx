@@ -25,7 +25,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
         </div>
         <Link
           to={`/destinations/${destination.id}`}
-          className="inline-block rounded-lg bg-[#9da586] text-[#f7f7ec] font-medium py-2 px-4 text-center hover:bg-[#131312] transition-colors"
+          className="inline-block rounded-lg bg-[var(--brand-button)] text-[#f7f7ec] font-medium py-2 px-4 text-center hover:bg-[#131312] transition-colors"
         >
           Explore {destination.shortName || destination.name}
         </Link>

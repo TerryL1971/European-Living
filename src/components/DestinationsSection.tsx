@@ -12,11 +12,14 @@ export default function DestinationsSection() {
   );
 
   return (
-    <section id="destinations" className="min-h-screen bg-[#f7f7ec] py-10 px-4">
+    <section
+      id="destinations"
+      className="min-h-screen bg-[var(--brand-bg)] py-10 px-4 transition-colors duration-300"
+    >
       <div className="max-w-6xl mx-auto">
         {/* Header + Search */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-          <h2 className="text-3xl font-bold text-[#131312]">
+          <h2 className="text-3xl font-bold text-[var(--brand-dark)]">
             Explore Destinations
           </h2>
           <input
@@ -24,7 +27,7 @@ export default function DestinationsSection() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search destinations..."
-            className="border border-[#9da586]/50 rounded-lg px-4 py-2 w-full sm:w-64 bg-white focus:outline-none focus:ring-2 focus:ring-[#9da586]"
+            className="border border-[var(--border)] rounded-lg px-4 py-2 w-full sm:w-64 bg-[var(--brand-light)] text-[var(--brand-dark)] placeholder-[var(--muted-foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-transparent transition-all duration-200"
           />
         </div>
 
@@ -35,7 +38,7 @@ export default function DestinationsSection() {
               <DestinationCard key={destination.id} destination={destination} />
             ))
           ) : (
-            <p className="text-gray-600 text-center col-span-full">
+            <p className="text-[var(--muted-foreground)] text-center col-span-full">
               No destinations found.
             </p>
           )}

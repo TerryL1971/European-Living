@@ -17,46 +17,40 @@ body {
 
 /* === Brand Colors === */
 :root {
-  --brand-primary: #9da586;
-  --brand-bg: #f7f7ec;
-  --brand-bg-alt: #eef2df;
-  --brand-dark: #131312;
+  /* === Brand Base Palette (European Urban Daylight) === */
+  --brand-primary: #6D889A; /* cool blue-gray, inspired by building shadows */
+  --brand-bg: #F1E8DE; /* daylight neutral white */
+  --brand-bg-alt: #F7F2EB; /* subtle alternate neutral */
+  --brand-dark: #1E2326; /* architectural shadow charcoal */
   --brand-black: #000000;
-  --brand-gold: #ffd166;
-  --brand-dark: #0f1724;
-  --brand-light: #f8fafb;
+  --brand-button: #CFB68A; /* soft warm button */
+  --brand-gold: #F5C14D; /* sunlit highlight gold */
+  --brand-light: #FAFAF8; /* warm white with daylight tone */
+
+  /* === UI Palette === */
+  --primary: #304D7C; /* deep slate blue for titles/CTAs */
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #C7B49E; /* warm sandstone beige */
+  --secondary-foreground: #1E2326;
+
+  --accent: #DDBB7E; /* softer amber highlight */
+  --accent-foreground: #1E2326;
+
+  --muted: #E8EAE9; /* gentle gray neutral for borders/cards */
+  --muted-foreground: #55595A;
+
+  --border: #D7DADA;
+  --input: #D7DADA;
+  --ring: #B8C3C6;
+
+  /* === Layout & Sidebar Consistency === */
+  --sidebar-bg: #F3F5F7;
+  --sidebar-text: #2B2E30;
+  --sidebar-accent: #6D889A;
+
+  /* === Shared UI Properties === */
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 /* === App Container === */
