@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBusinesses, Business } from "../../services/businessServices";
+import { getBusinessesByBase, Business } from "../../services/businessServices";
 
 const serviceCategories = [
   {
@@ -71,14 +71,14 @@ const serviceCategories = [
   },
 ];
 
-export default function ServicesCategoriesSection() {
+export default function ServicesCategoriesSection({ selectedBase }: { selectedBase: string }) {
   const [allBusinesses, setAllBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const businesses = await getBusinesses();
+        const businesses = await getBusinessesByBase(selectedBase);
         console.log("✅ Businesses loaded:", businesses);
         console.log("✅ Business count:", businesses.length);
         setAllBusinesses(businesses);
@@ -89,7 +89,7 @@ export default function ServicesCategoriesSection() {
       }
     }
     loadData();
-  }, []);
+  }, [selectedBase]);
 
   const getBusinessCount = (categoryId: string) =>
     allBusinesses.filter((b) => b.category === categoryId).length;
@@ -130,7 +130,7 @@ export default function ServicesCategoriesSection() {
             return (
               <Link
                 key={category.id}
-                to={count > 0 ? `/services/${category.id}` : "#"}
+                to={count > 0 ? `/services/${category.id}?base=${selectedBase}` : "#"}
                 className={`bg-[var(--brand-bg)] rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all ${
                   count > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
                 }`}

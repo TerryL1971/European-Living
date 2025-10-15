@@ -1,3 +1,4 @@
+// src/App.tsx
 import { Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -6,28 +7,28 @@ import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
-import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection"; // ✅ NEW
+import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
+import BaseSelector from "./components/page/BaseSelector";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import ArticlePage from "./pages/articles/ArticlePage";
 import DestinationPage from "./pages/destinations/DestinationPage";
 import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
-import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage"; // ✅ NEW
+import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
+import { DEFAULT_BASE } from "./data/bases";
 
 // ✅ Reading Progress Bar Component
 const ReadingProgress = () => {
   const [scroll, setScroll] = useState(0);
 
-  const handleScroll = () => {
-    const position = window.scrollY;
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-    const progress = (position / height) * 100;
-    setScroll(progress);
-  };
-
   useEffect(() => {
+    const handleScroll = () => {
+      const position = window.scrollY;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = (position / height) * 100;
+      setScroll(progress);
+    };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -43,53 +44,32 @@ const ReadingProgress = () => {
   );
 };
 
-function App() {
+export default function App() {
+  const [selectedBase, setSelectedBase] = useState(DEFAULT_BASE);
+
   return (
     <>
-      {/* 🔵 Global Reading Progress Bar */}
       <ReadingProgress />
-      
-      {/* ✅ GLOBAL HEADER - Shows on all pages */}
       <Header />
-
+      <BaseSelector selectedBase={selectedBase} onBaseChange={setSelectedBase} />
+      
       <Routes>
-        {/* ✅ Homepage */}
         <Route
           path="/"
           element={
             <>
-              <div id="home">
-                <HeroSection />
-              </div>
-              <div id="destinations">
-                <DestinationsSection />
-              </div>
-              <div id="tips">
-                <FeaturesSection />
-              </div>
-              <div id="phrases">
-                <GermanPhrasesSection />
-              </div>
-              <div id="services">
-                <ServicesCategoriesSection /> {/* ✅ CHANGED - Only shows category cards */}
-              </div>
-              <div id="contact">
-                <ContactSection />
-              </div>
+              <HeroSection />
+              <DestinationsSection />
+              <FeaturesSection />
+              <GermanPhrasesSection />
+              <ServicesCategoriesSection selectedBase={selectedBase} />
+              <ContactSection />
             </>
           }
         />
-
-        {/* ✅ Dynamic Article Route */}
         <Route path="/articles/:slug" element={<ArticlePage />} />
-
-        {/* ✅ Dynamic Destination Route */}
         <Route path="/destinations/:id" element={<DestinationPage />} />
-
-        {/* ✅ NEW - Service Category Route (shows businesses in a category) */}
         <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
-
-        {/* ✅ Dynamic Business Detail Route */}
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
 
@@ -97,5 +77,3 @@ function App() {
     </>
   );
 }
-
-export default App;

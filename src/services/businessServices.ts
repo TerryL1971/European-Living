@@ -20,6 +20,7 @@ export interface Business {
   notes?: string;
   imageUrl?: string;
   status?: "active" | "pending" | "inactive";
+  basesServed?: string[]; // NEW: Array of base identifiers
   createdAt?: string;
   updatedAt?: string;
 }
@@ -52,6 +53,7 @@ interface BusinessRow {
   notes?: string;
   image_url?: string;
   status?: string;
+  bases_served?: string[]; // NEW
   created_at?: string;
   updated_at?: string;
 }
@@ -85,6 +87,7 @@ function mapBusinessRow(row: BusinessRow): Business {
     notes: row.notes,
     imageUrl: row.image_url,
     status: row.status as Business["status"],
+    basesServed: row.bases_served, // NEW
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -190,6 +193,45 @@ export async function getBusinessesByCategory(category: string): Promise<Busines
 
   if (error) {
     console.error("Error fetching businesses by category:", error);
+    throw error;
+  }
+
+  return (data as BusinessRow[]).map(mapBusinessRow);
+}
+
+/**
+ * Get businesses that serve a specific base
+ */
+export async function getBusinessesByBase(baseId: string): Promise<Business[]> {
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("*")
+    .contains("bases_served", [baseId])
+    .eq("status", "active")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching businesses by base:", error);
+    throw error;
+  }
+
+  return (data as BusinessRow[]).map(mapBusinessRow);
+}
+
+/**
+ * Get featured businesses for a specific base
+ */
+export async function getFeaturedBusinessesByBase(baseId: string): Promise<Business[]> {
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("*")
+    .contains("bases_served", [baseId])
+    .eq("featured", true)
+    .eq("status", "active")
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching featured businesses by base:", error);
     throw error;
   }
 

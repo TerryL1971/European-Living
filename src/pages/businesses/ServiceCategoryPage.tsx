@@ -1,8 +1,9 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getBusinesses, getFeaturedBusinesses, Business } from "../../services/businessServices";
+import { getBusinessesByBase, getFeaturedBusinessesByBase, Business } from "../../services/businessServices";
 import { ArrowLeft, MapPin, Phone, Globe } from "lucide-react";
+import { getBaseById } from "../../data/bases";
 
 const categoryTitles: Record<string, string> = {
   automotive: "Automotive Services",
@@ -18,6 +19,8 @@ const categoryTitles: Record<string, string> = {
 
 export default function ServiceCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
+  const [searchParams] = useSearchParams();
+  const baseId = searchParams.get("base") || "stuttgart";
   const navigate = useNavigate();
   const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
   const [featuredBusinesses, setFeaturedBusinesses] = useState<Business[]>([]);
@@ -29,16 +32,16 @@ export default function ServiceCategoryPage() {
 
       try {
         const [allBusinesses, featured] = await Promise.all([
-          getBusinesses(),
-          getFeaturedBusinesses(),
+          getBusinessesByBase(baseId),
+          getFeaturedBusinessesByBase(baseId),
         ]);
 
         // Filter businesses by category
-        const filtered = allBusinesses.filter((b) => b.category === categoryId);
+        const filtered = allBusinesses.filter((b: Business) => b.category === categoryId);
         setCategoryBusinesses(filtered);
 
         // Filter featured by category
-        const featuredInCategory = featured.filter((b) => b.category === categoryId);
+        const featuredInCategory = featured.filter((b: Business) => b.category === categoryId);
         setFeaturedBusinesses(featuredInCategory);
       } catch (error) {
         console.error("Error loading businesses:", error);
@@ -47,7 +50,7 @@ export default function ServiceCategoryPage() {
       }
     }
     loadData();
-  }, [categoryId]);
+  }, [categoryId, baseId]);
 
   if (loading) {
     return (
@@ -58,6 +61,7 @@ export default function ServiceCategoryPage() {
   }
 
   const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
+  const currentBase = getBaseById(baseId);
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
@@ -76,7 +80,7 @@ export default function ServiceCategoryPage() {
           </h1>
           <p className="text-lg text-[var(--brand-dark)] opacity-80">
             {categoryBusinesses.length} {categoryBusinesses.length === 1 ? "business" : "businesses"}{" "}
-            near USAG Stuttgart
+            near {currentBase?.name || "your base"}
           </p>
         </div>
 
