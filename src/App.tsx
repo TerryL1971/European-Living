@@ -6,7 +6,7 @@ import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
-import GermanPhrasesSection from "./components/page/GermanPhrasesSection";
+import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
 import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
@@ -23,7 +23,9 @@ const ReadingProgress = () => {
   useEffect(() => {
     const handleScroll = () => {
       const position = window.scrollY;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const height =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
       const progress = (position / height) * 100;
       setScroll(progress);
     };
@@ -50,26 +52,31 @@ export default function App() {
     <>
       <ReadingProgress />
       <Header />
-      
+
       <Routes>
+        {/* Home Page */}
         <Route
           path="/"
           element={
-            <>
+            <div className="pt-16">
               <HeroSection />
               <DestinationsSection />
               <FeaturesSection />
               <GermanPhrasesSection />
-              {/* Pass selectedBase - user can change it on category pages */}
               <ServicesCategoriesSection selectedBase={selectedBase} />
               <ContactSection />
-            </>
+            </div>
           }
         />
+
+        {/* Article & Destination Pages */}
         <Route path="/articles/:slug" element={<ArticlePage />} />
         <Route path="/destinations/:id" element={<DestinationPage />} />
-        {/* BaseSelector will be shown inside ServiceCategoryPage */}
+
+        {/* ✅ Category Page (e.g. /services/automotive?base=ramstein) */}
         <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
+
+        {/* ✅ Business Detail Page (e.g. /businesses/ucg-ramstein) - FIXED PLURAL */}
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
 

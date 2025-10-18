@@ -7,10 +7,9 @@ import {
   Business,
   Review,
 } from "../../services/businessServices";
-import { Star, MapPin, Phone, Mail, Globe, ArrowLeft } from "lucide-react"; // Added Send
+import { Star, MapPin, Phone, Mail, Globe, ArrowLeft, Navigation } from "lucide-react";
+import MapView from "../../components/MapView";
 
-
-// Update function signature to accept props
 export default function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -23,7 +22,6 @@ export default function BusinessDetailPage() {
       if (!id) return;
 
       try {
-        // Fetch business and reviews in parallel
         const [bizData, reviewData] = await Promise.all([
           getBusinessById(id),
           getReviewsByBusiness(id),
@@ -71,18 +69,194 @@ export default function BusinessDetailPage() {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
-  return (
-    <div className="min-h-screen">
-      <div className="bg-[var(--brand-bg)] py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-6 font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
+  const directionsUrl = business.latitude && business.longitude
+    ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
+    : business.address
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(business.address)}`
+    : null;
 
+  return (
+    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-6 font-medium"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+
+        {/* Featured Layout - Large format with image + map side by side */}
+        {business.featured ? (
+          <div className="bg-[var(--brand-primary)] bg-opacity-95 rounded-xl p-8 shadow-xl">
+            {/* Image and Map Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Business Image */}
+              {business.imageUrl && (
+                <div className="rounded-lg overflow-hidden">
+                  <img
+                    src={business.imageUrl}
+                    alt={business.name}
+                    className="w-full h-64 object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Map with directions */}
+              {business.latitude && business.longitude && (
+                <div className="relative rounded-lg overflow-hidden">
+                  <MapView
+                    center={[business.latitude, business.longitude]}
+                    zoom={15}
+                    height="h-64"
+                    markers={[
+                      {
+                        position: [business.latitude, business.longitude],
+                        title: business.name,
+                        description: business.address,
+                      },
+                    ]}
+                  />
+                  {directionsUrl && (
+                    <a
+                      href={directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute bottom-4 right-4 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-2 rounded-lg shadow-lg hover:bg-yellow-400 transition flex items-center gap-2 text-sm font-semibold z-[1000]"
+                    >
+                      <Navigation className="w-4 h-4" />
+                      Directions
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Badges */}
+            <div className="flex items-center gap-3 mb-4 flex-wrap">
+              <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-sm font-bold">
+                ⭐ FEATURED
+              </span>
+              {business.verified && (
+                <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                  ✓ VERIFIED
+                </span>
+              )}
+              {business.englishFluency && (
+                <span className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold uppercase">
+                  {business.englishFluency} English
+                </span>
+              )}
+            </div>
+
+            <h1 className="text-3xl font-bold text-white mb-2">{business.name}</h1>
+            <p className="text-white opacity-90 mb-4 text-lg">{business.description}</p>
+
+            {/* Contact Info Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-white mb-4">
+              <div>
+                <p>
+                  <strong>📍 Location:</strong> {business.location}
+                </p>
+                {business.address && <p className="ml-5 opacity-80">{business.address}</p>}
+                {business.baseDistance && (
+                  <p>
+                    <strong>🚗 Distance:</strong> {business.baseDistance}
+                  </p>
+                )}
+              </div>
+              <div>
+                {business.phone && (
+                  <p>
+                    <strong>📞 Phone:</strong>{" "}
+                    <a href={`tel:${business.phone}`} className="underline hover:text-[var(--brand-gold)]">
+                      {business.phone}
+                    </a>
+                  </p>
+                )}
+                {business.email && (
+                  <p>
+                    <strong>✉️ Email:</strong>{" "}
+                    <a href={`mailto:${business.email}`} className="underline hover:text-[var(--brand-gold)]">
+                      {business.email}
+                    </a>
+                  </p>
+                )}
+                {business.website && (
+                  <p>
+                    <strong>🌐 Website:</strong>{" "}
+                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--brand-gold)]">
+                      Visit Site
+                    </a>
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Insider Tip */}
+            {business.notes && (
+              <div className="bg-white/10 rounded-lg p-4 mb-4">
+                <p className="text-white text-sm">
+                  <strong>💡 Insider Tip:</strong> {business.notes}
+                </p>
+              </div>
+            )}
+
+            {/* Action Button - Contact for Help */}
+            <div className="mb-6">
+              <a
+                href={`mailto:info@european-living.com?subject=Question about ${business.name}`}
+                className="inline-flex items-center gap-2 bg-white text-[var(--brand-primary)] px-6 py-3 rounded-lg hover:bg-gray-100 transition font-semibold"
+              >
+                <Mail className="w-5 h-5" />
+                Contact Us for Help
+              </a>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="border-t border-white/20 pt-6 mt-6">
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Reviews from Military Families
+              </h2>
+
+              {reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="bg-white/10 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="font-semibold text-white">{review.authorName}</p>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      {review.comment && (
+                        <p className="text-white opacity-90">{review.comment}</p>
+                      )}
+                      {review.createdAt && (
+                        <p className="text-xs text-white opacity-60 mt-2">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-white opacity-80">No reviews yet. Be the first to review!</p>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Standard Layout - Regular business detail page */
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Only show image if it exists */}
             {business.imageUrl && (
@@ -92,7 +266,6 @@ export default function BusinessDetailPage() {
                   alt={business.name ?? "Business"}
                   className="w-full h-64 object-cover"
                   onError={(e) => {
-                    // Hide image container if image fails to load
                     e.currentTarget.parentElement!.style.display = 'none';
                   }}
                 />
@@ -109,11 +282,6 @@ export default function BusinessDetailPage() {
                     {business.verified && (
                       <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
                         ✓ VERIFIED
-                      </span>
-                    )}
-                    {business.featured && (
-                      <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-xs font-bold">
-                        ⭐ FEATURED
                       </span>
                     )}
                   </div>
@@ -141,6 +309,30 @@ export default function BusinessDetailPage() {
               <p className="text-[var(--brand-dark)] opacity-80 mb-6 text-lg">
                 {business.description}
               </p>
+
+              {/* Action Buttons Bar - Standard Layout */}
+              <div className="bg-[var(--brand-bg)] rounded-lg p-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {directionsUrl && (
+                    <a
+                      href={directionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-[var(--brand-primary)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold text-center flex items-center justify-center gap-2"
+                    >
+                      <Navigation className="w-5 h-5" />
+                      Get Directions
+                    </a>
+                  )}
+                  <a
+                    href={`mailto:info@european-living.com?subject=Question about ${business.name}`}
+                    className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2"
+                  >
+                    <Mail className="w-5 h-5" />
+                    Contact for Help
+                  </a>
+                </div>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="space-y-3">
@@ -174,7 +366,6 @@ export default function BusinessDetailPage() {
                       </div>
                     </div>
                   )}
-
                 </div>
 
                 <div className="space-y-3">
@@ -263,7 +454,7 @@ export default function BusinessDetailPage() {
                           <p className="text-xs text-gray-500 mt-2">
                             {new Date(review.createdAt).toLocaleDateString()}
                           </p>
-                        )}
+                          )}
                       </div>
                     ))}
                   </div>
@@ -273,7 +464,7 @@ export default function BusinessDetailPage() {
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

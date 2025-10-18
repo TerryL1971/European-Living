@@ -5,7 +5,8 @@ import { supabase } from "./supabaseClient";
 export interface Business {
   id: string;
   name: string;
-  category: string;
+  category?: string;
+  subcategory?: string;
   description?: string;
   location: string;
   address?: string;
@@ -23,7 +24,7 @@ export interface Business {
   basesServed?: string[];
   latitude?: number;
   longitude?: number;
-  googleMapsUrl?: string; // NEW
+  googleMapsUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -42,6 +43,7 @@ interface BusinessRow {
   id: string;
   name: string;
   category: string;
+  subcategory?: string;
   description?: string;
   location: string;
   address?: string;
@@ -56,10 +58,10 @@ interface BusinessRow {
   notes?: string;
   image_url?: string;
   status?: string;
-  bases_served?: string[]; // NEW
+  bases_served?: string[];
   latitude?: number;
   longitude?: number;
-  google_maps_url?: string; // NEW
+  google_maps_url?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -79,6 +81,7 @@ function mapBusinessRow(row: BusinessRow): Business {
     id: row.id,
     name: row.name,
     category: row.category,
+    subcategory: row.subcategory,
     description: row.description,
     location: row.location,
     address: row.address,
@@ -93,10 +96,10 @@ function mapBusinessRow(row: BusinessRow): Business {
     notes: row.notes,
     imageUrl: row.image_url,
     status: row.status as Business["status"],
-    basesServed: row.bases_served, // NEW
+    basesServed: row.bases_served,
     latitude: row.latitude,
     longitude: row.longitude,
-    googleMapsUrl: row.google_maps_url, // NEW
+    googleMapsUrl: row.google_maps_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

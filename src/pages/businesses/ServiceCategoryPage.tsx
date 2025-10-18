@@ -1,7 +1,7 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
 import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getBusinessesByBase, getFeaturedBusinessesByBase, Business } from "../../services/businessServices";
+import { getBusinessesByBase, Business } from "../../services/businessServices";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { getBaseById, BASES } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
@@ -18,16 +18,50 @@ const categoryTitles: Record<string, string> = {
   business: "Business Services",
 };
 
+// Subcategory display names
+const subcategoryTitles: Record<string, string> = {
+  "car-dealerships": "Car Dealerships",
+  "mechanics": "Mechanics & Repair Shops",
+  "inspection-stations": "Inspection Stations (TÜV)",
+  "auto-parts": "Auto Parts Stores",
+  "general-practitioners": "General Practitioners",
+  "dentists": "Dentists",
+  "specialists": "Medical Specialists",
+  "pharmacies": "Pharmacies",
+  "american-food": "American Cuisine",
+  "international": "International Cuisine",
+  "cafes": "Cafés & Coffee Shops",
+  "grocery": "Grocery Stores",
+  "clothing": "Clothing & Fashion",
+  "electronics": "Electronics",
+  "plumbers": "Plumbers",
+  "electricians": "Electricians",
+  "handymen": "Handymen",
+  "rental-agents": "Rental Agents",
+  "property-management": "Property Management",
+  "sofa-lawyers": "SOFA Status Lawyers",
+  "immigration": "Immigration Lawyers",
+  "international-schools": "International Schools",
+  "tutors": "Tutors",
+  "tax-advisors": "Tax Advisors",
+  "accountants": "Accountants",
+};
+
+// Define subcategory order for each category
+const subcategoryOrder: Record<string, string[]> = {
+  automotive: ["car-dealerships", "inspection-stations", "mechanics", "auto-parts"],
+  healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies"],
+  restaurants: ["american-food", "international", "cafes"],
+};
+
 export default function ServiceCategoryPage() {
   const { categoryId } = useParams<{ categoryId: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const baseId = searchParams.get("base") || "stuttgart";
   const navigate = useNavigate();
   const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
-  const [featuredBusinesses, setFeaturedBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Handle base change
   const handleBaseChange = (newBaseId: string) => {
     setSearchParams({ base: newBaseId });
   };
@@ -37,18 +71,11 @@ export default function ServiceCategoryPage() {
       if (!categoryId) return;
 
       try {
-        const [allBusinesses, featured] = await Promise.all([
-          getBusinessesByBase(baseId),
-          getFeaturedBusinessesByBase(baseId),
-        ]);
-
+        const allBusinesses = await getBusinessesByBase(baseId);
+        
         // Filter businesses by category
         const filtered = allBusinesses.filter((b: Business) => b.category === categoryId);
         setCategoryBusinesses(filtered);
-
-        // Filter featured by category
-        const featuredInCategory = featured.filter((b: Business) => b.category === categoryId);
-        setFeaturedBusinesses(featuredInCategory);
       } catch (error) {
         console.error("Error loading businesses:", error);
       } finally {
@@ -68,6 +95,44 @@ export default function ServiceCategoryPage() {
 
   const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
   const currentBase = getBaseById(baseId);
+
+  // Group ALL businesses by subcategory
+  const groupedBySubcategory: Record<string, Business[]> = {};
+  
+  categoryBusinesses.forEach((business) => {
+    const subcat = business.subcategory || "other";
+    if (!groupedBySubcategory[subcat]) {
+      groupedBySubcategory[subcat] = [];
+    }
+    groupedBySubcategory[subcat].push(business);
+  });
+
+  // Sort businesses within each subcategory: featured first, then alphabetically
+  Object.keys(groupedBySubcategory).forEach((subcat) => {
+    groupedBySubcategory[subcat].sort((a, b) => {
+      // Featured businesses come first
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      // Then sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
+  });
+
+  // Get ordered subcategories for this category
+  // Start with the predefined order, then add any additional subcategories found
+  const orderedSubcats = categoryId && subcategoryOrder[categoryId] 
+    ? [
+        ...subcategoryOrder[categoryId],
+        ...Object.keys(groupedBySubcategory).filter(
+          subcat => !subcategoryOrder[categoryId].includes(subcat)
+        ).sort()
+      ]
+    : Object.keys(groupedBySubcategory).sort();
+  
+  // Debug logging
+  console.log('Category businesses:', categoryBusinesses);
+  console.log('Grouped by subcategory:', groupedBySubcategory);
+  console.log('Ordered subcats:', orderedSubcats);
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]">
@@ -102,7 +167,6 @@ export default function ServiceCategoryPage() {
             </div>
           </div>
 
-          {/* Mobile-friendly base info */}
           <div className="mt-2 text-xs opacity-80 hidden sm:block">
             {currentBase?.location} • Serving {currentBase?.nearbyTowns.join(", ")}
           </div>
@@ -130,27 +194,69 @@ export default function ServiceCategoryPage() {
             </p>
           </div>
 
-          {/* Featured Businesses */}
-          {featuredBusinesses.length > 0 && (
-            <div className="mb-12">
-              <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">Featured</h2>
-              {featuredBusinesses.map((business) => (
-                <BusinessCardWithMap key={business.id} business={business} featured={true} />
-              ))}
+          {/* Sticky Subcategory Navigation - Only show if multiple subcategories */}
+          {orderedSubcats.filter(id => groupedBySubcategory[id]?.length > 0).length > 1 && (
+            <div className="sticky top-[72px] z-30 bg-white/95 backdrop-blur-sm border-y border-gray-200 -mx-4 px-4 py-4 mb-8 shadow-sm">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                <span className="text-sm font-semibold text-[var(--brand-dark)] whitespace-nowrap mr-2">
+                  Jump to:
+                </span>
+                {orderedSubcats.map((subcatId) => {
+                  const businesses = groupedBySubcategory[subcatId];
+                  if (!businesses || businesses.length === 0) return null;
+                  
+                  return (
+                    <button
+                      key={subcatId}
+                      onClick={() => {
+                        const element = document.getElementById(`subcategory-${subcatId}`);
+                        if (element) {
+                          const offset = 150; // Account for sticky headers
+                          const elementPosition = element.getBoundingClientRect().top;
+                          const offsetPosition = elementPosition + window.pageYOffset - offset;
+                          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                        }
+                      }}
+                      className="bg-[var(--brand-primary)] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[var(--brand-dark)] transition whitespace-nowrap flex-shrink-0"
+                    >
+                      {subcategoryTitles[subcatId] || subcatId}
+                      <span className="ml-1.5 opacity-75">({businesses.length})</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
-          {/* All Businesses in Category */}
-          <div>
-            <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">All Businesses</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {categoryBusinesses.map((business) => (
-                <BusinessCardWithMap key={business.id} business={business} featured={false} />
-              ))}
-            </div>
-          </div>
+          {/* Businesses Grouped by Subcategory */}
+          {orderedSubcats.length > 0 ? (
+            <div className="space-y-12">
+              {orderedSubcats.map((subcatId) => {
+                const businesses = groupedBySubcategory[subcatId];
+                if (!businesses || businesses.length === 0) return null;
 
-          {categoryBusinesses.length === 0 && (
+                return (
+                  <div key={subcatId} id={`subcategory-${subcatId}`}>
+                    {/* Only show heading if subcategory is not "other" or if there are multiple subcategories */}
+                    {(subcatId !== "other" || orderedSubcats.length > 1) && (
+                      <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6 border-b-2 border-[var(--brand-primary)] pb-2">
+                        {subcategoryTitles[subcatId] || subcatId}
+                      </h2>
+                    )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {businesses.map((business) => (
+                        <BusinessCardWithMap 
+                          key={business.id} 
+                          business={business} 
+                          featured={business.featured || false}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
             <div className="text-center py-12">
               <p className="text-[var(--brand-dark)] opacity-60 mb-4">
                 No businesses found in this category yet for {currentBase?.name}.
