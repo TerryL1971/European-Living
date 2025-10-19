@@ -223,7 +223,7 @@ export default function TravelPhrasesSection() {
               }}
               className="px-3 sm:px-5 py-2 rounded-full font-medium transition-all hover:opacity-90 text-sm sm:text-base whitespace-nowrap"
               style={{
-                background: selectedCategory === category.id ? 'var(--primary)' : 'var(--brand-light)',
+                background: selectedCategory === category.id ? 'var(--brand-primary)' : 'var(--brand-light)',
                 color: selectedCategory === category.id ? 'white' : 'var(--brand-dark)',
                 border: `2px solid ${selectedCategory === category.id ? 'var(--primary)' : 'var(--border)'}`
               }}
