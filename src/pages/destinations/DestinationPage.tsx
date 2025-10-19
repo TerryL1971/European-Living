@@ -123,7 +123,7 @@ export default function DestinationPage() {
                     className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2"
                   >
                     <Mail className="w-5 h-5" />
-                    Contact for Help
+                    Contact for Questions
                   </a>
                 </div>
               </div>
