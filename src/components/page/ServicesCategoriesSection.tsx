@@ -107,17 +107,19 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
   return (
     <section id="services" className="relative bg-white py-20">
       <div className="absolute inset-0 bg-[url('/images/services.jpg')] bg-cover bg-center" />
-      <div className="absolute inset-0 bg-black/10" />
-
+      {/* Enhanced gradient overlay - darker and more dramatic */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+      
+      {/* Additional subtle vignette effect */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
+     
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
-            English-Speaking Services Near USAG Stuttgart
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-bg)] mb-4">
+            Trusted English-Speaking Services Helping Americans Feel at Home in Europe
           </h2>
-          <p className="text-lg text-[var(--brand-dark)] opacity-80 max-w-3xl mx-auto">
-            Personally verified businesses in Sindelfingen, Böblingen, and Vaihingen that welcome
-            American military families. All businesses are within 20 minutes of Panzer, Patch, or
-            Kelly Barracks.
+          <p className="text-lg text-[var(--brand-light)] font-bold opacity-80 max-w-3xl mx-auto">
+            Find personally verified, English-speaking businesses across Europe that understand U.S. military, civilian, and contractors, and their families — offering trusted local support and peace of mind wherever you’re stationed.
           </p>
         </div>
 
