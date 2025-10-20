@@ -25,13 +25,13 @@ const serviceCategories = [
     id: "healthcare",
     title: "Healthcare",
     icon: Stethoscope,
-    description: "English-speaking doctors, dentists, and specialists near USAG Stuttgart",
+    description: "English-speaking doctors, dentists, and specialists near European US Bases",
   },
   {
     id: "restaurants",
     title: "Restaurants & Dining",
     icon: Utensils,
-    description: "English-friendly restaurants in Sindelfingen, Böblingen, and Vaihingen",
+    description: "English-friendly restaurants throughout Europe serving American living abroad",
   },
   {
     id: "shopping",
