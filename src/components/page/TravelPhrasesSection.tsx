@@ -255,7 +255,7 @@ export default function TravelPhrasesSection() {
               <div 
                 className="overflow-y-auto space-y-3 sm:space-y-4 pr-1 sm:pr-2"
                 style={{ 
-                  maxHeight: '600px',
+                  maxHeight: '400px',
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'var(--brand-primary) var(--brand-bg-alt)'
                 }}
@@ -268,7 +268,7 @@ export default function TravelPhrasesSection() {
                   return (
                     <div
                       key={idx}
-                      className="p-4 sm:p-6 rounded-lg transition-shadow hover:shadow-lg"
+                      className="p-4 sm:p-6 rounded-xl transition-shadow hover:shadow-lg"
                       style={{ 
                         background: 'var(--brand-light)',
                         border: '1px solid var(--border)',
