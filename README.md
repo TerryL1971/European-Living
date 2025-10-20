@@ -1,16 +1,13 @@
------
+# 🏠 European Living: Travel Phrasebook & Content Hub
 
-# 🗺️ Polyglot Pilot: European Travel Phrasebook
-
-A modern, fast travel companion built to help users quickly learn and pronounce essential phrases in multiple European languages. This application features a clean, responsive interface powered by React and styled with Tailwind CSS, with all phrase data managed by a Supabase backend.
+**European Living** is a modern travel and content application designed to help users navigate European life, featuring an essential phrasebook and detailed city guides. The project features a clean, responsive interface built with React and Tailwind CSS, with all content sourced from a powerful Sanity.io CMS.
 
 ## ✨ Features
 
-  * **10+ Languages:** Master phrases for German, French, Italian, Spanish, Czech, Dutch, and more.
-  * **Contextual Phrase Grouping:** Phrases are organized into essential travel categories (e.g., Greetings, Transportation, Food).
-  * **Text-to-Speech (TTS):** Native browser speech synthesis allows users to hear the correct pronunciation of every phrase.
+  * **10+ Language Phrasebook:** Master essential phrases for travel across Europe with built-in text-to-speech (TTS) pronunciation.
+  * **Dynamic City Guides:** Detailed articles for cities like Stuttgart, London, Rome, and more, managed entirely within Sanity.io.
   * **Instant Search:** Quickly find phrases in English or the target language.
-  * **Supabase Backend:** All categories and phrases are dynamically loaded from a PostgreSQL database hosted on Supabase.
+  * **Sanity.io CMS:** Content repository providing a dedicated, user-friendly interface for managing articles, destinations, and phrases.
   * **Modern Stack:** Built on React, TypeScript, and Vite for a highly optimized development and build experience.
 
 ## 🛠️ Tech Stack
@@ -21,12 +18,12 @@ A modern, fast travel companion built to help users quickly learn and pronounce 
 | **Language** | [TypeScript](https://www.typescriptlang.org/) | Type safety and better code quality |
 | **Bundler** | [Vite](https://vitejs.dev/) | Next-generation frontend tooling |
 | **Styling** | [Tailwind CSS](https://tailwindcss.com/) | Utility-first CSS framework |
-| **Backend/DB** | [Supabase](https://supabase.io/) | Hosted PostgreSQL database and API |
+| **Content** | [Sanity.io](https://www.sanity.io/) | Headless CMS for structured content |
 | **Icons** | [Lucide React](https://lucide.dev/) | Clean, consistent icons |
 
 ## 🚀 Getting Started
 
-Follow these steps to set up the project locally.
+Follow these steps to set up the **European Living** project locally.
 
 ### 1\. Prerequisites
 
@@ -34,9 +31,11 @@ You need **Node.js** (version 18+) and **npm** installed.
 
 ### 2\. Clone the Repository
 
+Assuming your project folder is named `european-living`:
+
 ```bash
 git clone <YOUR_REPO_URL>
-cd polyglot-pilot
+cd european-living
 ```
 
 ### 3\. Install Dependencies
@@ -45,20 +44,19 @@ cd polyglot-pilot
 npm install
 ```
 
-### 4\. Set up Supabase
+### 4\. Set up Sanity.io
 
-This project requires a Supabase project for data management.
+This project fetches content from a Sanity.io instance.
 
-1.  **Create a Project:** Sign up for [Supabase](https://supabase.io/) and create a new project.
+1.  **Create Sanity Project:** Set up your Sanity Studio (the content editor) and define your schemas for `phrase`, `category`, and `article`.
 
-2.  **Database Schema:** Run the initial SQL schema script (found in your project, e.g., `schema.sql`) to create the `phrase_categories` and `phrases` tables.
-
-3.  **Environment Variables:** Create a file named `.env.local` in the project root and add your Supabase credentials:
+2.  **Environment Variables:** Create a file named `.env.local` in the project root and add your Sanity credentials. These are used by the React frontend to fetch data:
 
     ```bash
     # .env.local
-    VITE_SUPABASE_URL="YOUR_SUPABASE_PROJECT_URL"
-    VITE_SUPABASE_ANON_KEY="YOUR_SUPABASE_ANON_PUBLIC_KEY"
+    VITE_SANITY_PROJECT_ID="YOUR_SANITY_PROJECT_ID"
+    VITE_SANITY_DATASET="production" 
+    VITE_SANITY_API_VERSION="2023-03-01" 
     ```
 
 ### 5\. Run the Development Server
@@ -76,10 +74,10 @@ The application will be available at `http://localhost:5173`.
 ├── public/                # Static assets (e.g., /images)
 ├── src/
 │   ├── components/        # Reusable UI components (Card, Button, etc.)
-│   ├── data/              # Static data definitions (languages, etc.)
-│   ├── services/          # Supabase data fetching logic (phraseService.ts)
+│   ├── data/              # Static data definitions (languages, destinations, articles)
+│   ├── services/          # Data fetching logic (e.g., phraseService.ts)
 │   ├── components/page/   # Main page sections (e.g., TravelPhrasesSection.tsx)
-│   ├── lib/               # Utility functions (e.g., supabaseClient.ts)
+│   ├── lib/               # Utility functions (e.g., sanityClient.ts)
 │   └── main.tsx           # Entry point
 ├── tailwind.config.js     # Tailwind CSS configuration
 ├── vite.config.ts         # Vite configuration
@@ -88,7 +86,7 @@ The application will be available at `http://localhost:5173`.
 
 ## 📐 Styling and Customization
 
-The design uses a clean, accessible layout with a custom color palette defined via CSS variables in `index.css` and referenced throughout the React components:
+The design uses a custom color palette defined via CSS variables in `index.css` and referenced throughout the React components:
 
 | Variable | Description | Example Usage |
 | :--- | :--- | :--- |
