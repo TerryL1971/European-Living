@@ -1,34 +1,37 @@
 {
   "compilerOptions": {
-    /* Basic Setup */
+    /* -------------------- Basic Setup -------------------- */
     "target": "ESNext",
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* Module + JSX */
+    /* -------------------- Module + JSX -------------------- */
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Type Definitions */
-    "types": ["vite/client", "react", "react-dom"],
+    /* -------------------- Type Definitions -------------------- */
+    "types": ["vite/client", "react", "react-dom", "node"],
 
-    /* Optional: Path Aliases */
+    /* -------------------- Path Aliases -------------------- */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
 
-  /* ✅ Include source files only */
-  "include": ["src", "vite.config.ts"]
+  /* -------------------- Include -------------------- */
+  "include": ["src", "vite.config.ts"],
+
+  /* -------------------- Exclude -------------------- */
+  "exclude": ["node_modules", "dist"]
 }
