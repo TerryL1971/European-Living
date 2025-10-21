@@ -388,19 +388,3 @@ html { scroll-behavior: smooth; }
   font-weight: 600;
 }
 
-/* Emergency fix for base selector visibility */
-#base-select {
-  background-color: white !important;
-  color: #1a1a1a !important;
-  border: 2px solid #d4af37 !important;
-  min-height: 40px !important;
-  display: block !important;
-  visibility: visible !important;
-}
-
-/* Make sure parent container is visible */
-[class*="base"] {
-  display: block !important;
-  visibility: visible !important;
-  min-height: 50px !important;
-}
