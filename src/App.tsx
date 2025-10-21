@@ -1,5 +1,5 @@
 // src/App.tsx
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Header from "./components/page/Header";
@@ -47,7 +47,24 @@ const ReadingProgress = () => {
 
 export default function App() {
   const [selectedBase] = useState(DEFAULT_BASE);
+  const location = useLocation();
 
+  // Handle hash navigation on homepage
+  useEffect(() => {
+    if (location.pathname === '/' && location.hash) {
+      // Remove the # from hash
+      const sectionId = location.hash.substring(1);
+      
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location]);
+  
   return (
     <>
       <ReadingProgress />

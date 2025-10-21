@@ -27,12 +27,13 @@ export interface Business {
   googleMapsUrl?: string;
   createdAt?: string;
   updatedAt?: string;
+  city?: string; // ✅ added to fix the "city" type errors
 }
 
 export interface Review {
   id: string;
   businessId: string;
-  authorName: string;
+  userName: string;
   rating: number;
   comment?: string;
   createdAt?: string;
@@ -64,16 +65,19 @@ interface BusinessRow {
   google_maps_url?: string;
   created_at?: string;
   updated_at?: string;
+  city?: string; // ✅ match DB schema if you store it there
 }
 
 interface ReviewRow {
   id: string;
   business_id: string;
-  author_name: string;
+  user_name: string;
   rating: number;
   comment?: string;
   created_at?: string;
 }
+
+// -------------------- Mappers --------------------
 
 // Helper: Convert database row to Business object
 function mapBusinessRow(row: BusinessRow): Business {
@@ -102,6 +106,7 @@ function mapBusinessRow(row: BusinessRow): Business {
     googleMapsUrl: row.google_maps_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    city: row.city ?? "", // ✅ fallback if missing
   };
 }
 
@@ -110,7 +115,7 @@ function mapReviewRow(row: ReviewRow): Review {
   return {
     id: row.id,
     businessId: row.business_id,
-    authorName: row.author_name,
+    userName: row.user_name,
     rating: row.rating,
     comment: row.comment,
     createdAt: row.created_at,
@@ -189,6 +194,7 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
     throw error;
   }
 
+  // ✅ Clean transformation to camelCase
   return (data as ReviewRow[]).map(mapReviewRow);
 }
 

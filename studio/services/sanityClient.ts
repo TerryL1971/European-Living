@@ -20,7 +20,7 @@ if (!writeToken) throw new Error('❌ Missing VITE_SANITY_WRITE_TOKEN in .env.lo
 
 // -------------------- Sanity Clients --------------------
 
-// Read-only client (optional)
+// Read-only client (for queries)
 export const sanityClient = createClient({
   projectId,
   dataset,
@@ -28,7 +28,7 @@ export const sanityClient = createClient({
   useCdn,
 });
 
-// Write-enabled client (used in migration)
+// Write-enabled client (for migration)
 export const sanityWriteClient = createClient({
   projectId,
   dataset,
@@ -37,11 +37,11 @@ export const sanityWriteClient = createClient({
   token: writeToken,
 });
 
-// -------------------- Image URL builder --------------------
+// -------------------- Image URL Builder --------------------
 const builder = imageUrlBuilder(sanityClient);
 export const urlFor = (source: SanityImageSource) => builder.image(source);
 
-// -------------------- TypeScript interfaces --------------------
+// -------------------- TypeScript Interfaces --------------------
 export interface SanityImage {
   _type: 'image';
   asset: { _ref: string; _type: 'reference' };

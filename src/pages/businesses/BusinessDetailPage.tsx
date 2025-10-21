@@ -69,14 +69,8 @@ export default function BusinessDetailPage() {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : 0;
 
-  const directionsUrl = business.latitude && business.longitude
-    ? `https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`
-    : business.address
-    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(business.address)}`
-    : null;
-
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
+    <div className="min-h-screen bg-[var(--brand-bg)] pt-28 pb-12 px-4">
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate(-1)}
@@ -120,17 +114,15 @@ export default function BusinessDetailPage() {
                       },
                     ]}
                   />
-                  {directionsUrl && (
-                    <a
-                      href={directionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="absolute bottom-4 right-4 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-2 rounded-lg shadow-lg hover:bg-yellow-400 transition flex items-center gap-2 text-sm font-semibold z-[1000]"
-                    >
-                      <Navigation className="w-4 h-4" />
-                      Directions
-                    </a>
-                  )}
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${business.latitude},${business.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute bottom-4 right-4 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-2 rounded-lg shadow-lg hover:bg-yellow-400 transition flex items-center gap-2 text-sm font-semibold z-[1000]"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    Directions
+                  </a>
                 </div>
               )}
             </div>
@@ -205,17 +197,6 @@ export default function BusinessDetailPage() {
               </div>
             )}
 
-            {/* Action Button - Contact for Help */}
-            <div className="mb-6">
-              <a
-                href={`mailto:info@european-living.com?subject=Question about ${business.name}`}
-                className="inline-flex items-center gap-2 bg-white text-[var(--brand-primary)] px-6 py-3 rounded-lg hover:bg-gray-100 transition font-semibold"
-              >
-                <Mail className="w-5 h-5" />
-                Contact Us for Help
-              </a>
-            </div>
-
             {/* Reviews Section */}
             <div className="border-t border-white/20 pt-6 mt-6">
               <h2 className="text-2xl font-bold text-white mb-6">
@@ -227,7 +208,7 @@ export default function BusinessDetailPage() {
                   {reviews.map((review) => (
                     <div key={review.id} className="bg-white/10 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="font-semibold text-white">{review.authorName}</p>
+                        <p className="font-semibold text-white">{review.userName}</p>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
                             <Star
@@ -309,30 +290,6 @@ export default function BusinessDetailPage() {
               <p className="text-[var(--brand-dark)] opacity-80 mb-6 text-lg">
                 {business.description}
               </p>
-
-              {/* Action Buttons Bar - Standard Layout */}
-              <div className="bg-[var(--brand-bg)] rounded-lg p-4 mb-6">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  {directionsUrl && (
-                    <a
-                      href={directionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 bg-[var(--brand-primary)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold text-center flex items-center justify-center gap-2"
-                    >
-                      <Navigation className="w-5 h-5" />
-                      Get Directions
-                    </a>
-                  )}
-                  <a
-                    href={`mailto:info@european-living.com?subject=Question about ${business.name}`}
-                    className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2"
-                  >
-                    <Mail className="w-5 h-5" />
-                    Contact for Help
-                  </a>
-                </div>
-              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div className="space-y-3">
@@ -434,7 +391,7 @@ export default function BusinessDetailPage() {
                       <div key={review.id} className="bg-[var(--brand-bg)] rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-[var(--brand-dark)]">
-                            {review.authorName}
+                            {review.userName}
                           </p>
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
@@ -454,7 +411,7 @@ export default function BusinessDetailPage() {
                           <p className="text-xs text-gray-500 mt-2">
                             {new Date(review.createdAt).toLocaleDateString()}
                           </p>
-                          )}
+                        )}
                       </div>
                     ))}
                   </div>

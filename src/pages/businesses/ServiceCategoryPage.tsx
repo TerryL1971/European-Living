@@ -135,9 +135,9 @@ export default function ServiceCategoryPage() {
   console.log('Ordered subcats:', orderedSubcats);
 
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)]">
+    <div className="min-h-screen bg-[var(--brand-bg)] pt-16">
       {/* Base Selector - Sticky at top */}
-      <div className="bg-[var(--brand-primary)] text-white py-4 sticky top-0 z-40 shadow-md">
+      <div className="bg-[var(--brand-primary)] text-white py-4 sticky top-16 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -174,7 +174,7 @@ export default function ServiceCategoryPage() {
       </div>
 
       {/* Content */}
-      <div className="py-12 px-4">
+      <div className="py-12 px-4pt">
         <div className="max-w-7xl mx-auto">
           <button
             onClick={() => navigate("/")}

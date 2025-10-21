@@ -1,7 +1,7 @@
 import { getCliClient } from 'sanity/cli'
 import { createClient } from '@supabase/supabase-js'
 
-// This runs with CLI authentication (full permissions)
+// CLI client with full permissions
 const client = getCliClient()
 
 const supabase = createClient(
@@ -9,6 +9,7 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrYWNiY29ocnlncHlhcGd0enBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNzc5NzEsImV4cCI6MjA3NTg1Mzk3MX0.BJZulmGejOPa5mv4jLUKqDamBdLyjDEBP2RVTswga8c'
 )
 
+// -------------------- Migrate Phrase Categories --------------------
 async function migratePhraseCategories() {
   console.log('📦 Migrating categories...')
   
@@ -32,6 +33,7 @@ async function migratePhraseCategories() {
   }
 }
 
+// -------------------- Migrate Phrases --------------------
 async function migratePhrases() {
   console.log('💬 Migrating phrases...')
   
@@ -74,11 +76,67 @@ async function migratePhrases() {
   console.log(`✨ Done! ${count} phrases`)
 }
 
+// -------------------- Migrate Articles --------------------
+async function migrateArticles() {
+  console.log('📰 Migrating articles...')
+
+  const { data: articles } = await supabase.from('articles').select('*')
+  if (!articles?.length) return
+
+  for (const a of articles) {
+    await client.createOrReplace({
+      _type: 'article',
+      _id: `article-${a.id}`,
+      title: a.title,
+      slug: { _type: 'slug', current: a.slug },
+      excerpt: a.excerpt,
+      mainImage: a.mainImage ?? undefined,
+      content: a.content ?? [],
+      category: a.category ?? undefined,
+      publishedAt: a.published_at,
+      author: a.author ?? undefined
+    })
+    console.log(`✅ ${a.title}`)
+  }
+}
+
+// -------------------- Migrate Destinations --------------------
+async function migrateDestinations() {
+  console.log('🗺️ Migrating destinations...')
+
+  const { data: destinations } = await supabase.from('destinations').select('*')
+  if (!destinations?.length) return
+
+  for (const d of destinations) {
+    await client.createOrReplace({
+      _type: 'destination',
+      _id: `destination-${d.id}`,
+      name: d.name,
+      slug: { _type: 'slug', current: d.slug },
+      tagline: d.tagline,
+      description: d.description,
+      heroImage: d.heroImage ?? undefined,
+      gallery: d.gallery ?? undefined,
+      content: d.content ?? [],
+      highlights: d.highlights ?? undefined,
+      bestTimeToVisit: d.best_time_to_visit ?? undefined,
+      gettingThere: d.getting_there ?? undefined,
+      location: d.location ?? undefined,
+      country: d.country,
+      featured: d.featured
+    })
+    console.log(`✅ ${d.name}`)
+  }
+}
+
+// -------------------- Run Migration --------------------
 async function run() {
-  console.log('🚀 Starting...\n')
+  console.log('🚀 Starting migration...\n')
   await migratePhraseCategories()
   await migratePhrases()
-  console.log('\n🎉 Success!')
+  await migrateArticles()
+  await migrateDestinations()
+  console.log('\n🎉 Migration complete!')
 }
 
 run()

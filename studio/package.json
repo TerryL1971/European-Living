@@ -5,22 +5,22 @@
   "main": "package.json",
   "license": "UNLICENSED",
   "scripts": {
-  "dev": "sanity dev",
-  "start": "sanity start",
-  "build": "sanity build",
-  "deploy": "sanity deploy",
-  "deploy-graphql": "sanity graphql deploy",
-  "migrate": "ts-node -P ./tsconfig.json ./scripts/migrateToSanity.ts"
+    "dev": "sanity dev",
+    "start": "sanity start",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "deploy-graphql": "sanity graphql deploy",
+    "migrate": "ts-node -P ./tsconfig.json ./scripts/migrateToSanity.ts"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^4.10.3",
+    "@sanity/vision": "^4.11.0",
     "dotenv": "^17.2.3",
     "react": "^19.1",
     "react-dom": "^19.1",
-    "sanity": "^4.10.3",
+    "sanity": "^4.11.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
