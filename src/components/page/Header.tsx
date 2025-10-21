@@ -2,45 +2,54 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 
+interface MenuItem {
+  label: string;
+  id: string; // corresponds to hash or special "home"
+}
+
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>("home");
+  const [activeItem, setActiveItem] = useState<string>("home");
   const location = useLocation();
   const navigate = useNavigate();
 
   const toggle = () => setIsMobileMenuOpen((s) => !s);
 
-  // Update active section based on URL or hash
+  const menuItems: MenuItem[] = [
+    { label: "Home", id: "home" },
+    { label: "Destinations", id: "destinations" },
+    { label: "Travel Tips", id: "tips" },
+    { label: "Travel Phrases", id: "phrases" },
+    { label: "Services", id: "services" },
+  ];
+
+  // Update active menu item based on URL/hash
   useEffect(() => {
     if (location.pathname === "/") {
-      // Use hash if on homepage
-      const hash = location.hash.replace("#", "");
-      setActiveSection(hash || "home");
+      const hashId = location.hash.replace("#", "") || "home";
+      setActiveItem(hashId);
     } else {
-      // Highlight "Services" or other pages
-      if (location.pathname.startsWith("/services")) setActiveSection("services");
-      else setActiveSection("");
+      setActiveItem(""); // no item active outside home
     }
   }, [location]);
 
-  const isHomePage = location.pathname === "/";
-
   const handleNavClick = (sectionId: string) => {
-    if (isHomePage) {
+    if (sectionId === "home") {
+      navigate("/");
+      setActiveItem("home");
+      setIsMobileMenuOpen(false);
+      return;
+    }
+
+    if (location.pathname === "/") {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
     } else {
       navigate(`/#${sectionId}`);
     }
+
+    setActiveItem(sectionId);
     setIsMobileMenuOpen(false);
   };
-
-  const menuItems = [
-    { id: "home", label: "Home" },
-    { id: "destinations", label: "Destinations" },
-    { id: "tips", label: "Travel Tips" },
-    { id: "phrases", label: "Travel Phrases" },
-    { id: "services", label: "Services" },
-  ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-[100] shadow-sm">
@@ -49,9 +58,13 @@ export default function Header() {
           {/* Logo */}
           <div
             className="flex items-center space-x-3 cursor-pointer"
-            onClick={() => navigate("/")}
+            onClick={() => handleNavClick("home")}
           >
-            <img src="/EL_Logo.png" alt="European Living Logo" className="w-10 h-10 object-contain" />
+            <img
+              src="/EL_Logo.png"
+              alt="European Living Logo"
+              className="w-10 h-10 object-contain"
+            />
             <span className="text-gray-900 font-semibold text-lg">European Living</span>
           </div>
 
@@ -61,8 +74,10 @@ export default function Header() {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`font-medium hover:text-blue-800 ${
-                  activeSection === item.id ? "text-blue-600" : "text-gray-600"
+                className={`font-medium px-2 py-1 transition-colors ${
+                  activeItem === item.id
+                    ? "text-blue-600"
+                    : "text-gray-600 hover:text-blue-800"
                 }`}
               >
                 {item.label}
@@ -75,9 +90,9 @@ export default function Header() {
             <button
               onClick={() => handleNavClick("contact")}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeSection === "contact"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                activeItem === "contact"
+                  ? "bg-blue-700 text-white"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
               }`}
             >
               Contact Us
@@ -98,19 +113,22 @@ export default function Header() {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`text-left px-4 py-2 font-medium rounded-lg transition-colors ${
-                    activeSection === item.id
-                      ? "bg-blue-100 text-blue-600"
-                      : "text-gray-600 hover:bg-gray-100"
+                  className={`px-4 py-2 text-left font-medium transition-colors ${
+                    activeItem === item.id
+                      ? "text-blue-600"
+                      : "text-gray-600 hover:text-blue-800"
                   }`}
                 >
                   {item.label}
                 </button>
               ))}
+
               <button
                 onClick={() => handleNavClick("contact")}
-                className={`bg-blue-600 text-white px-4 py-2 rounded-lg font-medium mx-4 ${
-                  activeSection === "contact" ? "bg-blue-700" : ""
+                className={`px-4 py-2 rounded-lg font-medium mx-4 transition-colors ${
+                  activeItem === "contact"
+                    ? "bg-blue-700 text-white"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
                 }`}
               >
                 Contact Us
