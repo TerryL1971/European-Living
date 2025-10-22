@@ -35,16 +35,29 @@ export default function Header() {
 
   const handleNavClick = (sectionId: string) => {
     if (sectionId === "home") {
-      navigate("/");
+      if (location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/");
+      }
       setActiveItem("home");
       setIsMobileMenuOpen(false);
       return;
     }
 
-    if (location.pathname === "/") {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+    if (sectionId === "contact") {
+      const contactEl = document.getElementById("contact");
+      if (contactEl) {
+        contactEl.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate("/#contact");
+      }
     } else {
-      navigate(`/#${sectionId}`);
+      if (location.pathname === "/") {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        navigate(`/#${sectionId}`);
+      }
     }
 
     setActiveItem(sectionId);
@@ -65,19 +78,19 @@ export default function Header() {
               alt="European Living Logo"
               className="w-10 h-10 object-contain"
             />
-            <span className="text-gray-900 font-semibold text-lg">European Living</span>
+            <span className="text-[var(--brand-dark)] font-semibold text-lg">European Living</span>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {menuItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`font-medium px-2 py-1 transition-colors ${
+                className={`font-medium px-3 py-2 rounded-md transition-colors cursor-pointer ${
                   activeItem === item.id
-                    ? "text-blue-600"
-                    : "text-gray-600 hover:text-blue-800"
+                    ? "text-[var(--brand-primary)]"
+                    : "text-[var(--brand-dark)] hover:text-[var(--brand-primary)]"
                 }`}
               >
                 {item.label}
@@ -89,10 +102,10 @@ export default function Header() {
           <div className="hidden md:flex items-center">
             <button
               onClick={() => handleNavClick("contact")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                 activeItem === "contact"
-                  ? "bg-blue-700 text-white"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  ? "bg-[var(--brand-primary)] text-[var(--brand-bg-alt)]"
+                  : "bg-[var(--brand-dark)] text-[var(--brand-bg)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-bg-alt)]"
               }`}
             >
               Contact Us
@@ -100,7 +113,7 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button onClick={toggle} className="md:hidden">
+          <button onClick={toggle} className="md:hidden cursor-pointer">
             {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
@@ -113,10 +126,10 @@ export default function Header() {
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`px-4 py-2 text-left font-medium transition-colors ${
+                  className={`px-4 py-2 text-left font-medium rounded-md transition-colors cursor-pointer ${
                     activeItem === item.id
-                      ? "text-blue-600"
-                      : "text-gray-600 hover:text-blue-800"
+                      ? "text-[var(--brand-primary)]"
+                      : "text-[var(--brand-dark)] hover:text-[var(--brand-primary)]"
                   }`}
                 >
                   {item.label}
@@ -125,10 +138,10 @@ export default function Header() {
 
               <button
                 onClick={() => handleNavClick("contact")}
-                className={`px-4 py-2 rounded-lg font-medium mx-4 transition-colors ${
+                className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
                   activeItem === "contact"
-                    ? "bg-blue-700 text-white"
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    ? "bg-[var(--brand-primary)] text-[var(--brand-bg-alt)]"
+                    : "bg-[var(--brand-dark)] text-[var(--brand-bg)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-bg-alt)]"
                 }`}
               >
                 Contact Us

@@ -49,13 +49,24 @@ export default function App() {
   const [selectedBase] = useState(DEFAULT_BASE);
   const location = useLocation();
 
-  // Handle hash navigation on homepage
-  useEffect(() => {
-    if (location.pathname === '/' && location.hash) {
-      // Remove the # from hash
-      const sectionId = location.hash.substring(1);
-      
-      // Small delay to ensure DOM is ready
+  // Handle hash navigation and location.state scrolling on homepage
+useEffect(() => {
+  if (location.pathname === '/') {
+    let sectionId = null;
+
+    // Check if coming from location.state (from back button)
+    if (location.state?.scrollTo) {
+      sectionId = location.state.scrollTo;
+      // Clear the state so it doesn't scroll again on subsequent renders
+      window.history.replaceState({}, document.title);
+    } 
+    // Otherwise check for hash in URL
+    else if (location.hash) {
+      sectionId = location.hash.substring(1); // Remove the #
+    }
+
+    // Scroll to the section if we found one
+    if (sectionId) {
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -63,7 +74,8 @@ export default function App() {
         }
       }, 100);
     }
-  }, [location]);
+  }
+}, [location]);
   
   return (
     <>

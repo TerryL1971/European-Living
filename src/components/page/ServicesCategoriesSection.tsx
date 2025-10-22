@@ -96,7 +96,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
 
   if (loading) {
     return (
-      <section id="services" className="relative bg-white py-20">
+      <section className="relative bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-[var(--brand-dark)]">Loading services...</p>
         </div>
@@ -119,7 +119,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
             Trusted English-Speaking Services Helping Americans Feel at Home in Europe
           </h2>
           <p className="text-lg text-[var(--brand-light)] font-bold opacity-80 max-w-3xl mx-auto">
-            Find personally verified, English-speaking businesses across Europe that understand U.S. military, civilian, and contractors, and their families — offering trusted local support and peace of mind wherever you’re stationed.
+            Find personally verified, English-speaking businesses across Europe that understand U.S. military, civilian, and contractors, and their families — offering trusted local support and peace of mind wherever you're stationed.
           </p>
         </div>
 

@@ -177,7 +177,7 @@ export default function ServiceCategoryPage() {
       <div className="py-12 px-4pt">
         <div className="max-w-7xl mx-auto">
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/", { state: { scrollTo: "services" } })}
             className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium"
           >
             <ArrowLeft className="w-4 h-4" />

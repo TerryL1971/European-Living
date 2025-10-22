@@ -6,7 +6,7 @@ export default function ContactSection() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <section className="bg-[var(--brand-bg)] py-16 px-6 text-[#131312]">
+    <section id="contact" className="bg-[var(--brand-bg)] py-16 px-6 text-[#131312]">
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-3xl font-semibold mb-4 tracking-tight">
           Get in Touch
