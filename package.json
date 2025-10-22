@@ -9,14 +9,11 @@
     "lint": "eslint . --fix",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "vite build && gh-pages -d dist",
-    "migrate": "node --loader ts-node/esm ./studio/scripts/migrateToSanity.ts"
+    "deploy": "vite build && gh-pages -d dist"
   },
   "homepage": "https://european-living.live",
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
-    "@sanity/client": "^7.12.0",
-    "@sanity/image-url": "^1.2.0",
     "@supabase/supabase-js": "^2.75.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
