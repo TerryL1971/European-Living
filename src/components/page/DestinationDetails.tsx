@@ -25,7 +25,7 @@ export default function DestinationDetails() {
         {destination.description}
       </p>
 
-      <div className="flex flex-wrap gap-4 justify-center mt-6">
+      <div className="flex flex-wrap gap-4 justify-center mt-6 pt-16">
         <button className="btn" onClick={() => navigate(-1)}>
           ← Back
         </button>

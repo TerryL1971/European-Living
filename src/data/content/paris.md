@@ -10,6 +10,8 @@ Paris is everything you've heard and more. I've visited multiple times, and each
 
 ---
 
+![Paris Eiffel Tower](/images/paris-eiffel.jpg)
+
 ## 🗼 Start with the Eiffel Tower
 
 Let's be honest — you're going to see the **Eiffel Tower**, so let's do it right.
@@ -31,6 +33,8 @@ Let's be honest — you're going to see the **Eiffel Tower**, so let's do it rig
 **My Take:** The Eiffel Tower is touristy, but it's iconic for a reason. See it at night when it sparkles — that's when the magic really happens.
 
 ---
+
+![Paris Louvre](/images/paris-louvre.jpg)
 
 ## 🎨 The Louvre — More Than the Mona Lisa
 
@@ -65,6 +69,8 @@ The **Louvre** is the world's largest art museum, and you cannot see it all in o
 
 ---
 
+![Paris Notre-Dame](/images/paris-notre-dame.jpg)
+
 ## ⛪ Notre-Dame Cathedral
 
 **Notre-Dame** suffered a devastating fire in 2019 and is currently closed for restoration (reopening planned for December 2024).
@@ -78,6 +84,8 @@ Even if you can't go inside:
 > **Update:** Check current status before visiting, as restoration timelines can change.
 
 ---
+
+![Paris Versailles](/images/paris-versailes.jpg)
 
 ## 🏰 Versailles — The Ultimate Day Trip
 

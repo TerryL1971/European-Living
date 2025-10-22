@@ -4,9 +4,9 @@
 
 ---
 
-Amsterdam is unlike anywhere else in Europe. I've visited several times, and each trip reveals new sides to this fascinating city. Yes, it's famous for its liberal policies, but there's so much more — world-class museums, stunning canal architecture, incredible cycling culture, and some of the friendliest people you'll meet.
-
 ![Amsterdam Canals](/images/amsterdam.jpg)
+
+Amsterdam is unlike anywhere else in Europe. I've visited several times, and each trip reveals new sides to this fascinating city. Yes, it's famous for its liberal policies, but there's so much more — world-class museums, stunning canal architecture, incredible cycling culture, and some of the friendliest people you'll meet.
 
 ---
 
@@ -44,6 +44,8 @@ Amsterdam is the world's most bike-friendly city, and bicycles have **absolute r
 ## 🏛️ The Museum Quarter — World-Class Art
 
 Amsterdam has some of Europe's finest museums, all within walking distance of each other.
+
+![Amsterdam Canals](/images/amsterdam-rijks.jpg)
 
 ### Rijksmuseum ⭐⭐⭐
 
@@ -103,6 +105,8 @@ The **Anne Frank House** is a powerful, sobering experience.
 **My Take:** This is essential Amsterdam. It's not fun, but it's important and moving.
 
 ---
+
+![Amsterdam Canals](/images/amsterdam-canals.jpg)
 
 ## 🌷 Canal Belt — UNESCO World Heritage
 

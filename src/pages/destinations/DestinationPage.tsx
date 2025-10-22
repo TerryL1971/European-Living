@@ -67,7 +67,7 @@ export default function DestinationPage() {
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 pt-16">
         <button
           onClick={() => navigate(-1)}
           className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline mb-6 block font-medium"

@@ -30,15 +30,17 @@ One of my favorite spots in Munich is the **English Garden (Englischer Garten)**
 - Traditional beer gardens under chestnut trees
 - The famous urban surfers at Eisbachwelle
 
+> *"The English Garden has several beer gardens where you can grab a cold beer and a pretzel while sitting under massive chestnut trees. This is pure Munich."*
+
+---
+
 ### The Eisbachwelle — Urban Surfing
 
 **Don't miss this!** The **Eisbachwelle** (river wave) near the park entrance is one of Munich's most unique spectacles. Year-round, you'll find surfers riding a standing wave in the cold river. 
 
 Watching skilled surfers carve through the current while city traffic buzzes nearby is absolutely surreal. Grab a spot on the bridge and watch for 10-15 minutes — it's mesmerizing.
 
-![Munich English Garden](/images/munich-english-garden.jpg)
-
-> *"The English Garden has several beer gardens where you can grab a cold beer and a pretzel while sitting under massive chestnut trees. This is pure Munich."*
+![Munich English Garden](/images/munich-eisbachwelle.jpg)
 
 ---
 
@@ -147,7 +149,7 @@ For science and technology lovers, the **Deutsches Museum** is one of the world'
 
 You could easily spend a full day here exploring. Even if you're not a "museum person," this one is engaging and hands-on.
 
-![Marienplatz Glockenspiel](/images/munich-glockenspiel.jpg)
+![Marienplatz Glockenspiel](/images/munich-glockenspiels.jpg)
 
 ---
 
