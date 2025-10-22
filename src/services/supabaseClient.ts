@@ -24,11 +24,11 @@ export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKe
  * Optional helper function for fetching data with error handling
  */
 export async function fetchTable<T>(table: string): Promise<T[]> {
-  const { data, error } = await supabase.from<T>(table).select('*')
+  const { data, error } = await supabase.from(table).select('*')
   if (error) {
     console.error(`❌ Error fetching ${table}:`, error.message)
     throw error
   }
   if (!data) return []
-  return data
+  return data as T[]
 }
