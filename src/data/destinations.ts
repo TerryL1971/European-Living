@@ -1,3 +1,16 @@
+// src/data/destinations.ts
+export interface Destination {
+  id: string;
+  name: string;
+  shortName?: string;
+  country?: string;
+  description: string;
+  image: string;       // path in public/images/...
+  contentFile?: string; // markdown filename in src/data/content/, e.g. "berlin"
+  lat?: number;
+  lng?: number;
+  travelTips?: string[];
+};
 export const destinations: Destination[] = [
   {
     id: "stuttgart",
