@@ -16,7 +16,7 @@ export const features = [
   },
   {
     id: "accommodations", // Match your .md filename
-    title: "Accommodation Assistance",
+    title: "Accommodations in Germany",
     description: "Find the best hotels, hostels, and apartments near must-see attractions.",
     icon: Hotel,
   },
@@ -34,7 +34,7 @@ export const features = [
   },
   {
     id: "budgeting",
-    title: "Budgeting & Payments",
+    title: "Banking & Payments in Germany",
     description: "Understand banking, currency conversion, and digital payments across Europe.",
     icon: PiggyBank,
   },

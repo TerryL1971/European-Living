@@ -1,17 +1,3 @@
-// src/data/destinations.ts
-export interface Destination {
-  id: string;
-  name: string;
-  shortName?: string;
-  country?: string;
-  description: string;
-  image: string;       // path in public/images/...
-  contentFile?: string; // markdown filename in src/data/content/, e.g. "berlin"
-  lat?: number;
-  lng?: number;
-  travelTips?: string[];
-};
-
 export const destinations: Destination[] = [
   {
     id: "stuttgart",
@@ -22,7 +8,11 @@ export const destinations: Destination[] = [
     image: "/images/stuttgart-schlossplatz.jpg",
     contentFile: "stuttgart",
     lat: 48.7758,
-    lng: 9.1829,  
+    lng: 9.1829,
+    travelTips: [
+      "Park under the LB/BW bank near Hauptbahnhof for easy access to everything.",
+      "Don't miss Stuttgart's Spring Festival (Frühlingsfest) — it rivals Oktoberfest!"
+    ],
   },
   {
     id: "berlin",
@@ -36,7 +26,7 @@ export const destinations: Destination[] = [
     lng: 13.405,
     travelTips: [
       "Buy a day pass for BVG to use buses, trams and U-Bahn.",
-      "Try Döner kebab and currywurst — local favorites."
+      "Book museum tickets online weeks ahead — Pergamon and others sell out fast."
     ],
   },
   {
@@ -49,6 +39,10 @@ export const destinations: Destination[] = [
     contentFile: "munich",
     lat: 48.1351,
     lng: 11.5820,
+    travelTips: [
+      "Visit beer halls and try Weißwurst before noon — it's tradition!",
+      "Book Oktoberfest accommodation months in advance if visiting in fall."
+    ],
   },
   {
     id: "paris",
@@ -60,6 +54,10 @@ export const destinations: Destination[] = [
     contentFile: "paris",
     lat: 48.8566,
     lng: 2.3522,
+    travelTips: [
+      "Book Louvre and Eiffel Tower tickets weeks in advance to skip massive lines.",
+      "Always say 'Bonjour' when entering shops — it's considered rude not to."
+    ],
   },
   {
     id: "amsterdam",
@@ -71,6 +69,25 @@ export const destinations: Destination[] = [
     contentFile: "amsterdam",
     lat: 52.3676,
     lng: 4.9041,
+    travelTips: [
+      "Book Anne Frank House tickets exactly 6 weeks in advance — they sell out in minutes.",
+      "Never walk in bike lanes (red pavement) — bikes have absolute right of way!"
+    ],
+  },
+  {
+    id: "london",
+    name: "London",
+    shortName: "London",
+    country: "United Kingdom",
+    description: "Royal palaces, world-class museums, and 2,000 years of history.",
+    image: "/images/london.jpg",
+    contentFile: "london",
+    lat: 51.5074,
+    lng: -0.1278,
+    travelTips: [
+      "Get an Oyster card or use contactless — it's much cheaper than paper tickets.",
+      "Major museums are FREE (British Museum, National Gallery, V&A) — huge money saver!"
+    ],
   },
   {
     id: "prague",
@@ -82,6 +99,10 @@ export const destinations: Destination[] = [
     contentFile: "prague",
     lat: 50.0755,
     lng: 14.4378,
+    travelTips: [
+      "Beer is cheaper than water — seriously! Enjoy Prague's incredible beer culture.",
+      "Walk Charles Bridge at sunrise to avoid massive crowds."
+    ],
   },
   {
     id: "vienna",
@@ -93,6 +114,10 @@ export const destinations: Destination[] = [
     contentFile: "vienna",
     lat: 48.2082,
     lng: 16.3738,
+    travelTips: [
+      "Book Schönbrunn Palace tickets online to skip long lines.",
+      "Experience a traditional coffee house — sit as long as you want, it's part of the culture."
+    ],
   },
   {
     id: "rome",
@@ -104,6 +129,10 @@ export const destinations: Destination[] = [
     contentFile: "rome",
     lat: 41.9028,
     lng: 12.4964,
+    travelTips: [
+      "Book Colosseum and Vatican tickets weeks ahead — lines can be 3+ hours!",
+      "Cover shoulders and knees for churches — dress code is strictly enforced."
+    ],
   },
   {
     id: "barcelona",
@@ -115,6 +144,10 @@ export const destinations: Destination[] = [
     contentFile: "barcelona",
     lat: 41.3851,
     lng: 2.1734,
+    travelTips: [
+      "Book Sagrada Família tickets weeks in advance — it's Barcelona's #1 attraction.",
+      "Watch for pickpockets on La Rambla and in the Metro — they target tourists."
+    ],
   },
   {
     id: "lisbon",
@@ -126,6 +159,10 @@ export const destinations: Destination[] = [
     contentFile: "lisbon",
     lat: 38.7223,
     lng: -9.1393,
+    travelTips: [
+      "Ride Tram 28 early morning to avoid tourist crowds.",
+      "Wear very comfortable shoes — Lisbon is built on seven hills with steep cobblestones!"
+    ],
   },
   {
     id: "budapest",
@@ -137,5 +174,9 @@ export const destinations: Destination[] = [
     contentFile: "budapest",
     lat: 47.4979,
     lng: 19.0402,
+    travelTips: [
+      "Visit Széchenyi thermal baths — it's an essential Budapest experience!",
+      "Explore ruin bars in the Jewish Quarter — unique nightlife you won't find elsewhere."
+    ],
   },
 ];
