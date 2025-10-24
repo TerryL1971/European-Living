@@ -10,38 +10,38 @@ import {
 export const features = [
   {
     id: "transportation",
-    title: "Transportation Made Simple",
-    description: "Step-by-step guides for trains, buses, flights, and car rentals across Europe.",
+    title: "Transportation in Germany", // ← CHANGE THIS
+    description: "Navigate trains, buses, and driving in Germany with confidence.",
     icon: Bus,
   },
   {
-    id: "accommodations", // Match your .md filename
-    title: "Accommodations in Germany",
-    description: "Find the best hotels, hostels, and apartments near must-see attractions.",
+    id: "accommodations",
+    title: "Finding Housing in Germany", // ← CHANGE THIS
+    description: "Find apartments, understand rental contracts, and navigate German housing.",
     icon: Hotel,
   },
   {
     id: "services",
-    title: "English-Speaking Services",
-    description: "Directory of English-speaking doctors, lawyers, and businesses in major cities.",
+    title: "English-Speaking Services in Germany", // ← CHANGE THIS
+    description: "Verified English-speaking doctors, mechanics, lawyers, and businesses.",
     icon: Handshake,
   },
   {
-    id: "phrases", // This links to phrases.md
+    id: "phrases",
     title: "Essential German Phrases",
-    description: "Learn key German phrases with pronunciation to make your travels smoother.",
+    description: "Learn key German phrases with pronunciation to navigate daily life.",
     icon: Languages,
   },
   {
     id: "budgeting",
-    title: "Banking & Payments in Germany",
-    description: "Understand banking, currency conversion, and digital payments across Europe.",
+    title: "Banking & Money in Germany",
+    description: "Open German bank accounts, understand payments, and manage your finances.",
     icon: PiggyBank,
   },
   {
     id: "etiquette",
-    title: "Cultural Etiquette",
-    description: "Do's and don'ts when traveling or living in Europe — blend in like a local.",
+    title: "German Cultural Etiquette", // ← CHANGE THIS
+    description: "Do's and don'ts for living in Germany — blend in like a local.",
     icon: Plane,
   },
 ];
