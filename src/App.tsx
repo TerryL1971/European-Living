@@ -103,7 +103,8 @@ useEffect(() => {
         <Route path="/destinations/:id" element={<DestinationPage />} />
 
         {/* ✅ Category Page (e.g. /services/automotive?base=ramstein) */}
-        <Route path="/services/:categoryId" element={<ServiceCategoryPage />} />
+        <Route path="/services/:category" element={<ServiceCategoryPage />} />
+        <Route path="/services/:category/:subcategory" element={<ServiceCategoryPage />} />
 
         {/* ✅ Business Detail Page (e.g. /businesses/ucg-ramstein) - FIXED PLURAL */}
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
