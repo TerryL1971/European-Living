@@ -119,7 +119,7 @@ export default function DestinationPage() {
                     Find Hotels
                   </a>
                   <a
-                    href="mailto:info@european-living.com?subject=Help with Trip Planning"
+                    href="mailto:european.living.live@gmail.com?subject=Help with Trip Planning"
                     className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2"
                   >
                     <Mail className="w-5 h-5" />

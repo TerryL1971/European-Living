@@ -183,7 +183,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
                 List Your Business
               </Link>
               <a
-                href="mailto:info@european-living.live?subject=Business Listing Inquiry"
+                href="mailto:european.living.live@gmail.com?subject=Business Listing Inquiry"
                 className="inline-block bg-white text-[var(--brand-dark)] px-8 py-3 rounded-lg hover:bg-gray-100 transition font-semibold"
               >
                 Email Us
