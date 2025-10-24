@@ -62,7 +62,7 @@ export default function ArticlePage() {
   const Icon = article.icon;
 
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4 sm:px-6 pt-16">
       <div className="max-w-7xl mx-auto">
         <Link
           to="/"
