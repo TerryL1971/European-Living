@@ -20,7 +20,7 @@ export default function Header() {
     { label: "Destinations", id: "destinations" },
     { label: "Travel Tips", id: "tips" },
     { label: "Travel Phrases", id: "phrases" },
-    { label: "Services", id: "services" },
+    { label: "English Services", id: "services" },
   ];
 
   // Update active menu item based on URL/hash
