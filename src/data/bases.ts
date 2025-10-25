@@ -20,15 +20,15 @@ export const BASES: BaseInfo[] = [
   },
   {
     id: "ramstein",
-    name: "Ramstein Air Base",
-    fullName: "Ramstein Air Base",
+    name: "Ramstein Air Force Base",
+    fullName: "Ramstein Air Force Base",
     location: "Ramstein-Miesenbach, Rhineland-Palatinate",
     region: "Southwest Germany",
     nearbyTowns: ["Kaiserslautern", "Landstuhl", "Ramstein-Miesenbach"],
   },
   {
     id: "kaiserslautern",
-    name: "Kaiserslautern",
+    name: "Kaiserslautern Military Community (KMC)",
     fullName: "Kaiserslautern Military Community",
     location: "Kaiserslautern, Rhineland-Palatinate",
     region: "Southwest Germany",
@@ -36,7 +36,7 @@ export const BASES: BaseInfo[] = [
   },
   {
     id: "grafenwoehr",
-    name: "Grafenwöhr",
+    name: "USAG Grafenwöhr",
     fullName: "USAG Bavaria - Grafenwöhr",
     location: "Grafenwöhr, Bavaria",
     region: "Southeast Germany",
@@ -44,7 +44,7 @@ export const BASES: BaseInfo[] = [
   },
   {
     id: "spangdahlem",
-    name: "Spangdahlem Air Base",
+    name: "Spangdahlem Air Force Base",
     fullName: "Spangdahlem Air Base",
     location: "Spangdahlem, Rhineland-Palatinate",
     region: "Western Germany",
