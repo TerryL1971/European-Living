@@ -49,13 +49,13 @@ const subcategoryTitles: Record<string, string> = {
 
 // Define subcategory order for each category
 const subcategoryOrder: Record<string, string[]> = {
-  automotive: ["car-dealerships", "inspection-stations", "mechanics", "auto-parts"],
+  automotive: ["car-dealerships", "mechanics", "inspection-stations", "auto-parts"], // ← CHANGED ORDER
   healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies"],
   restaurants: ["american-food", "international", "cafes"],
 };
 
 export default function ServiceCategoryPage() {
-  const { categoryId } = useParams<{ categoryId: string }>();
+  const { category: categoryId } = useParams<{ category: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const baseId = searchParams.get("base") || "stuttgart";
   const navigate = useNavigate();
@@ -67,23 +67,38 @@ export default function ServiceCategoryPage() {
   };
 
   useEffect(() => {
-    async function loadData() {
-      if (!categoryId) return;
-
-      try {
-        const allBusinesses = await getBusinessesByBase(baseId);
-        
-        // Filter businesses by category
-        const filtered = allBusinesses.filter((b: Business) => b.category === categoryId);
-        setCategoryBusinesses(filtered);
-      } catch (error) {
-        console.error("Error loading businesses:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function loadData() {
+    if (!categoryId) {
+      console.log('❌ No categoryId found');
+      return;
     }
-    loadData();
-  }, [categoryId, baseId]);
+
+    console.log('🔍 Starting loadData for:', { categoryId, baseId });
+    console.log('🔍 Loading state:', loading);
+
+    try {
+      console.log('📡 Calling getBusinessesByBase...');
+      const allBusinesses = await getBusinessesByBase(baseId);
+      console.log('✅ Fetched businesses:', allBusinesses.length, allBusinesses);
+      
+      // Filter businesses by category
+      const filtered = allBusinesses.filter((b: Business) => b.category === categoryId);
+      console.log('✅ Filtered for category "' + categoryId + '":', filtered.length, filtered);
+      
+      console.log('📝 Setting categoryBusinesses...');
+      setCategoryBusinesses(filtered);
+      console.log('✅ categoryBusinesses set');
+    } catch (error) {
+      console.error("❌ Error loading businesses:", error);
+    } finally {
+      console.log('🏁 Setting loading to false');
+      setLoading(false);
+    }
+  }
+  
+  console.log('🚀 useEffect triggered - calling loadData()');
+  loadData();
+}, [categoryId, baseId, loading]);
 
   if (loading) {
     return (

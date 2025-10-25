@@ -67,12 +67,13 @@ useEffect(() => {
 
     // Scroll to the section if we found one
     if (sectionId) {
+      // Add a longer delay to ensure section is rendered
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 100);
+      }, 300); // Increased from 100 to 300ms
     }
   }
 }, [location]);
