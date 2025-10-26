@@ -12,9 +12,9 @@ London is massive, diverse, and endlessly fascinating. I've visited countless ti
 
 ## 👑 The Royal & Historic Must-Sees
 
-![London Tower](/images/london-tower.jpg)
-
 ### Tower of London ⭐⭐⭐
+
+![London Tower](/images/london-tower.jpg)
 
 **1,000-year-old fortress** — home to the Crown Jewels and incredible history.
 
@@ -89,6 +89,8 @@ London is massive, diverse, and endlessly fascinating. I've visited countless ti
 London's major museums are **free** (donations requested). This is incredible value!
 
 ### British Museum ⭐⭐⭐
+
+![London British Museum](/images/london-british-museum.jpg)
 
 **One of the world's greatest museums** — human history spanning 2 million years.
 
