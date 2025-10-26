@@ -10,9 +10,9 @@ Paris is everything you've heard and more. I've visited multiple times, and each
 
 ---
 
-![Paris Eiffel Tower](/images/paris-eiffel.jpg)
-
 ## 🗼 Start with the Eiffel Tower
+
+![Paris Eiffel Tower](/images/paris-eiffel.jpg)
 
 Let's be honest — you're going to see the **Eiffel Tower**, so let's do it right.
 

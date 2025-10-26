@@ -8,8 +8,6 @@
 
 Budapest is stunning, affordable, and criminally underrated. I've visited several times, and it gets better with each trip. This city has thermal baths, stunning architecture, incredible nightlife, cheap beer, and some of Europe's best value for money.
 
-![Budapest Parliament](/images/budapest-parliament.jpg)
-
 ---
 
 ## 🏛️ The Two Sides — Buda & Pest
@@ -20,11 +18,11 @@ Budapest is actually **two cities merged in 1873** — Buda (hilly, historic) an
 
 ---
 
-![Budapest Castle](/images/buda-castle.jpg)
-
 ## 🏰 Buda Side — Castle District
 
 ### Buda Castle ⭐⭐
+
+![Budapest Castle](/images/buda-castle.jpg)
 
 **The castle complex** dominates the Buda hill skyline.
 
@@ -42,6 +40,8 @@ Budapest is actually **two cities merged in 1873** — Buda (hilly, historic) an
 > **💡 Pro Tip:** The castle itself is nice but not mind-blowing. The VIEWS are what make it worth the climb!
 
 ### Fisherman's Bastion ⭐⭐⭐
+
+![Budapest Fisherman's Bastion](/images/budapest-fishermans-bastion.jpg)
 
 **My favorite spot in Budapest** — fairy-tale towers with incredible views.
 
@@ -78,6 +78,8 @@ Budapest is actually **two cities merged in 1873** — Buda (hilly, historic) an
 
 ### Hungarian Parliament Building ⭐⭐⭐
 
+![Budapest Parliament](/images/budapest-parliament.jpg)
+
 **The most iconic building in Budapest** — and one of Europe's most beautiful parliament buildings.
 
 **What Makes It Special:**
@@ -105,13 +107,14 @@ Budapest is actually **two cities merged in 1873** — Buda (hilly, historic) an
 - River cruises pass right by it
 
 ---
-![Széchenyi Baths](/images/széchenyi-baths.jpg)
 
 ## ♨️ Thermal Baths — Budapest's Soul
 
 Budapest sits on thermal springs — over 100 hot springs feed the city's famous baths.
 
 ### Széchenyi Baths ⭐⭐⭐
+
+![Budapest Széchenyi Baths](/images/budapest-széchenyi-baths.jpg)
 
 **The most famous** — huge outdoor pools in City Park.
 
@@ -138,6 +141,8 @@ Budapest sits on thermal springs — over 100 hot springs feed the city's famous
 
 ### Gellért Baths ⭐⭐
 
+![Budapest Gellért Baths](/images/budapest-gellert-baths.jpg)
+
 **Most beautiful** — Art Nouveau masterpiece.
 
 **Why Visit:**
@@ -153,6 +158,8 @@ Budapest sits on thermal springs — over 100 hot springs feed the city's famous
 - More tourists, fewer locals
 
 ### Rudas Baths ⭐
+
+![Budapest Rudas Baths ](/images/budapest-rudas-baths.jpg)
 
 **Historic Turkish bath** with rooftop pool.
 

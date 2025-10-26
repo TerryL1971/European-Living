@@ -55,7 +55,7 @@ London is massive, diverse, and endlessly fascinating. I've visited countless ti
 
 ### Westminster Abbey ⭐⭐
 
-![London Westminster Abbbey](/images/london-weetminster-abbey.jpg)
+![London Westminster Abbbey](/images/london-westminster-abbey.jpg)
 
 **Coronation church** since 1066 — incredible history and architecture.
 

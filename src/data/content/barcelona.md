@@ -6,7 +6,7 @@
 
 Barcelona is unlike anywhere else in Spain. I've visited several times, and each trip reveals new layers to this fascinating city. It's Catalan first, Spanish second. It has beaches AND mountains. It's home to Gaudí's wild architecture, incredible food, and a fierce independent spirit.
 
-![Barcelona Sagrada Familia](/images/barcelona.jpg)
+![Barcelona City](/images/barcelona.jpg)
 
 ---
 
@@ -15,6 +15,8 @@ Barcelona is unlike anywhere else in Spain. I've visited several times, and each
 Antoni Gaudí's architecture defines Barcelona. You cannot visit without seeing his work.
 
 ### Sagrada Família ⭐⭐⭐
+
+![Barcelona Sagrada Familia](/images/barcelona-sagrada.jpg)
 
 **Gaudí's unfinished masterpiece** — and Barcelona's most iconic sight.
 
@@ -48,6 +50,8 @@ Antoni Gaudí's architecture defines Barcelona. You cannot visit without seeing 
 
 ### Park Güell ⭐⭐
 
+![Barcelona Park Güell](/images/barcelona-park-güell.jpg)
+
 **Gaudí's colorful park** overlooking the city.
 
 **What's Here:**
@@ -68,6 +72,8 @@ Antoni Gaudí's architecture defines Barcelona. You cannot visit without seeing 
 > **💰 Free Areas:** Much of park is free to wander
 
 ### Casa Batlló & Casa Milà (La Pedrera) ⭐
+
+![Barcelona Casa Milà](/images/barcelona-casa-mila.jpg)
 
 **Two Gaudí houses** on Passeig de Gràcia.
 
@@ -92,6 +98,8 @@ Antoni Gaudí's architecture defines Barcelona. You cannot visit without seeing 
 Barcelona has actual beaches right in the city!
 
 ### Barceloneta Beach
+
+![Barcelona Barceloneta Beach](/images/barcelona-barceloneta-beach.jpg)
 
 **Main City Beach:**
 - Sandy, wide, clean
@@ -123,6 +131,8 @@ Barcelona has actual beaches right in the city!
 
 ### La Rambla
 
+![Barcelona La Rambla & Gothic Quarter](/images/barcelona-la-rambla.jpg)
+
 **Barcelona's most famous street** — a tree-lined pedestrian boulevard.
 
 **What's Here:**
@@ -141,6 +151,8 @@ Barcelona has actual beaches right in the city!
 
 ### La Boqueria Market ⭐⭐
 
+![Barcelona La Boqueria Market](/images/barcelona-la-boqueria-market.jpg)
+
 **Famous food market** — vibrant and Instagram-worthy.
 
 **What to See:**
@@ -157,6 +169,8 @@ Barcelona has actual beaches right in the city!
 - Great for lunch
 
 ### Gothic Quarter (Barri Gòtic) ⭐⭐
+
+![Barcelona Gothic Quarter (Barri Gòtic)](/images/barcelona-gothic-quarter.jpg)
 
 **Medieval heart of Barcelona** — narrow streets, history, atmosphere.
 

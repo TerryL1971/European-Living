@@ -6,11 +6,11 @@
 
 Prague is straight out of a fairy tale. I've visited multiple times, and the magic never fades. This city survived both World Wars relatively intact, leaving you with pristine medieval architecture, stunning castles, Gothic churches, and cobblestone streets that transport you back centuries.
 
-![Prague Old Town](/images/prague.jpg)
-
 ---
 
 ## 🏰 Prague Castle — Start at the Top
+
+![Prague Castle](/images/prague-castle.jpg)
 
 **Prague Castle** is one of the largest ancient castle complexes in the world and the perfect place to start your visit.
 
@@ -54,6 +54,8 @@ Prague is straight out of a fairy tale. I've visited multiple times, and the mag
 
 ## 🕰️ Old Town Square (Staroměstské náměstí)
 
+![Prague Old Town](/images/prague-old-town-square.jpg)
+
 The **Old Town Square** is Prague's heart and one of Europe's most beautiful squares.
 
 ### What to See:
@@ -87,6 +89,8 @@ The **Old Town Square** is Prague's heart and one of Europe's most beautiful squ
 ---
 
 ## 🌉 Charles Bridge — Prague's Icon
+
+![Prague Charles Bridge](/images/prague-charles-bridge.jpg)
 
 **Charles Bridge** is the most famous bridge in Prague and an absolute must-see.
 

@@ -6,11 +6,11 @@
 
 Vienna is elegance personified. I've visited several times, and the city's imperial grandeur never fails to impress. This is a city where Mozart and Beethoven composed, where emperors ruled vast empires, where coffee house culture is UNESCO heritage, and where classical music still fills the air every night.
 
-![Vienna Imperial](/images/vienna.jpg)
-
 ---
 
 ## 🏰 Start with the Palaces
+
+![Vienna Imperial](/images/vienna.jpg)
 
 Vienna has some of Europe's most magnificent palaces, and you absolutely must visit at least one.
 
@@ -44,6 +44,8 @@ Vienna has some of Europe's most magnificent palaces, and you absolutely must vi
 
 ### Hofburg Palace
 
+![Vienna Imperial](/images/vienna-hofburg-palace.jpg)
+
 The **Hofburg** was the Habsburgs' winter residence and now houses multiple museums.
 
 **What's Inside:**
@@ -58,6 +60,8 @@ The **Hofburg** was the Habsburgs' winter residence and now houses multiple muse
 > **🐴 Horse Show:** Book Spanish Riding School tickets months ahead
 
 ### Belvedere Palace
+
+![Vienna Imperial](/images/vienna-belvedere-palace.jpg)vienna-belvedere-palce
 
 **Two baroque palaces** (Upper and Lower) with beautiful gardens between them.
 

@@ -6,13 +6,13 @@
 
 Rome is overwhelming in the best possible way. I've visited multiple times, and there's always more to discover. This is a living museum where ancient ruins sit next to medieval churches next to Renaissance palaces next to modern life. History is literally everywhere you turn.
 
-![Rome Colosseum](/images/rome.jpg)
-
 ---
 
 ## 🏛️ The Ancient Rome Must-Sees
 
 ### The Colosseum ⭐⭐⭐
+
+![Rome Colosseum](/images/rome.jpg)
 
 The **Colosseum** is Rome's most iconic monument and absolutely lives up to the hype.
 
@@ -59,6 +59,8 @@ The **Colosseum** is Rome's most iconic monument and absolutely lives up to the 
 
 ### Pantheon ⭐⭐⭐
 
+![Rome Pantheon](/images/rome-pantheon.jpg)
+
 The **Pantheon** is my favorite ancient building in Rome — and it's **FREE**!
 
 **Why It's Amazing:**
@@ -78,9 +80,13 @@ The **Pantheon** is my favorite ancient building in Rome — and it's **FREE**!
 
 ## ⛪ Vatican City — A Country Within a City
 
+![Rome Vatican City](/images/rome-vatican-city.jpg)
+
 **Vatican City** is the world's smallest country and home to some of humanity's greatest art.
 
 ### St. Peter's Basilica ⭐⭐⭐
+
+![Rome Vatican City](/images/rome-st-peters-square.jpg)
 
 **The largest church in the world** and absolutely breathtaking.
 
@@ -103,6 +109,8 @@ The **Pantheon** is my favorite ancient building in Rome — and it's **FREE**!
 > **📸 Photos Allowed:** Except for Pietà
 
 ### Vatican Museums & Sistine Chapel ⭐⭐⭐
+
+![Rome Sistine Chapel](/images/rome-sistine-chapel.jpg)
 
 The **Vatican Museums** contain one of the world's greatest art collections — and the Sistine Chapel.
 
@@ -144,6 +152,8 @@ The **Vatican Museums** contain one of the world's greatest art collections — 
 Rome's piazzas are works of art themselves:
 
 ### Trevi Fountain ⭐⭐⭐
+
+![Rome Trevi Fountain](/images/rome-trevi-fountain.jpg)
 
 **The most famous fountain in the world** — and it's spectacular.
 

@@ -1,7 +1,10 @@
 // src/services/businessServices.ts
 import { supabase } from "./supabaseClient";
 
-// TypeScript interfaces (camelCase for frontend)
+// =======================
+// Interfaces
+// =======================
+
 export interface Business {
   id: string;
   name: string;
@@ -27,7 +30,7 @@ export interface Business {
   googleMapsUrl?: string;
   createdAt?: string;
   updatedAt?: string;
-  city?: string; // ✅ added to fix the "city" type errors
+  city?: string;
 }
 
 export interface Review {
@@ -39,7 +42,7 @@ export interface Review {
   createdAt?: string;
 }
 
-// Database row type (snake_case from Supabase)
+// Database row type (snake_case)
 interface BusinessRow {
   id: string;
   name: string;
@@ -65,7 +68,7 @@ interface BusinessRow {
   google_maps_url?: string;
   created_at?: string;
   updated_at?: string;
-  city?: string; // ✅ match DB schema if you store it there
+  city?: string;
 }
 
 interface ReviewRow {
@@ -77,10 +80,21 @@ interface ReviewRow {
   created_at?: string;
 }
 
-// -------------------- Mappers --------------------
+// =======================
+// Mappers
+// =======================
 
-// Helper: Convert database row to Business object
 function mapBusinessRow(row: BusinessRow): Business {
+  let imageUrl = row.image_url ?? "";
+
+  // ✅ Automatically resolve Supabase public URL if not absolute
+  if (imageUrl && !imageUrl.startsWith("http")) {
+    const { data: publicUrlData } = supabase.storage
+      .from("images") // ⚠️ change if your bucket name is different
+      .getPublicUrl(imageUrl);
+    imageUrl = publicUrlData?.publicUrl || imageUrl;
+  }
+
   return {
     id: row.id,
     name: row.name,
@@ -98,7 +112,7 @@ function mapBusinessRow(row: BusinessRow): Business {
     featuredTier: row.featured_tier as Business["featuredTier"],
     baseDistance: row.base_distance,
     notes: row.notes,
-    imageUrl: row.image_url,
+    imageUrl, // ✅ always usable full URL
     status: row.status as Business["status"],
     basesServed: row.bases_served,
     latitude: row.latitude,
@@ -106,11 +120,10 @@ function mapBusinessRow(row: BusinessRow): Business {
     googleMapsUrl: row.google_maps_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
-    city: row.city ?? "", // ✅ fallback if missing
+    city: row.city ?? "",
   };
 }
 
-// Helper: Convert database row to Review object
 function mapReviewRow(row: ReviewRow): Review {
   return {
     id: row.id,
@@ -122,11 +135,11 @@ function mapReviewRow(row: ReviewRow): Review {
   };
 }
 
-// -------------------- Queries --------------------
+// =======================
+// Queries
+// =======================
 
-/**
- * Get all active businesses, ordered by name
- */
+/** Get all active businesses, ordered by name */
 export async function getBusinesses(): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
@@ -142,9 +155,7 @@ export async function getBusinesses(): Promise<Business[]> {
   return (data as BusinessRow[]).map(mapBusinessRow);
 }
 
-/**
- * Get featured businesses only
- */
+/** Get all featured businesses */
 export async function getFeaturedBusinesses(): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
@@ -161,9 +172,7 @@ export async function getFeaturedBusinesses(): Promise<Business[]> {
   return (data as BusinessRow[]).map(mapBusinessRow);
 }
 
-/**
- * Get a single business by ID (can be any status)
- */
+/** Get a single business by ID */
 export async function getBusinessById(id: string): Promise<Business | null> {
   const { data, error } = await supabase
     .from("businesses")
@@ -179,9 +188,7 @@ export async function getBusinessById(id: string): Promise<Business | null> {
   return data ? mapBusinessRow(data as BusinessRow) : null;
 }
 
-/**
- * Get all reviews for a specific business
- */
+/** Get all reviews for a specific business */
 export async function getReviewsByBusiness(businessId: string): Promise<Review[]> {
   const { data, error } = await supabase
     .from("reviews")
@@ -194,13 +201,10 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
     throw error;
   }
 
-  // ✅ Clean transformation to camelCase
   return (data as ReviewRow[]).map(mapReviewRow);
 }
 
-/**
- * Get businesses by category (active only)
- */
+/** Get businesses by category */
 export async function getBusinessesByCategory(category: string): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
@@ -217,9 +221,7 @@ export async function getBusinessesByCategory(category: string): Promise<Busines
   return (data as BusinessRow[]).map(mapBusinessRow);
 }
 
-/**
- * Get businesses that serve a specific base
- */
+/** Get businesses that serve a specific base */
 export async function getBusinessesByBase(baseId: string): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")
@@ -236,9 +238,7 @@ export async function getBusinessesByBase(baseId: string): Promise<Business[]> {
   return (data as BusinessRow[]).map(mapBusinessRow);
 }
 
-/**
- * Get featured businesses for a specific base
- */
+/** Get featured businesses that serve a specific base */
 export async function getFeaturedBusinessesByBase(baseId: string): Promise<Business[]> {
   const { data, error } = await supabase
     .from("businesses")

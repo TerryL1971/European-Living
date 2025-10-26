@@ -10,9 +10,11 @@ Lisbon has become one of Europe's hottest destinations, and after multiple visit
 
 ---
 
-![Lisbon Tram](/images/lisbon-tram.jpg)
+
 
 ## 🚋 Tram 28 — Start Here
+
+![Lisbon Tram](/images/lisbon-tram.jpg)
 
 **Tram 28** is Lisbon's most famous attraction and the perfect introduction to the city.
 
@@ -43,11 +45,11 @@ Lisbon has become one of Europe's hottest destinations, and after multiple visit
 
 ---
 
-![Lisbon City](/images/lisbon-city.jpg)
-
 ## 🏰 Must-See Neighborhoods & Sites
 
 ### Alfama — The Soul of Lisbon ⭐⭐⭐
+
+![Lisbon City](/images/lisbon-city.jpg)
 
 **The oldest district** — narrow medieval streets, fado music, authentic Lisbon.
 
@@ -105,13 +107,13 @@ Lisbon has become one of Europe's hottest destinations, and after multiple visit
 
 ---
 
-![Lisbon Belém](/images/lisbon-belem.jpg)
-
 ## 🏛️ Belém — Maritime History
 
 **Belém** is 6km west of center — Portugal's Age of Discovery monuments.
 
 ### Torre de Belém ⭐⭐
+
+![Lisbon Belém](/images/lisbon-belem.jpg)
 
 **Iconic tower** from 1519.
 
@@ -123,6 +125,8 @@ Lisbon has become one of Europe's hottest destinations, and after multiple visit
 - Can climb inside
 
 ### Jerónimos Monastery ⭐⭐⭐
+
+![Lisbon Jerónimos Monastery](/images/lisbon-jeronimos-monastery.jpg)
 
 **Stunning monastery** — Portugal's most impressive monument.
 
@@ -136,6 +140,8 @@ Lisbon has become one of Europe's hottest destinations, and after multiple visit
 > **🎟️ Buy Combined Ticket:** Torre + Monastery + more (€12, saves money)
 
 ### Pastéis de Belém ⭐⭐⭐
+
+![Lisbon Pastéis de Belém](/images/lisbon-pasteis-de-belem.jpg)
 
 **THE place** for Portugal's famous custard tarts.
 

@@ -93,7 +93,7 @@ export const destinations: Destination[] = [
     shortName: "London",
     country: "United Kingdom",
     description: "Royal palaces, world-class museums, and 2,000 years of history.",
-    image: "/images/london.jpg",
+    image: "/images/london-city.jpg",
     contentFile: "london",
     lat: 51.5074,
     lng: -0.1278,
