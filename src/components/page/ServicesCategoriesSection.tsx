@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBusinessesByBase, Business } from "../../services/businessServices";
+import { getBusinesses, Business } from "../../services/businessServices";
 
 const serviceCategories = [
   {
@@ -76,20 +76,20 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const businesses = await getBusinessesByBase(selectedBase);
-        console.log("✅ Businesses loaded:", businesses);
-        console.log("✅ Business count:", businesses.length);
-        setAllBusinesses(businesses);
-      } catch (error) {
-        console.error("❌ Error loading businesses:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function loadData() {
+    try {
+      const businesses = await getBusinesses(); // ← Changed from getBusinessesByBase
+      console.log("✅ All businesses loaded:", businesses);
+      console.log("✅ Total business count:", businesses.length);
+      setAllBusinesses(businesses);
+    } catch (error) {
+      console.error("❌ Error loading businesses:", error);
+    } finally {
+      setLoading(false);
     }
-    loadData();
-  }, [selectedBase]);
+  }
+  loadData();
+}, []); // ← Remove selectedBase dependency since we're loading ALL businesses
 
   const getBusinessCount = (categoryId: string) =>
     allBusinesses.filter((b) => b.category === categoryId).length;

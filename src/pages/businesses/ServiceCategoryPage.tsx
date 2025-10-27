@@ -1,7 +1,7 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
 import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getBusinessesByBase, Business } from "../../services/businessServices";
+import { getBusinesses, Business } from "../../services/businessServices";
 import { ArrowLeft, MapPin } from "lucide-react";
 import { getBaseById, BASES } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
@@ -74,31 +74,29 @@ export default function ServiceCategoryPage() {
     }
 
     console.log('🔍 Starting loadData for:', { categoryId, baseId });
-    console.log('🔍 Loading state:', loading);
 
     try {
-      console.log('📡 Calling getBusinessesByBase...');
-      const allBusinesses = await getBusinessesByBase(baseId);
-      console.log('✅ Fetched businesses:', allBusinesses.length, allBusinesses);
+      console.log('📡 Calling getBusinesses...');
+      const allBusinesses = await getBusinesses(); // ← Changed from getBusinessesByBase
+      console.log('✅ Fetched all businesses:', allBusinesses.length);
       
-      // Filter businesses by category
-      const filtered = allBusinesses.filter((b: Business) => b.category === categoryId);
-      console.log('✅ Filtered for category "' + categoryId + '":', filtered.length, filtered);
-      
-      console.log('📝 Setting categoryBusinesses...');
+      // Filter by category AND base
+      const filtered = allBusinesses.filter((b: Business) => 
+        b.category === categoryId && 
+        b.basesServed?.includes(baseId) // ← Added base filter
+      );
+      console.log('✅ Filtered for category "' + categoryId + '" and base "' + baseId + '":', filtered.length);
+    
       setCategoryBusinesses(filtered);
-      console.log('✅ categoryBusinesses set');
     } catch (error) {
       console.error("❌ Error loading businesses:", error);
     } finally {
-      console.log('🏁 Setting loading to false');
       setLoading(false);
     }
   }
   
-  console.log('🚀 useEffect triggered - calling loadData()');
   loadData();
-}, [categoryId, baseId, loading]);
+}, [categoryId, baseId]); // ← Removed 'loading' from dependencies
 
   if (loading) {
     return (

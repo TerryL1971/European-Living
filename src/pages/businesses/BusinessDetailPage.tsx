@@ -9,6 +9,7 @@ import {
 } from "../../services/businessServices";
 import { Star, MapPin, Phone, Mail, Globe, ArrowLeft, Navigation } from "lucide-react";
 import MapView from "../../components/MapView";
+import ReviewForm from "../../components/ReviewForm";
 
 export default function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +38,16 @@ export default function BusinessDetailPage() {
 
     loadData();
   }, [id]);
+
+  const refreshReviews = async () => {
+    if (!id) return;
+    try {
+      const reviewData = await getReviewsByBusiness(id);
+      setReviews(reviewData);
+    } catch (error) {
+      console.error("Error refreshing reviews:", error);
+    }
+  };
 
   if (loading) {
     return (
@@ -121,7 +132,7 @@ export default function BusinessDetailPage() {
                     className="absolute bottom-4 right-4 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-2 rounded-lg shadow-lg hover:bg-yellow-400 transition flex items-center gap-2 text-sm font-semibold z-[1000]"
                   >
                     <Navigation className="w-4 h-4" />
-                    Directions
+                    Get Directions
                   </a>
                 </div>
               )}
@@ -234,6 +245,11 @@ export default function BusinessDetailPage() {
               ) : (
                 <p className="text-white opacity-80">No reviews yet. Be the first to review!</p>
               )}
+
+              {/* Review Form */}
+              <div className="mt-8">
+                <ReviewForm businessId={business.id} onSuccess={refreshReviews} />
+              </div>
             </div>
           </div>
         ) : (
@@ -418,6 +434,11 @@ export default function BusinessDetailPage() {
                 ) : (
                   <p className="text-gray-600">No reviews yet. Be the first to review!</p>
                 )}
+
+                {/* Review Form */}
+                <div className="mt-8">
+                  <ReviewForm businessId={business.id} onSuccess={refreshReviews} />
+                </div>
               </div>
             </div>
           </div>
