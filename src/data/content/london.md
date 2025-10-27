@@ -304,6 +304,8 @@ Fancy tea service with sandwiches, scones with clotted cream and jam, and tiny c
 
 **Borough Market** ⭐⭐⭐
 
+![London Borough Market](/images/london-borough-market.jpg)
+
 The best food market in London. Artisanal cheese, fresh bread, international street food, wine, pastries, prepared foods. It's expensive but the quality is incredible.
 
 **When:** Thursday-Saturday (busiest on Saturday)  
