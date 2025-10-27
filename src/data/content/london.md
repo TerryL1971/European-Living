@@ -332,6 +332,8 @@ Bombay-style café chain that's somehow both cool and consistently excellent. Mu
 
 **Chinatown**
 
+![London China Town](/images/london-chinatown.jpg)
+
 Gerrard Street area. Authentic Chinese food, bubble tea everywhere, the energy of Hong Kong packed into a few streets.
 
 **Get:** Dim sum at Royal China or dim sum at Dumplings Legend, fresh soup dumplings at Din Tai Fung.
