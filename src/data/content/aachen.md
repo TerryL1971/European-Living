@@ -175,7 +175,7 @@ A neoclassical pavilion in the city center where you can **drink the thermal wat
 
 ## 🎓 RWTH Aachen University — The Student Energy
 
-![RWTH Aachen University](/images/aachen-elisenbrunnen.jpg)
+![RWTH Aachen University](/images/aachen-rwth-university.jpg)
 
 ![RWTH Aachen University](/images/RWTH Aachen University.jpg)aachen-rwth-university
 
@@ -203,7 +203,7 @@ Aachen is home to **RWTH Aachen University**, one of Germany's top technical uni
 
 ## 🍰 Aachener Printen — The Local Specialty
 
-![Aachener Printen](/images/aachener-printen.jpg)
+![Aachener Printen](/images/aachen-printen.jpg)
 
 **Aachener Printen** are Aachen's most famous food export. Think gingerbread, but **harder, spicier, and better**.
 
@@ -232,6 +232,8 @@ A type of Lebkuchen (gingerbread) made with honey, spices (cinnamon, anise, clov
 ---
 
 ## 🌍 Tri-Border Point (Dreiländereck) ⭐
+
+![Aachen Tri-Border Point (Dreiländereck)](/images/aachen-dreilaendereck.jpg)
 
 Where **Germany, Belgium, and the Netherlands meet**. About 6km from Aachen's center.
 
