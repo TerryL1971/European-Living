@@ -14,6 +14,8 @@ import ArticlePage from "./pages/articles/ArticlePage";
 import DestinationPage from "./pages/destinations/DestinationPage";
 import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
 import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
+import ServicesDirectory from "./components/ServicesDirectory";
+import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
 import { DEFAULT_BASE } from "./data/bases";
 
 // ✅ Reading Progress Bar Component
@@ -50,33 +52,33 @@ export default function App() {
   const location = useLocation();
 
   // Handle hash navigation and location.state scrolling on homepage
-useEffect(() => {
-  if (location.pathname === '/') {
-    let sectionId = null;
+  useEffect(() => {
+    if (location.pathname === '/') {
+      let sectionId = null;
 
-    // Check if coming from location.state (from back button)
-    if (location.state?.scrollTo) {
-      sectionId = location.state.scrollTo;
-      // Clear the state so it doesn't scroll again on subsequent renders
-      window.history.replaceState({}, document.title);
-    } 
-    // Otherwise check for hash in URL
-    else if (location.hash) {
-      sectionId = location.hash.substring(1); // Remove the #
-    }
+      // Check if coming from location.state (from back button)
+      if (location.state?.scrollTo) {
+        sectionId = location.state.scrollTo;
+        // Clear the state so it doesn't scroll again on subsequent renders
+        window.history.replaceState({}, document.title);
+      } 
+      // Otherwise check for hash in URL
+      else if (location.hash) {
+        sectionId = location.hash.substring(1); // Remove the #
+      }
 
-    // Scroll to the section if we found one
-    if (sectionId) {
-      // Add a longer delay to ensure section is rendered
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 300); // Increased from 100 to 300ms
+      // Scroll to the section if we found one
+      if (sectionId) {
+        // Add a longer delay to ensure section is rendered
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 300); // Increased from 100 to 300ms
+      }
     }
-  }
-}, [location]);
+  }, [location]);
   
   return (
     <>
@@ -103,11 +105,17 @@ useEffect(() => {
         <Route path="/articles/:slug" element={<ArticlePage />} />
         <Route path="/destinations/:id" element={<DestinationPage />} />
 
+        {/* ✅ NEW: Services Directory (all services browsable) */}
+        <Route path="/services-directory" element={<div className="pt-16"><ServicesDirectory /></div>} />
+        
+        {/* ✅ NEW: Business Submission Form */}
+        <Route path="/submit-business" element={<div className="pt-16"><BusinessSubmissionForm /></div>} />
+
         {/* ✅ Category Page (e.g. /services/automotive?base=ramstein) */}
         <Route path="/services/:category" element={<ServiceCategoryPage />} />
         <Route path="/services/:category/:subcategory" element={<ServiceCategoryPage />} />
 
-        {/* ✅ Business Detail Page (e.g. /businesses/ucg-ramstein) - FIXED PLURAL */}
+        {/* ✅ Business Detail Page (e.g. /businesses/ucg-ramstein) */}
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
 
