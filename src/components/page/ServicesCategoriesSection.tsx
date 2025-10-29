@@ -169,7 +169,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
         <div className="bg-[var(--brand-dark)] rounded-xl p-8 mb-8 shadow-xl">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-white mb-4">
-              Do You Own a Business Near USAG Stuttgart?
+              Do You Own a Business Near a US Military Base?
             </h3>
             <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
               If your business serves American military families and you speak English, we'd love to
