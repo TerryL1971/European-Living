@@ -209,7 +209,7 @@ export default function BusinessDetailPage() {
             )}
 
             {/* Reviews Section */}
-            <div className="border-t border-white/20 pt-6 mt-6">
+            <div id="reviews" className="border-t border-white/20 pt-6 mt-6">
               <h2 className="text-2xl font-bold text-white mb-6">
                 Reviews from Military Families
               </h2>
@@ -244,8 +244,7 @@ export default function BusinessDetailPage() {
                 </div>
               ) : (
                 <p className="text-white opacity-80">No reviews yet. Be the first to review!</p>
-              )}
-
+           )}
               {/* Review Form */}
               <div className="mt-8">
                 <ReviewForm businessId={business.id} onSuccess={refreshReviews} />
