@@ -193,6 +193,18 @@ body {
 .card .title { font-weight: 700; color: var(--brand-dark); margin-bottom: 8px; }
 .card .desc { color: #556475; font-size: 14px; }
 
+/* Prevent Leaflet controls and tiles from overlapping the fixed header */
+.leaflet-container {
+  z-index: 1 !important;
+}
+
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-container {
+  z-index: 1 !important;
+}
+
 /* === Footer === */
 .footer {
   background: var(--brand-dark);
