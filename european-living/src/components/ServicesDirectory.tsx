@@ -1,7 +1,6 @@
 // src/components/ServicesDirectory.tsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
-import { seedServices } from '../data/services-seed';
 import { ServiceBusiness, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
 
 const categories = [
@@ -26,8 +25,22 @@ export default function ServicesDirectory() {
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
+  const [services, setServices] = useState<ServiceBusiness[]>([]);
+
+  useEffect(() => {
+    async function loadServices() {
+      try {
+        const data = await getAllBusinesses(); // replace with your actual Supabase fetch function
+        setServices(data || []);
+      } catch (error) {
+        console.error('Failed to load services:', error);
+      }
+    }
+    loadServices();
+  }, []);
+
   const filteredServices = useMemo(() => {
-    const filtered = filterServices(seedServices, {
+    const filtered = filterServices(services, {
       category: selectedCategory === 'all' ? undefined : selectedCategory,
       city: selectedCity === 'All Cities' ? undefined : selectedCity,
       searchQuery: searchQuery || undefined,
@@ -36,7 +49,7 @@ export default function ServicesDirectory() {
     });
 
     return sortServices(filtered, sortBy);
-  }, [searchQuery, selectedCategory, selectedCity, militaryDiscountOnly, minRating, sortBy]);
+  }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
 
   const ServiceCard = ({ service }: { service: ServiceBusiness }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
@@ -44,32 +57,32 @@ export default function ServicesDirectory() {
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-xl font-bold text-gray-900">{service.name}</h3>
-            {service.verified && (
+            <h3 className="text-xl font-bold text-gray-900">{service?.name ?? 'Unnamed Service'}</h3>
+            {service?.verified && (
               <Shield className="w-5 h-5 text-blue-600" aria-label="Verified Business" />
             )}
-            {service.featured && (
+            {service?.featured && (
               <Award className="w-5 h-5 text-yellow-500" aria-label="Featured" />
             )}
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <div className="flex items-center gap-1">
               <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">{service.rating}</span>
-              <span>({service.reviewCount})</span>
+              <span className="font-semibold">{service?.rating ?? 0}</span>
+              <span>({service?.reviewCount ?? 0})</span>
             </div>
             <span className="text-gray-400">•</span>
-            <span>{service.priceRange}</span>
+            <span>{service?.priceRange ?? 'N/A'}</span>
           </div>
         </div>
       </div>
 
       {/* Description */}
-      <p className="text-gray-700 mb-4">{service.description}</p>
+      <p className="text-gray-700 mb-4">{service?.description ?? 'No description available.'}</p>
 
       {/* Specialties */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {service.specialties?.map(specialty => (
+        {service?.specialties?.map(specialty => (
           <span key={specialty} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
             {specialty}
           </span>
@@ -77,14 +90,14 @@ export default function ServicesDirectory() {
       </div>
 
       {/* Military Features */}
-      {(service.militaryFeatures.militaryDiscount || service.militaryFeatures.sofaFamiliar) && (
+      {(service?.militaryFeatures?.militaryDiscount || service?.militaryFeatures?.sofaFamiliar) && (
         <div className="flex flex-wrap gap-2 mb-4">
-          {service.militaryFeatures.militaryDiscount && (
+          {service?.militaryFeatures?.militaryDiscount && (
             <span className="px-3 py-1 bg-green-50 text-green-700 text-sm rounded-full font-medium">
-              🎖️ {service.militaryFeatures.discountPercent}% Military Discount
+              🎖️ {service?.militaryFeatures?.discountPercent ?? 0}% Military Discount
             </span>
           )}
-          {service.militaryFeatures.sofaFamiliar && (
+          {service?.militaryFeatures?.sofaFamiliar && (
             <span className="px-3 py-1 bg-purple-50 text-purple-700 text-sm rounded-full font-medium">
               ✓ SOFA Familiar
             </span>
@@ -96,12 +109,12 @@ export default function ServicesDirectory() {
       <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-gray-400" />
-          <span>{service.location.city}</span>
-          {service.location.nearbyBases && service.location.nearbyBases.length > 0 && (
+          <span>{service?.location?.city ?? 'Unknown City'}</span>
+          {service?.location?.nearbyBases?.length ? (
             <span className="text-gray-400">• Near {service.location.nearbyBases[0]}</span>
-          )}
+          ) : null}
         </div>
-        {service.contact.phone && (
+        {service?.contact?.phone && (
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-gray-400" />
             <a href={`tel:${service.contact.phone}`} className="text-blue-600 hover:underline">
@@ -109,7 +122,7 @@ export default function ServicesDirectory() {
             </a>
           </div>
         )}
-        {service.contact.website && (
+        {service?.contact?.website && (
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-gray-400" />
             <a href={service.contact.website} target="_blank" rel="noopener noreferrer" 
@@ -123,7 +136,7 @@ export default function ServicesDirectory() {
       {/* Language Badge */}
       <div className="mt-4 pt-4 border-t">
         <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
-          🗣️ {service.languages.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
+          🗣️ {service?.languages?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
         </span>
       </div>
     </div>
@@ -250,7 +263,7 @@ export default function ServicesDirectory() {
         {filteredServices.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredServices.map(service => (
-              <ServiceCard key={service.id} service={service} />
+              <ServiceCard key={service?.id} service={service} />
             ))}
           </div>
         ) : (
@@ -276,4 +289,9 @@ export default function ServicesDirectory() {
       </div>
     </div>
   );
+}
+
+// Placeholder function: replace with your Supabase fetch
+async function getAllBusinesses(): Promise<ServiceBusiness[]> {
+  return []; // return empty array to satisfy TypeScript
 }
