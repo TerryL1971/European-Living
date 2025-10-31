@@ -1,3 +1,5 @@
+// src/components/CollapsibleContent.tsx
+
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -24,6 +26,7 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
     const lines = content.split("\n");
     let currentSection: Section | null = null;
     let contentBuffer: string[] = [];
+    const usedIds = new Set<string>();
 
     const saveCurrentSection = () => {
       if (currentSection) {
@@ -31,6 +34,21 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
         sections.push(currentSection);
         contentBuffer = [];
       }
+    };
+
+    const generateUniqueId = (title: string): string => {
+      const baseId = title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+      let id = baseId;
+      let counter = 1;
+
+      // If ID already exists, append a number
+      while (usedIds.has(id)) {
+        id = `${baseId}-${counter}`;
+        counter++;
+      }
+
+      usedIds.add(id);
+      return id;
     };
 
     lines.forEach((line) => {
@@ -44,7 +62,7 @@ export default function CollapsibleContent({ content }: CollapsibleContentProps)
         // Start new section
         const title = h2Match ? h2Match[1] : h3Match![1];
         const level = h2Match ? 2 : 3;
-        const id = title.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+        const id = generateUniqueId(title);
 
         currentSection = { id, title, content: "", level };
       } else if (currentSection) {

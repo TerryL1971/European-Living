@@ -2,6 +2,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
 import { ServiceBusiness, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
+import { supabase } from '../services/supabaseClient'; // Make sure this import exists
 
 const categories = [
   { id: 'all', name: 'All Services' },
@@ -26,16 +27,35 @@ export default function ServicesDirectory() {
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
   const [services, setServices] = useState<ServiceBusiness[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadServices() {
       try {
-        const data = await getAllBusinesses(); // replace with your actual Supabase fetch function
+        setLoading(true);
+        setError(null);
+        
+        // Fetch all businesses from Supabase
+        const { data, error: fetchError } = await supabase
+          .from('businesses')
+          .select('*')
+          .eq('status', 'active'); // Only show active businesses
+        
+        if (fetchError) {
+          throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
+        }
+        
         setServices(data || []);
-      } catch (error) {
-        console.error('Failed to load services:', error);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
+        console.error('Failed to load services:', err);
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
       }
     }
+    
     loadServices();
   }, []);
 
@@ -151,6 +171,13 @@ export default function ServicesDirectory() {
           <p className="text-lg text-gray-600">English-friendly businesses serving Americans in Germany</p>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p className="text-red-800">{error}</p>
+          </div>
+        )}
+
         {/* Search & Filters */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           {/* Search Bar */}
@@ -254,23 +281,33 @@ export default function ServicesDirectory() {
           )}
         </div>
 
-        {/* Results Count */}
-        <div className="mb-4 text-gray-600">
-          Found <span className="font-semibold">{filteredServices.length}</span> services
-        </div>
-
-        {/* Services Grid */}
-        {filteredServices.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredServices.map(service => (
-              <ServiceCard key={service?.id} service={service} />
-            ))}
+        {/* Loading State */}
+        {loading ? (
+          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading services...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-600 text-lg mb-2">No services found</p>
-            <p className="text-gray-500">Try adjusting your search or filters</p>
-          </div>
+          <>
+            {/* Results Count */}
+            <div className="mb-4 text-gray-600">
+              Found <span className="font-semibold">{filteredServices.length}</span> services
+            </div>
+
+            {/* Services Grid */}
+            {filteredServices.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredServices.map(service => (
+                  <ServiceCard key={service?.id} service={service} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-12 text-center">
+                <p className="text-gray-600 text-lg mb-2">No services found</p>
+                <p className="text-gray-500">Try adjusting your search or filters</p>
+              </div>
+            )}
+          </>
         )}
 
         {/* Add Business CTA */}
@@ -289,9 +326,4 @@ export default function ServicesDirectory() {
       </div>
     </div>
   );
-}
-
-// Placeholder function: replace with your Supabase fetch
-async function getAllBusinesses(): Promise<ServiceBusiness[]> {
-  return []; // return empty array to satisfy TypeScript
 }

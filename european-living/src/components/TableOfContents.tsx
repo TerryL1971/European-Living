@@ -1,3 +1,5 @@
+// src/components/TableOfContents.tsx
+
 import { useEffect, useState } from "react";
 
 interface TocItem {
@@ -18,15 +20,28 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     // Extract headers from markdown
     const headingRegex = /^(#{2,3})\s+(.+)$/gm;
     const items: TocItem[] = [];
+    const usedIds = new Set<string>();
     let match;
+
+    const generateUniqueId = (text: string): string => {
+      const baseId = text.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+      let id = baseId;
+      let counter = 1;
+
+      // If ID already exists, append a number
+      while (usedIds.has(id)) {
+        id = `${baseId}-${counter}`;
+        counter++;
+      }
+
+      usedIds.add(id);
+      return id;
+    };
 
     while ((match = headingRegex.exec(content)) !== null) {
       const level = match[1].length;
       const text = match[2].trim();
-      const id = text
-        .toLowerCase()
-        .replace(/[^\w\s-]/g, "")
-        .replace(/\s+/g, "-");
+      const id = generateUniqueId(text);
 
       items.push({ id, text, level });
     }

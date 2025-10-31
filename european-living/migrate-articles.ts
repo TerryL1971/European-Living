@@ -207,6 +207,7 @@ async function migrateArticles(): Promise<void> {
 
   let successCount = 0;
   let failCount = 0;
+  let skippedCount = 0;
 
   for (const filename of files) {
     try {
@@ -215,6 +216,20 @@ async function migrateArticles(): Promise<void> {
       const { metadata, body } = parseFrontmatter(rawContent);
 
       const slug = metadata.slug || generateSlug(filename);
+      
+      // Check if article already exists
+      const { data: existing } = await supabase
+        .from('articles')
+        .select('id, slug')
+        .eq('slug', slug)
+        .single();
+
+      if (existing) {
+        console.log(`⊘ Skipped: ${slug} (already exists)`);
+        skippedCount++;
+        continue;
+      }
+
       const title = metadata.title || extractTitle(body);
       const category = metadata.category || determineCategory(filename);
 
@@ -260,8 +275,49 @@ async function migrateArticles(): Promise<void> {
 
   console.log(`\n📊 Migration Summary:`);
   console.log(`   ✓ Success: ${successCount}`);
+  console.log(`   ⊘ Skipped: ${skippedCount}`);
   console.log(`   ✗ Failed: ${failCount}`);
   console.log(`   📄 Total: ${files.length}\n`);
+}
+
+async function cleanupDuplicates(): Promise<void> {
+  console.log('🧹 Step 0: Checking for and removing duplicates...\n');
+
+  try {
+    // Find duplicates
+    const { data: duplicates, error: queryError } = await supabase.rpc('find_duplicate_slugs');
+
+    if (queryError) {
+      console.log('⚠️  Could not check for duplicates (this is OK on first run)');
+      return;
+    }
+
+    if (!duplicates || duplicates.length === 0) {
+      console.log('✓ No duplicates found\n');
+      return;
+    }
+
+    console.log(`Found ${duplicates.length} duplicate slugs. Removing older entries...\n`);
+
+    for (const dup of duplicates) {
+      // Keep the most recent, delete the rest
+      const { error: deleteError } = await supabase
+        .from('articles')
+        .delete()
+        .eq('slug', dup.slug)
+        .not('id', 'eq', dup.latest_id);
+
+      if (deleteError) {
+        console.error(`✗ Failed to remove duplicates for ${dup.slug}`);
+      } else {
+        console.log(`✓ Removed duplicates for ${dup.slug}`);
+      }
+    }
+
+    console.log('\n✓ Cleanup complete\n');
+  } catch {
+    console.log('⚠️  Could not clean duplicates (this is OK on first run)\n');
+  }
 }
 
 async function main(): Promise<void> {
@@ -269,10 +325,12 @@ async function main(): Promise<void> {
   console.log('='.repeat(50) + '\n');
 
   try {
+    await cleanupDuplicates();
     await uploadImages();
     await migrateArticles();
     console.log('='.repeat(50));
     console.log('✅ Migration Complete!\n');
+    console.log('💡 You can now safely remove local /public/images and /src/data/content folders\n');
   } catch (err) {
     const error = err as Error;
     console.error('\n❌ Migration failed:', error.message);
