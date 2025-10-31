@@ -14,7 +14,7 @@
   "homepage": "https://european-living.live",
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
-    "@supabase/supabase-js": "^2.75.0",
+    "@supabase/supabase-js": "^2.78.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "csv-parse": "^6.1.0",
