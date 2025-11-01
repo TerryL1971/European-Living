@@ -1,7 +1,7 @@
 // src/data/destinations.ts
 
 // Supabase Storage base URL for images
-const SUPABASE_STORAGE_URL = 'https://pkacbccohrygpyapgtzpq.supabase.co/storage/v1/object/public/images';
+const SUPABASE_STORAGE_URL = 'https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images';
 
 export interface Destination {
   id: string;

@@ -1,3 +1,5 @@
+// src/components/DestinationCard.tsx
+
 import { Card, CardContent } from "./ui/card";
 import { Link } from "react-router-dom";
 import type { Destination } from "../data/destinations";
