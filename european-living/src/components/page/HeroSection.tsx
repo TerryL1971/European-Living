@@ -9,7 +9,7 @@ export default function HeroSection(): JSX.Element {
     >
       {/* Background image */}
       <img
-        src="/images/hero-bg.jpg"
+        src="https://pkacbccohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/hero-bg.jpg"
         alt="European street scene"
         className="absolute inset-0 w-full h-full object-cover object-center md:object-[center_55%] lg:object-[center_50%]"
         loading="eager"

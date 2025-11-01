@@ -1,16 +1,21 @@
 // src/data/destinations.ts
+
+// Supabase Storage base URL for images
+const SUPABASE_STORAGE_URL = 'https://pkacbccohrygpyapgtzpq.supabase.co/storage/v1/object/public/images';
+
 export interface Destination {
   id: string;
   name: string;
   shortName?: string;
   country?: string;
   description: string;
-  image: string;       // path in public/images/...
-  contentFile?: string; // markdown filename in src/data/content/, e.g. "berlin"
+  image: string;
+  contentFile?: string; // deprecated - now using Supabase articles
   lat?: number;
   lng?: number;
   travelTips?: string[];
-};
+}
+
 export const destinations: Destination[] = [
   {
     id: "stuttgart",
@@ -18,7 +23,7 @@ export const destinations: Destination[] = [
     shortName: "Stuttgart",
     country: "Germany",
     description: "Mercedes-Benz and Porsche museums, vineyards, and Swabian culture in Baden-Württemberg.",
-    image: "/images/stuttgart-schlossplatz.jpg",
+    image: `${SUPABASE_STORAGE_URL}/stuttgart-schlossplatz.jpg`,
     contentFile: "stuttgart",
     lat: 48.7758,
     lng: 9.1829,
@@ -33,7 +38,7 @@ export const destinations: Destination[] = [
     shortName: "Berlin",
     country: "Germany",
     description: "The vibrant capital of Germany, rich with history and culture.",
-    image: "/images/berlin.jpg",
+    image: `${SUPABASE_STORAGE_URL}/berlin.jpg`,
     contentFile: "berlin",
     lat: 52.52,
     lng: 13.405,
@@ -48,7 +53,7 @@ export const destinations: Destination[] = [
     shortName: "Munich",
     country: "Germany",
     description: "Bavarian charm with easy train connections and English-friendly atmosphere.",
-    image: "/images/munich.jpg",
+    image: `${SUPABASE_STORAGE_URL}/munich.jpg`,
     contentFile: "munich",
     lat: 48.1351,
     lng: 11.5820,
@@ -63,7 +68,7 @@ export const destinations: Destination[] = [
     shortName: "Paris",
     country: "France",
     description: "City of Light — museums, cafés, and iconic architecture.",
-    image: "/images/paris.jpg",
+    image: `${SUPABASE_STORAGE_URL}/paris.jpg`,
     contentFile: "paris",
     lat: 48.8566,
     lng: 2.3522,
@@ -78,7 +83,7 @@ export const destinations: Destination[] = [
     shortName: "Amsterdam",
     country: "Netherlands",
     description: "Picturesque canals and world-class museums with excellent English support.",
-    image: "/images/amsterdam.jpg",
+    image: `${SUPABASE_STORAGE_URL}/amsterdam.jpg`,
     contentFile: "amsterdam",
     lat: 52.3676,
     lng: 4.9041,
@@ -93,7 +98,7 @@ export const destinations: Destination[] = [
     shortName: "London",
     country: "United Kingdom",
     description: "Royal palaces, world-class museums, and 2,000 years of history.",
-    image: "/images/london-city.jpg",
+    image: `${SUPABASE_STORAGE_URL}/london-city.jpg`,
     contentFile: "london",
     lat: 51.5074,
     lng: -0.1278,
@@ -108,7 +113,7 @@ export const destinations: Destination[] = [
     shortName: "Prague",
     country: "Czech Republic",
     description: "Fairy-tale architecture, historic squares, and budget-friendly prices.",
-    image: "/images/prague.jpg",
+    image: `${SUPABASE_STORAGE_URL}/prague.jpg`,
     contentFile: "prague",
     lat: 50.0755,
     lng: 14.4378,
@@ -123,7 +128,7 @@ export const destinations: Destination[] = [
     shortName: "Vienna",
     country: "Austria",
     description: "Imperial elegance with music, coffee houses, and palaces.",
-    image: "/images/vienna.jpg",
+    image: `${SUPABASE_STORAGE_URL}/vienna.jpg`,
     contentFile: "vienna",
     lat: 48.2082,
     lng: 16.3738,
@@ -138,7 +143,7 @@ export const destinations: Destination[] = [
     shortName: "Rome",
     country: "Italy",
     description: "Ancient ruins, vibrant piazzas, and unforgettable food.",
-    image: "/images/rome.jpg",
+    image: `${SUPABASE_STORAGE_URL}/rome.jpg`,
     contentFile: "rome",
     lat: 41.9028,
     lng: 12.4964,
@@ -153,7 +158,7 @@ export const destinations: Destination[] = [
     shortName: "Barcelona",
     country: "Spain",
     description: "Gaudí architecture, beaches, and tapas culture.",
-    image: "/images/barcelona.jpg",
+    image: `${SUPABASE_STORAGE_URL}/barcelona.jpg`,
     contentFile: "barcelona",
     lat: 41.3851,
     lng: 2.1734,
@@ -168,7 +173,7 @@ export const destinations: Destination[] = [
     shortName: "Lisbon",
     country: "Portugal",
     description: "Hilly streets, trams, and seafood by the Tagus.",
-    image: "/images/lisbon.jpg",
+    image: `${SUPABASE_STORAGE_URL}/lisbon.jpg`,
     contentFile: "lisbon",
     lat: 38.7223,
     lng: -9.1393,
@@ -183,7 +188,7 @@ export const destinations: Destination[] = [
     shortName: "Budapest",
     country: "Hungary",
     description: "Thermal baths, riverside views, and historic architecture.",
-    image: "/images/budapest.jpg",
+    image: `${SUPABASE_STORAGE_URL}/budapest.jpg`,
     contentFile: "budapest",
     lat: 47.4979,
     lng: 19.0402,
