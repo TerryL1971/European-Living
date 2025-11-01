@@ -1,5 +1,9 @@
 // src/services/articleService.ts
+
 import { supabase } from './supabaseClient';
+import { PostgrestSingleResponse } from '@supabase/supabase-js';
+
+// --- Interface Definitions ---
 
 export interface Article {
   id: string;
@@ -28,6 +32,42 @@ export interface ArticleFilters {
   limit?: number;
   offset?: number;
 }
+
+// --- Helper Function ---
+
+// Helper function to safely parse the tags string into a string array.
+function mapTags(data: unknown): Article {
+  const article: Article = data as Article;
+  const rawData = data as Record<string, unknown>; 
+  
+  if (typeof rawData.tags === 'string') {
+    // FIX: Removed the '_e' variable from the catch block to resolve the ESLint error.
+    try {
+      const tagsString = rawData.tags.trim();
+      
+      // If it looks like a Postgres array string ('{tag1,tag2}'), convert to a comma-separated array
+      if (tagsString.startsWith('{') && tagsString.endsWith('}')) {
+        article.tags = tagsString
+          .slice(1, -1) // Remove {}
+          .split(',')
+          .map((t: string) => t.trim().replace(/^"|"$/g, ''))
+          .filter(Boolean);
+      } else {
+         // Assume standard JSON array string '["tag1","tag2"]'
+         article.tags = JSON.parse(tagsString);
+      }
+    } catch { 
+      console.warn('Could not parse tags string, defaulting to empty array:', rawData.tags);
+      article.tags = [];
+    }
+  } else if (!Array.isArray(rawData.tags)) {
+    article.tags = [];
+  }
+  
+  return article;
+}
+
+// --- Service Functions ---
 
 /**
  * Fetch all articles with optional filters
@@ -69,7 +109,7 @@ export async function getArticles(filters?: ArticleFilters): Promise<Article[]> 
     throw error;
   }
   
-  return data as Article[];
+  return data.map(mapTags);
 }
 
 /**
@@ -81,21 +121,22 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     .select('*')
     .eq('slug', slug)
     .eq('published', true)
-    .single();
+    .single() as PostgrestSingleResponse<unknown>; 
   
   if (error) {
     if (error.code === 'PGRST116') {
-      // Not found
       return null;
     }
     console.error('Error fetching article:', error);
     throw error;
   }
   
-  // Increment view count (fire and forget)
-  incrementViewCount(data.id);
+  const article = mapTags(data);
   
-  return data as Article;
+  // Increment view count (fire and forget)
+  incrementViewCount(article.id);
+  
+  return article;
 }
 
 /**
@@ -119,11 +160,11 @@ async function incrementViewCount(articleId: string): Promise<void> {
       await supabase
         .from('articles')
         .update({ view_count: data.view_count + 1 })
-        .eq('id', articleId);
+        .eq('id', articleId)
+        .select(); 
     }
   }
 }
-
 
 /**
  * Search articles by keyword
@@ -142,7 +183,7 @@ export async function searchArticles(searchTerm: string): Promise<Article[]> {
     throw error;
   }
   
-  return data as Article[];
+  return data.map(mapTags);
 }
 
 /**
@@ -161,7 +202,7 @@ export async function getFeaturedArticles(limit: number = 5): Promise<Article[]>
     throw error;
   }
   
-  return data as Article[];
+  return data.map(mapTags);
 }
 
 /**
@@ -217,5 +258,5 @@ export async function getRelatedArticles(
     throw error;
   }
   
-  return data as Article[];
+  return data.map(mapTags);
 }

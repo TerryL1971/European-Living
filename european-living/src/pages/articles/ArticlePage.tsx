@@ -2,8 +2,33 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { Components } from 'react-markdown'; 
 import { Clock, Calendar, Tag, ArrowLeft } from 'lucide-react';
+import remarkGfm from 'remark-gfm'; 
+import { HTMLProps } from 'react'; 
+
+// --- Custom Image Renderer Component ---
+
+// Define the required props explicitly to satisfy TypeScript
+type MarkdownImageProps = HTMLProps<HTMLImageElement>;
+
+const MarkdownImage = ({ alt, src, ...props }: MarkdownImageProps) => {
+  // IMPORTANT: Since the migration script ensures the 'src' in the Markdown
+  // is the full, absolute Supabase URL, we simply use it as-is.
+  if (!src) return null;
+  
+  return (
+    <img 
+      // Use the src directly, as it is already the absolute URL from the DB.
+      src={src} 
+      alt={alt || ''} 
+      className="w-full h-auto rounded-lg shadow-md my-8" 
+      loading="lazy" 
+      {...props} 
+    />
+  );
+};
+
 
 export default function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,6 +45,8 @@ export default function ArticlePage() {
       
       setLoading(true);
       setError(null);
+      setArticle(null); 
+      setRelatedArticles([]);
       
       try {
         const data = await getArticleBySlug(slug);
@@ -32,7 +59,6 @@ export default function ArticlePage() {
         
         setArticle(data);
         
-        // Load related articles
         const related = await getRelatedArticles(
           data.id,
           data.category,
@@ -41,8 +67,9 @@ export default function ArticlePage() {
         );
         setRelatedArticles(related);
         
-      } catch (err: any) {
-        console.error('Error loading article:', err);
+      } catch (err: unknown) { 
+        const castError = err as Error;
+        console.error('Error loading article:', castError);
         setError('Failed to load article');
       } finally {
         setLoading(false);
@@ -68,15 +95,22 @@ export default function ArticlePage() {
             {error || 'Article Not Found'}
           </h1>
           <button
-            onClick={() => navigate('/articles')}
-            className="text-blue-600 hover:text-blue-800 font-medium"
+            onClick={() => navigate('/articles')} 
+            className="flex items-center mx-auto text-blue-600 hover:text-blue-800 font-medium"
           >
-            ← Back to Articles
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Articles
           </button>
         </div>
       </div>
     );
   }
+  
+  // FIX: This now correctly sets the component map without using 'as any', 
+  // resolving your final ESLint error.
+  const components: Components = {
+    img: MarkdownImage, 
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -156,7 +190,7 @@ export default function ArticlePage() {
         </div>
       </div>
 
-      {/* Featured Image */}
+      {/* Featured Image - already full URL, should render fine */}
       {article.featured_image_url && (
         <div className="max-w-4xl mx-auto px-4 py-8">
           <img
@@ -170,7 +204,12 @@ export default function ArticlePage() {
       {/* Article Content */}
       <article className="max-w-4xl mx-auto px-4 py-8">
         <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
-          <ReactMarkdown>{article.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={components} 
+            remarkPlugins={[remarkGfm]}
+          >
+            {article.content}
+          </ReactMarkdown>
         </div>
       </article>
 
