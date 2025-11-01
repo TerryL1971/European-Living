@@ -1,3 +1,4 @@
+// src/pages/destinations/DestinationPage.tsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
@@ -7,14 +8,17 @@ import rehypeSanitize from "rehype-sanitize";
 import { Navigation, Hotel, Mail } from "lucide-react";
 import { destinations } from "../../data/destinations";
 import type { Destination } from "../../data/destinations";
+import { getArticles } from "../../services/articleService";
+import type { Article } from "../../services/articleService";
 import TableOfContents from "../../components/TableOfContents";
 import CollapsibleContent from "../../components/CollapsibleContent";
 
 export default function DestinationPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [content, setContent] = useState<string>("");
+  const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const destination: Destination | undefined = destinations.find(
     (d) => d.id === id
@@ -22,21 +26,44 @@ export default function DestinationPage() {
 
   useEffect(() => {
     const loadContent = async () => {
-      if (destination?.contentFile) {
-        setLoading(true);
-        try {
-          const module = await import(`../../data/content/${destination.contentFile}.md?raw`);
-          setContent(module.default);
-        } catch (err) {
-          console.error("Error loading content:", err);
-        } finally {
-          setLoading(false);
+      if (!destination) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Try to find article by destination name
+        const articles = await getArticles({ 
+          destination: destination.name,
+          published: true,
+          limit: 1 
+        });
+        
+        if (articles && articles.length > 0) {
+          setArticle(articles[0]);
+        } else {
+          // Fallback: try by slug (destination id)
+          const articlesBySlug = await getArticles({ 
+            published: true 
+          });
+          
+          const found = articlesBySlug.find(a => a.slug === id);
+          if (found) {
+            setArticle(found);
+          } else {
+            setError('No content available for this destination yet.');
+          }
         }
+      } catch (err) {
+        console.error("Error loading content:", err);
+        setError('Failed to load destination content.');
+      } finally {
+        setLoading(false);
       }
     };
     
     loadContent();
-  }, [destination]);
+  }, [destination, id]);
 
   if (!destination) {
     return (
@@ -64,6 +91,8 @@ export default function DestinationPage() {
   const hotelsUrl = destination.lat && destination.lng
     ? `https://www.booking.com/searchresults.html?latitude=${destination.lat}&longitude=${destination.lng}&radius=5`
     : `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination.name)}`;
+
+  const content = article?.content || '';
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]">
@@ -129,7 +158,16 @@ export default function DestinationPage() {
               </div>
 
               {loading ? (
-                <p className="text-[var(--brand-dark)] opacity-80">Loading content...</p>
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              ) : error ? (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                  <p className="text-yellow-800">{error}</p>
+                  <p className="text-sm text-yellow-600 mt-2">
+                    {destination.description}
+                  </p>
+                </div>
               ) : content ? (
                 <>
                   {/* Mobile: Collapsible Sections */}
