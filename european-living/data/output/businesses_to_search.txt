@@ -1,0 +1,463 @@
+================================================================================
+BUSINESSES NEEDING DATA - MANUAL SEARCH LIST
+Generated: 2025-11-02 13:23
+================================================================================
+
+INSTRUCTIONS:
+1. Copy the 'Search Query' into Google
+2. Find official website and contact info
+3. Fill data into business_updates_template.csv
+4. Run this script again to apply updates
+
+================================================================================
+
+ID: 0255d11a-8891-4046-8395-665a29c6413f
+Business: Grafenwoehr Elementary/Middle School (DoDEA)
+Location: Grafenwöhr
+Category: education
+Missing: phone
+Search Query: "Grafenwoehr Elementary/Middle School (DoDEA) Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Grafenwoehr+Elementary/Middle+School+(DoDEA)+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 8b9c0d1e-2f3a-4b4c-5d6e-7f8a9b0c1d2f
+Business: Pho Viet Grafenwöhr
+Location: Grafenwöhr, Bavaria
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Pho Viet Grafenwöhr Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Pho+Viet+Grafenwöhr+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 8b9c0d1e-2f3a-4b4c-5d6e-7f8a9b0c1d2e
+Business: Brauhaus Schönbuch
+Location: Böblingen, Baden-Württemberg
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Brauhaus Schönbuch Böblingen"
+Google Maps: https://www.google.com/maps/search/Brauhaus+Schönbuch+Böblingen
+--------------------------------------------------------------------------------
+
+ID: 875a9415-4ca0-4558-ab45-2faa743fdaf7
+Business: GTÜ Böblingen
+Location: Böblingen, Baden-Württemberg
+Category: automotive
+Missing: address, website, phone
+Search Query: "GTÜ Böblingen Böblingen"
+Google Maps: https://www.google.com/maps/search/GTÜ+Böblingen+Böblingen
+--------------------------------------------------------------------------------
+
+ID: 86870525-4bb1-461a-8e8c-4e6fd8ea40ae
+Business: KFZ Rupprecht Auto Repair
+Location: Grafenwöhr, Bavaria
+Category: automotive
+Missing: address, website, phone
+Search Query: "KFZ Rupprecht Auto Repair Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/KFZ+Rupprecht+Auto+Repair+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 85ec61e3-1102-4d44-9bbc-fab026f5a122
+Business: Das Haut Lazer Centrum
+Location: Altenstadt
+Category: healthcare
+Missing: website
+Search Query: "Das Haut Lazer Centrum Altenstadt"
+Google Maps: https://www.google.com/maps/search/Das+Haut+Lazer+Centrum+Altenstadt
+--------------------------------------------------------------------------------
+
+ID: 83450d8f-14d1-43f3-947b-eb54caee8fe5
+Business: Doctorsa.com
+Location: Online - Germany-wide
+Category: healthcare
+Missing: address, phone
+Search Query: "Doctorsa.com Online - Germany-wide"
+Google Maps: https://www.google.com/maps/search/Doctorsa.com+Online+-+Germany-wide
+--------------------------------------------------------------------------------
+
+ID: 83157f09-869e-4e67-9f54-9d1ea0c89ebb
+Business: Used Car Guys
+Location: Spangdahlem
+Category: automotive
+Missing: website
+Search Query: "Used Car Guys Spangdahlem"
+Google Maps: https://www.google.com/maps/search/Used+Car+Guys+Spangdahlem
+--------------------------------------------------------------------------------
+
+ID: 809045ef-af26-47ab-af07-9fb30665ae4a
+Business: Kaiserslautern Middle School (DoDEA)
+Location: Kaiserslautern
+Category: education
+Missing: phone
+Search Query: "Kaiserslautern Middle School (DoDEA) Kaiserslautern"
+Google Maps: https://www.google.com/maps/search/Kaiserslautern+Middle+School+(DoDEA)+Kaiserslautern
+--------------------------------------------------------------------------------
+
+ID: 7e8f9a0b-1c2d-4e3f-4a5b-6c7d8e9f0a1b
+Business: Hacienda Mexican Restaurant
+Location: Kaiserslautern, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Hacienda Mexican Restaurant Kaiserslautern"
+Google Maps: https://www.google.com/maps/search/Hacienda+Mexican+Restaurant+Kaiserslautern
+--------------------------------------------------------------------------------
+
+ID: 7c8d9e0f-1a2b-4c3d-4e5f-6a7b8c9d0e1f
+Business: Mom's Place – Roma
+Location: Spangdahlem, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Mom's Place – Roma Spangdahlem"
+Google Maps: https://www.google.com/maps/search/Mom's+Place+–+Roma+Spangdahlem
+--------------------------------------------------------------------------------
+
+ID: 7a8b9c0d-1e2f-4a3b-4c5d-6e7f8a9b0c1e
+Business: Restaurant Grill Beer Garden in Erstes Kulmbacher
+Location: Grafenwöhr, Bavaria
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Restaurant Grill Beer Garden in Erstes Kulmbacher Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Restaurant+Grill+Beer+Garden+in+Erstes+Kulmbacher+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 7a8b9c0d-1e2f-4a3b-4c5d-6e7f8a9b0c1d
+Business: Mauritius
+Location: Böblingen, Baden-Württemberg
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Mauritius Böblingen"
+Google Maps: https://www.google.com/maps/search/Mauritius+Böblingen
+--------------------------------------------------------------------------------
+
+ID: 7390492d-d9bd-4da8-9ae7-7f938aeae462
+Business: Swiss International School Stuttgart-Fellbach
+Location: Stuttgart
+Category: education
+Missing: website, phone
+Search Query: "Swiss International School Stuttgart-Fellbach Stuttgart"
+Google Maps: https://www.google.com/maps/search/Swiss+International+School+Stuttgart-Fellbach+Stuttgart
+--------------------------------------------------------------------------------
+
+ID: 730264ef-be27-4389-a1e0-ec9a0bbfcb4e
+Business: Aukamm Elementary School (DoDEA)
+Location: Wiesbaden
+Category: education
+Missing: phone
+Search Query: "Aukamm Elementary School (DoDEA) Wiesbaden"
+Google Maps: https://www.google.com/maps/search/Aukamm+Elementary+School+(DoDEA)+Wiesbaden
+--------------------------------------------------------------------------------
+
+ID: 6f7a8b9c-0d1e-4f2a-3b4c-5d6e7f8a9b0d
+Business: Pizzeria Santa Lucia II
+Location: Grafenwöhr, Bavaria
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Pizzeria Santa Lucia II Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Pizzeria+Santa+Lucia+II+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 6f7a8b9c-0d1e-4f2a-3b4c-5d6e7f8a9b0c
+Business: Gustaggio Pizzaibek
+Location: Sindelfingen, Baden-Württemberg
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Gustaggio Pizzaibek Sindelfingen"
+Google Maps: https://www.google.com/maps/search/Gustaggio+Pizzaibek+Sindelfingen
+--------------------------------------------------------------------------------
+
+ID: 6d7e8f9a-0b1c-4d2e-3f4a-5b6c7d8e9f0a
+Business: Maxi Gasto GmbH
+Location: Ramstein-Miesenbach, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Maxi Gasto GmbH Ramstein-Miesenbach"
+Google Maps: https://www.google.com/maps/search/Maxi+Gasto+GmbH+Ramstein-Miesenbach
+--------------------------------------------------------------------------------
+
+ID: 6d7022ed-ddd1-4b59-824f-cb6f18d3a24d
+Business: Agape International Academy
+Location: Ramstein
+Category: education
+Missing: website, phone
+Search Query: "Agape International Academy Ramstein"
+Google Maps: https://www.google.com/maps/search/Agape+International+Academy+Ramstein
+--------------------------------------------------------------------------------
+
+ID: 6b7c8d9e-0f1a-4b2c-3d4e-5f6a7b8c9d0e
+Business: Nick's Fried Chicken
+Location: Kaiserslautern, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Nick's Fried Chicken Kaiserslautern"
+Google Maps: https://www.google.com/maps/search/Nick's+Fried+Chicken+Kaiserslautern
+--------------------------------------------------------------------------------
+
+ID: fdc5e2f2-0d6c-4f7b-91c4-0b039712e113
+Business: Vilseck Elementary School (DoDEA)
+Location: Vilseck
+Category: education
+Missing: phone
+Search Query: "Vilseck Elementary School (DoDEA) Vilseck"
+Google Maps: https://www.google.com/maps/search/Vilseck+Elementary+School+(DoDEA)+Vilseck
+--------------------------------------------------------------------------------
+
+ID: 6908b96f-503a-4b7b-95b0-e1883ba85806
+Business: Ramstein Intermediate School (DoDEA)
+Location: Ramstein
+Category: education
+Missing: phone
+Search Query: "Ramstein Intermediate School (DoDEA) Ramstein"
+Google Maps: https://www.google.com/maps/search/Ramstein+Intermediate+School+(DoDEA)+Ramstein
+--------------------------------------------------------------------------------
+
+ID: 667b4012-b9db-4f72-b4dc-0461edc186c0
+Business: Netzaberg Middle School (DoDEA)
+Location: Grafenwöhr
+Category: education
+Missing: phone
+Search Query: "Netzaberg Middle School (DoDEA) Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Netzaberg+Middle+School+(DoDEA)+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 6674e4e7-dd78-4663-9693-7fb2d51602a2
+Business: Bitburg High School (DoDEA)
+Location: Bitburg
+Category: education
+Missing: phone
+Search Query: "Bitburg High School (DoDEA) Bitburg"
+Google Maps: https://www.google.com/maps/search/Bitburg+High+School+(DoDEA)+Bitburg
+--------------------------------------------------------------------------------
+
+ID: 66276505-c810-483c-9246-b54ae40d1a3f
+Business: DEKRA Automobil GmbH Station Wittlich
+Location: Wittlich, Rhineland-Palatinate
+Category: automotive
+Missing: address, website, phone
+Search Query: "DEKRA Automobil GmbH Station Wittlich Wittlich"
+Google Maps: https://www.google.com/maps/search/DEKRA+Automobil+GmbH+Station+Wittlich+Wittlich
+--------------------------------------------------------------------------------
+
+ID: 5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9c
+Business: Zugstüble Zum Adler
+Location: Grafenwöhr, Bavaria
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Zugstüble Zum Adler Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Zugstüble+Zum+Adler+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: 5e6f7a8b-9c0d-4e1f-2a3b-4c5d6e7f8a9b
+Business: Funzel
+Location: Sindelfingen, Baden-Württemberg
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Funzel Sindelfingen"
+Google Maps: https://www.google.com/maps/search/Funzel+Sindelfingen
+--------------------------------------------------------------------------------
+
+ID: 5d2e3b83-6f37-44bc-bde0-ef14de56c5fc
+Business: Landstuhl Elementary School (DoDEA)
+Location: Landstuhl
+Category: education
+Missing: phone
+Search Query: "Landstuhl Elementary School (DoDEA) Landstuhl"
+Google Maps: https://www.google.com/maps/search/Landstuhl+Elementary+School+(DoDEA)+Landstuhl
+--------------------------------------------------------------------------------
+
+ID: 8d9e0f1a-2b3c-4d4e-5f6a-7b8c9d0e1f2a
+Business: Burg bistro Bella Vista
+Location: Spangdahlem, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Burg bistro Bella Vista Spangdahlem"
+Google Maps: https://www.google.com/maps/search/Burg+bistro+Bella+Vista+Spangdahlem
+--------------------------------------------------------------------------------
+
+ID: 8f9a0b1c-2d3e-4f4a-5b6c-7d8e9f0a1b2c
+Business: Zimtblüte Sushi Restaurant
+Location: Kaiserslautern, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Zimtblüte Sushi Restaurant Kaiserslautern"
+Google Maps: https://www.google.com/maps/search/Zimtblüte+Sushi+Restaurant+Kaiserslautern
+--------------------------------------------------------------------------------
+
+ID: 94a66be0-d913-4222-865e-8a958b02e1d3
+Business: International School of Stuttgart
+Location: Stuttgart
+Category: education
+Missing: phone
+Search Query: "International School of Stuttgart Stuttgart"
+Google Maps: https://www.google.com/maps/search/International+School+of+Stuttgart+Stuttgart
+--------------------------------------------------------------------------------
+
+ID: 950005b8-deec-46ce-8a1f-e42e02d8aaaf
+Business: Spangdahlem Middle School (DoDEA)
+Location: Spangdahlem
+Category: education
+Missing: phone
+Search Query: "Spangdahlem Middle School (DoDEA) Spangdahlem"
+Google Maps: https://www.google.com/maps/search/Spangdahlem+Middle+School+(DoDEA)+Spangdahlem
+--------------------------------------------------------------------------------
+
+ID: f6a7b8c9-d0e1-4f3a-4b5c-6d7e8f9a0b1c
+Business: Grafenwöhr Auto Skills Center
+Location: Grafenwöhr, Bavaria
+Category: automotive
+Missing: address, website, phone
+Search Query: "Grafenwöhr Auto Skills Center Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Grafenwöhr+Auto+Skills+Center+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: f0a1b2c3-d4e5-4f7a-8b9c-0d1e2f3a4b5c
+Business: The Auld Rogue
+Location: Vaihingen, Baden-Württemberg
+Category: restaurants
+Missing: address, phone
+Search Query: "The Auld Rogue Vaihingen"
+Google Maps: https://www.google.com/maps/search/The+Auld+Rogue+Vaihingen
+--------------------------------------------------------------------------------
+
+ID: f08eed0a-9164-4be5-b673-7f9e40d0771a
+Business: École Française de Stuttgart
+Location: Stuttgart
+Category: education
+Missing: website, phone
+Search Query: "École Française de Stuttgart Stuttgart"
+Google Maps: https://www.google.com/maps/search/École+Française+de+Stuttgart+Stuttgart
+--------------------------------------------------------------------------------
+
+ID: e5f6a7b8-c9d0-4e2f-3a4b-5c6d7e8f9a0b
+Business: Grafenwöhr Vehicle Registration
+Location: Grafenwöhr, Bavaria
+Category: automotive
+Missing: address, website, phone
+Search Query: "Grafenwöhr Vehicle Registration Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Grafenwöhr+Vehicle+Registration+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: dacedac5-f400-447b-beed-3d4dda410b6d
+Business: Wiesbaden High School (DoDEA)
+Location: Wiesbaden
+Category: education
+Missing: phone
+Search Query: "Wiesbaden High School (DoDEA) Wiesbaden"
+Google Maps: https://www.google.com/maps/search/Wiesbaden+High+School+(DoDEA)+Wiesbaden
+--------------------------------------------------------------------------------
+
+ID: d4e5f6a7-b8c9-4d1e-2f3a-4b5c6d7e8f9a
+Business: TÜV Hessen Service Center Wiesbaden
+Location: Wiesbaden, Hesse
+Category: automotive
+Missing: address, website, phone
+Search Query: "TÜV Hessen Service Center Wiesbaden Wiesbaden"
+Google Maps: https://www.google.com/maps/search/TÜV+Hessen+Service+Center+Wiesbaden+Wiesbaden
+--------------------------------------------------------------------------------
+
+ID: d496f34c-1c0d-48ff-a68c-cd4c67933cdf
+Business: Vilseck High School (DoDEA)
+Location: Vilseck
+Category: education
+Missing: phone
+Search Query: "Vilseck High School (DoDEA) Vilseck"
+Google Maps: https://www.google.com/maps/search/Vilseck+High+School+(DoDEA)+Vilseck
+--------------------------------------------------------------------------------
+
+ID: c79b054b-19d9-43ca-80d9-62b8d07a9412
+Business: Grafenwöhr Vehicle Registration
+Location: Grafenwöhr, Bavaria
+Category: automotive
+Missing: address, website, phone
+Search Query: "Grafenwöhr Vehicle Registration Grafenwöhr"
+Google Maps: https://www.google.com/maps/search/Grafenwöhr+Vehicle+Registration+Grafenwöhr
+--------------------------------------------------------------------------------
+
+ID: c327dfdb-0f30-49bb-99a4-c236e579dc87
+Business: Wiesbaden Auto Skills Center
+Location: Wiesbaden, Hesse
+Category: automotive
+Missing: website, phone
+Search Query: "Wiesbaden Auto Skills Center Wiesbaden"
+Google Maps: https://www.google.com/maps/search/Wiesbaden+Auto+Skills+Center+Wiesbaden
+--------------------------------------------------------------------------------
+
+ID: c1d2e3f4-a5b6-4c8d-9e0f-1a2b3c4d5e6f
+Business: Urad Car Guys Service Center - Paint & Body
+Location: Ramstein-Kaiserslautern area, Rhineland-Palatinate
+Category: automotive
+Missing: address, phone
+Search Query: "Urad Car Guys Service Center - Paint & Body Ramstein-Kaiserslautern area"
+Google Maps: https://www.google.com/maps/search/Urad+Car+Guys+Service+Center+-+Paint+&+Body+Ramstein-Kaiserslautern+area
+--------------------------------------------------------------------------------
+
+ID: bb9f788c-36b3-4dc6-a7bf-208f56e8b6dd
+Business: Christian Learning Academy
+Location: Mackenbach
+Category: education
+Missing: website, phone
+Search Query: "Christian Learning Academy Mackenbach"
+Google Maps: https://www.google.com/maps/search/Christian+Learning+Academy+Mackenbach
+--------------------------------------------------------------------------------
+
+ID: b9e1469d-faeb-44e2-b2ca-624f113880c6
+Business: TÜV SÜD Service-Center Sindelfingen
+Location: Sindelfingen, Baden-Württemberg
+Category: automotive
+Missing: address, website, phone
+Search Query: "TÜV SÜD Service-Center Sindelfingen Sindelfingen"
+Google Maps: https://www.google.com/maps/search/TÜV+SÜD+Service-Center+Sindelfingen+Sindelfingen
+--------------------------------------------------------------------------------
+
+ID: b9135f54-3e7e-49e1-9d66-053d1eaffe4f
+Business: Faith Baptist School
+Location: Kaiserslautern
+Category: education
+Missing: website, phone
+Search Query: "Faith Baptist School Kaiserslautern"
+Google Maps: https://www.google.com/maps/search/Faith+Baptist+School+Kaiserslautern
+--------------------------------------------------------------------------------
+
+ID: 5c6d7e8f-9a0b-4c1d-2e3f-4a5b6c7d8e9f
+Business: Restaurant Seoul
+Location: Ramstein-Miesenbach, Rhineland-Palatinate
+Category: restaurants
+Missing: address, website, phone
+Search Query: "Restaurant Seoul Ramstein-Miesenbach"
+Google Maps: https://www.google.com/maps/search/Restaurant+Seoul+Ramstein-Miesenbach
+--------------------------------------------------------------------------------
+
+ID: b8c9d0e1-f2a3-4b5c-6d7e-8f9a0b1c2d3e
+Business: Military Car Service Dom
+Location: Weil im Schönbuch, Baden-Württemberg
+Category: automotive
+Missing: address, website, phone
+Search Query: "Military Car Service Dom Weil im Schönbuch"
+Google Maps: https://www.google.com/maps/search/Military+Car+Service+Dom+Weil+im+Schönbuch
+--------------------------------------------------------------------------------
+
+ID: b2c3d4e5-f6a7-4b9c-0d1e-2f3a4b5c6d7e
+Business: GTÜ Kfz-Prüfstelle Ramstein
+Location: Ramstein, Rhineland-Palatinate
+Category: automotive
+Missing: address, website, phone
+Search Query: "GTÜ Kfz-Prüfstelle Ramstein Ramstein"
+Google Maps: https://www.google.com/maps/search/GTÜ+Kfz-Prüfstelle+Ramstein+Ramstein
+--------------------------------------------------------------------------------
+
+ID: b0c1d2e3-f4a5-4b7c-8d9e-0f1a2b3c4d5e
+Business: Orlando Autoservice GbR Schönaich
+Location: Schönaich, Baden-Württemberg
+Category: automotive
+Missing: address, website, phone
+Search Query: "Orlando Autoservice GbR Schönaich Schönaich"
+Google Maps: https://www.google.com/maps/search/Orlando+Autoservice+GbR+Schönaich+Schönaich
+--------------------------------------------------------------------------------
+
+ID: aade55bc-3d0f-4ac4-a79b-ceb869a9dc9c
+Business: Ramstein Middle School (DoDEA)
+Location: Ramstein
+Category: education
+Missing: phone
+Search Query: "Ramstein Middle School (DoDEA) Ramstein"
+Google Maps: https://www.google.com/maps/search/Ramstein+Middle+School+(DoDEA)+Ramstein
+--------------------------------------------------------------------------------
+

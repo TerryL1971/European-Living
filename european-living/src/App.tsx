@@ -17,6 +17,7 @@ import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
 import ServicesDirectory from "./components/ServicesDirectory";
 import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
 import { DEFAULT_BASE } from "./data/bases";
+import BaseSelectionModal from './components/page/BaseSelectionModal';
 
 // ✅ Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -82,6 +83,7 @@ export default function App() {
   
   return (
     <>
+      <BaseSelectionModal />
       <ReadingProgress />
       <Header />
 

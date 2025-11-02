@@ -18,6 +18,7 @@ export interface Business {
   englishFluency?: string;
   featuredTier?: string;
   status?: string;
+  is_on_base?: boolean;  
   created_at?: string;
   updated_at?: string;
 }

@@ -222,21 +222,17 @@ export async function getBusinessesByCategory(category: string): Promise<Busines
 }
 
 /** Get businesses that serve a specific base */
-export async function getBusinessesByBase(baseId: string): Promise<Business[]> {
+export const getBusinessesByBase = async (baseId: string) => {
   const { data, error } = await supabase
-    .from("businesses")
-    .select("*")
-    .contains("bases_served", [baseId])
-    .eq("status", "active")
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error("Error fetching businesses by base:", error);
-    throw error;
-  }
-
-  return (data as BusinessRow[]).map(mapBusinessRow);
-}
+    .from('businesses')
+    .select('*')
+    .eq('status', 'active')
+    .eq('is_on_base', false)  // ← Exclude on-base
+    .contains('bases_served', [baseId]);
+    
+  if (error) throw error;
+  return data;
+};
 
 /** Get featured businesses that serve a specific base */
 export async function getFeaturedBusinessesByBase(baseId: string): Promise<Business[]> {

@@ -30,6 +30,15 @@ export default function ServicesDirectory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // ✅ NEW: track base selection from localStorage
+  const [selectedBase, setSelectedBase] = useState<string | null>(null);
+
+  useEffect(() => {
+    // read saved base on mount
+    const base = localStorage.getItem('selectedBase');
+    if (base) setSelectedBase(base);
+  }, []);
+
   useEffect(() => {
     async function loadServices() {
       try {
@@ -59,8 +68,9 @@ export default function ServicesDirectory() {
     loadServices();
   }, []);
 
+  // ✅ UPDATED: include selectedBase in filtering logic
   const filteredServices = useMemo(() => {
-    const filtered = filterServices(services, {
+    let filtered = filterServices(services, {
       category: selectedCategory === 'all' ? undefined : selectedCategory,
       city: selectedCity === 'All Cities' ? undefined : selectedCity,
       searchQuery: searchQuery || undefined,
@@ -68,8 +78,22 @@ export default function ServicesDirectory() {
       minRating: minRating || undefined,
     });
 
+    // ✅ Filter by base if selectedBase exists
+    if (selectedBase) {
+      filtered = filtered.filter(svc => 
+        svc.location?.nearbyBases?.includes(selectedBase)
+      );
+    }
+
     return sortServices(filtered, sortBy);
-  }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
+  }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy, selectedBase]);
+
+  // ✅ Show which base is currently active (for testing)
+  const currentBaseDisplay = selectedBase ? (
+    <div className="text-sm text-gray-600 mb-4">
+      Showing results near: <span className="font-semibold text-blue-700">{selectedBase}</span>
+    </div>
+  ) : null;
 
   const ServiceCard = ({ service }: { service: ServiceBusiness }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
@@ -78,12 +102,8 @@ export default function ServicesDirectory() {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="text-xl font-bold text-gray-900">{service?.name ?? 'Unnamed Service'}</h3>
-            {service?.verified && (
-              <Shield className="w-5 h-5 text-blue-600" aria-label="Verified Business" />
-            )}
-            {service?.featured && (
-              <Award className="w-5 h-5 text-yellow-500" aria-label="Featured" />
-            )}
+            {service?.verified && <Shield className="w-5 h-5 text-blue-600" />}
+            {service?.featured && <Award className="w-5 h-5 text-yellow-500" />}
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-600">
             <div className="flex items-center gap-1">
@@ -165,13 +185,12 @@ export default function ServicesDirectory() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Services Directory</h1>
           <p className="text-lg text-gray-600">English-friendly businesses serving Americans in Germany</p>
+          {currentBaseDisplay}
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-800">{error}</p>

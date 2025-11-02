@@ -8,6 +8,13 @@ interface MenuItem {
 }
 
 export default function Header() {
+  const resetBaseSelection = () => {
+  localStorage.removeItem("selectedBase");
+  localStorage.removeItem("hasVisitedSite"); // or set to false if you prefer
+  // localStorage.setItem("hasVisited", "false"); // alternative approach
+  window.location.reload();
+};
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string>("home");
   const location = useLocation();
@@ -23,13 +30,12 @@ export default function Header() {
     { label: "English Services", id: "services" },
   ];
 
-  // Update active menu item based on URL/hash
   useEffect(() => {
     if (location.pathname === "/") {
       const hashId = location.hash.replace("#", "") || "home";
       setActiveItem(hashId);
     } else {
-      setActiveItem(""); // no item active outside home
+      setActiveItem("");
     }
   }, [location]);
 
@@ -54,7 +60,9 @@ export default function Header() {
       }
     } else {
       if (location.pathname === "/") {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+        document
+          .getElementById(sectionId)
+          ?.scrollIntoView({ behavior: "smooth" });
       } else {
         navigate(`/#${sectionId}`);
       }
@@ -78,7 +86,9 @@ export default function Header() {
               alt="European Living Logo"
               className="w-10 h-10 object-contain"
             />
-            <span className="text-[var(--brand-dark)] font-semibold text-lg">European Living</span>
+            <span className="text-[var(--brand-dark)] font-semibold text-lg">
+              European Living
+            </span>
           </div>
 
           {/* Desktop Menu */}
@@ -96,10 +106,8 @@ export default function Header() {
                 {item.label}
               </button>
             ))}
-          </div>
 
-          {/* Contact Button */}
-          <div className="hidden md:flex items-center">
+            {/* Contact Button */}
             <button
               onClick={() => handleNavClick("contact")}
               className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
@@ -110,11 +118,23 @@ export default function Header() {
             >
               Contact Us
             </button>
+
+            {/* ✅ Reset Base Button */}
+            <button
+              onClick={resetBaseSelection}
+              className="text-sm text-red-500 hover:text-red-700 underline ml-2"
+            >
+              Reset Base
+            </button>
           </div>
 
           {/* Mobile Menu Toggle */}
           <button onClick={toggle} className="md:hidden cursor-pointer">
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
@@ -145,6 +165,14 @@ export default function Header() {
                 }`}
               >
                 Contact Us
+              </button>
+
+              {/* ✅ Add Reset Base also to mobile */}
+              <button
+                onClick={resetBaseSelection}
+                className="text-sm text-red-500 hover:text-red-700 underline px-4 text-left"
+              >
+                Reset Base
               </button>
             </div>
           </div>
