@@ -28,12 +28,9 @@ const BaseSelectionModal: React.FC = () => {
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
   const [hasVisited, setHasVisited] = useState<boolean>(false);
 
-  const resetBaseSelection = () => {
-    localStorage.removeItem("selectedBase");
-    localStorage.removeItem("hasVisitedSite");
-    window.location.reload();
-  };
+  // NOTE: resetBaseSelection function has been removed.
 
+  // === Check if user has already selected a base ===
   useEffect(() => {
     const storedBase = localStorage.getItem("selectedBase");
     const visited = localStorage.getItem("hasVisitedSite");
@@ -83,7 +80,7 @@ const BaseSelectionModal: React.FC = () => {
 
   return (
     <>
-      {/* === Header Base Indicator (Forcing light brand background) === */}
+      {/* === Header Base Indicator === */}
       {hasVisited && selectedBase && (
         <div className="fixed top-4 right-4 z-40 bg-[var(--brand-bg)] shadow-lg rounded-lg px-4 py-2 border border-[var(--border)]">
           <div className="flex items-center gap-2">
@@ -98,14 +95,7 @@ const BaseSelectionModal: React.FC = () => {
             >
               Change
             </button>
-
-            {/* ✅ Reset Button */}
-            <button
-              onClick={resetBaseSelection}
-              className="ml-2 text-xs text-red-500 hover:text-red-700 underline"
-            >
-              Reset
-            </button>
+            {/* The Reset Button was here and has been removed */}
           </div>
         </div>
       )}
@@ -113,7 +103,6 @@ const BaseSelectionModal: React.FC = () => {
       {/* === Modal Overlay === */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          {/* Main Modal Container (Forcing light brand background) */}
           <div className="bg-[var(--brand-bg)] rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             
             {/* Header (Using deep slate blue: --primary) */}
@@ -154,7 +143,6 @@ const BaseSelectionModal: React.FC = () => {
                     key={base.id}
                     onClick={() => handleBaseSelect(base.id)}
                     className={`relative p-4 rounded-xl border-2 transition-all text-left hover:shadow-md ${
-                      // Selected state: Primary border, light secondary background (sandstone beige)
                       selectedBase === base.id
                         ? "border-[var(--primary)] bg-[var(--secondary)]/30 shadow-md"
                         : "border-[var(--border)] hover:border-[var(--primary)]/50"
@@ -213,7 +201,6 @@ const BaseSelectionModal: React.FC = () => {
                   onClick={handleConfirm}
                   disabled={!selectedBase}
                   className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all ${
-                    // Primary button style
                     selectedBase
                       ? "bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90 shadow-md hover:shadow-lg"
                       : "bg-[var(--muted)] text-[var(--muted-foreground)]/50 cursor-not-allowed"
