@@ -5,7 +5,7 @@ import { getBusinesses, Business } from "../../services/businessServices";
 import { ArrowLeft } from "lucide-react";
 import { getBaseById } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
-import BaseSelector from "../../components/page/BaseSelector"; // <-- IMPORT BaseSelector
+import BaseSelector from "../../components/page/BaseSelector"; 
 
 // Define required props
 interface ServiceCategoryPageProps {
@@ -151,10 +151,6 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
       ]
     : Object.keys(groupedBySubcategory).sort();
   
-  // Debug logging is fine to keep
-  // console.log('Category businesses:', categoryBusinesses);
-  // console.log('Grouped by subcategory:', groupedBySubcategory);
-  // console.log('Ordered subcats:', orderedSubcats);
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]"> 
@@ -192,7 +188,8 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
           {/* Sticky Subcategory Navigation */}
           {orderedSubcats.filter(id => groupedBySubcategory[id]?.length > 0).length > 1 && (
             <div className="sticky top-[72px] z-30 bg-white/95 backdrop-blur-sm border-y border-gray-200 -mx-4 px-4 py-4 mb-8 shadow-sm">
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              {/* 🛑 FIX: Added 'fading-edge-scroll' for visual cue */}
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide fading-edge-scroll">
                 <span className="text-sm font-semibold text-[var(--brand-dark)] whitespace-nowrap mr-2">
                   Jump to:
                 </span>
@@ -212,6 +209,7 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
                           window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         }
                       }}
+                      // 🛑 FIX: Added 'flex-shrink-0' to links for better spacing/readability
                       className="bg-[var(--brand-primary)] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[var(--brand-dark)] transition whitespace-nowrap flex-shrink-0"
                     >
                       {subcategoryTitles[subcatId] || subcatId}

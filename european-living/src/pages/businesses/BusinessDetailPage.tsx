@@ -183,7 +183,10 @@ export default function BusinessDetailPage() {
                 {business.email && (
                   <p>
                     <strong>✉️ Email:</strong>{" "}
-                    <a href={`mailto:${business.email}`} className="underline hover:text-[var(--brand-gold)]">
+                    <a 
+                      href={`mailto:${business.email}`} 
+                      className="underline hover:text-[var(--brand-gold)] break-all" // 🛑 FIX APPLIED HERE
+                    >
                       {business.email}
                     </a>
                   </p>
@@ -191,7 +194,12 @@ export default function BusinessDetailPage() {
                 {business.website && (
                   <p>
                     <strong>🌐 Website:</strong>{" "}
-                    <a href={business.website} target="_blank" rel="noopener noreferrer" className="underline hover:text-[var(--brand-gold)]">
+                    <a 
+                      href={business.website} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="underline hover:text-[var(--brand-gold)] break-all" // 🛑 FIX APPLIED HERE
+                    >
                       Visit Site
                     </a>
                   </p>
@@ -348,7 +356,7 @@ export default function BusinessDetailPage() {
                         <p className="font-semibold text-[var(--brand-dark)]">Email</p>
                         <a
                           href={`mailto:${business.email}`}
-                          className="text-[var(--brand-primary)] hover:underline"
+                          className="text-[var(--brand-primary)] hover:underline break-all" // 🛑 FIX APPLIED HERE
                         >
                           {business.email}
                         </a>
@@ -365,7 +373,7 @@ export default function BusinessDetailPage() {
                           href={business.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--brand-primary)] hover:underline"
+                          className="text-[var(--brand-primary)] hover:underline break-all" // 🛑 FIX APPLIED HERE
                         >
                           Visit Website
                         </a>

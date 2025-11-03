@@ -12,7 +12,6 @@ interface Base {
 }
 
 // NOTE: BASES array should ideally be imported from a separate file
-// but is kept here for a complete, self-contained component based on your prompt.
 const BASES: Base[] = [
   {
     id: "ramstein",
@@ -84,18 +83,16 @@ const BaseSelectionModal: React.FC = () => {
     }
   }, []);
 
-  // 2️⃣ NEW EFFECT: Listen for the "Reset Base" event from Header.tsx.
+  // 2️⃣ EFFECT: Listen for the "Reset Base" event from Header.tsx.
   useEffect(() => {
     const handleOpenModal = () => {
-      // Clear current selection and force the modal open
-      setSelectedBase(localStorage.getItem("selectedBase")); 
+      // Base has been cleared by Header.tsx. We just force the open state.
+      setSelectedBase(null); 
       setIsOpen(true);
     };
 
-    // Attach the event listener to the window
     window.addEventListener("openBaseSelectionModal", handleOpenModal);
 
-    // Cleanup: remove the event listener when the component unmounts
     return () => {
       window.removeEventListener("openBaseSelectionModal", handleOpenModal);
     };
@@ -107,10 +104,10 @@ const BaseSelectionModal: React.FC = () => {
     if (!selectedBase) return;
     localStorage.setItem("selectedBase", selectedBase);
     localStorage.setItem("hasVisitedSite", "true");
-    setIsOpen(false);
+    setIsOpen(false); // Closes the modal
     setHasVisited(true);
     
-    // Dispatch event to update global state (like in your Parent/App component)
+    // Dispatch event to update global state (App.tsx)
     window.dispatchEvent(
       new CustomEvent("baseChanged", { detail: { baseId: selectedBase } })
     );
@@ -120,7 +117,7 @@ const BaseSelectionModal: React.FC = () => {
     localStorage.setItem("hasVisitedSite", "true");
     localStorage.setItem("selectedBase", "all");
     setSelectedBase("all");
-    setIsOpen(false);
+    setIsOpen(false); // Closes the modal
     setHasVisited(true);
 
     // Dispatch event to set "all" as the selected base globally
@@ -129,10 +126,21 @@ const BaseSelectionModal: React.FC = () => {
     );
   };
 
-  const resetBase = () => {
+  // Handles the reset click from the floating indicator
+  const handleResetFromIndicator = () => {
+    // 1. Clear local storage for a fresh start
     localStorage.removeItem("selectedBase");
     localStorage.removeItem("hasVisitedSite");
-    window.location.reload();
+    
+    // 2. Clear component state and open the modal
+    setSelectedBase(null);
+    setHasVisited(false);
+    setIsOpen(true); // Opens the modal for re-selection
+    
+    // 3. Dispatch an event to clear the base in App.tsx 
+    window.dispatchEvent(
+      new CustomEvent("baseChanged", { detail: { baseId: "all" } })
+    );
   };
 
   const getBaseName = (id: string | null) => {
@@ -143,33 +151,42 @@ const BaseSelectionModal: React.FC = () => {
 
   return (
     <>
-      {/* ✅ Floating selected base indicator */}
+      {/* Floating selected base indicator */}
       {hasVisited && selectedBase && (
-        <div className="fixed top-4 right-4 z-40 bg-white shadow-lg rounded-lg px-4 py-2 border flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-blue-600" />
-          <span className="text-sm font-medium">
+        <div 
+          // 🛑 FIX APPLIED HERE:
+          // 1. Added max-w-[calc(100vw-3rem)] to ensure it never exceeds the screen width minus padding.
+          // 2. Added overflow-hidden to contain the contents if the name gets too long.
+          className="fixed top-4 right-4 z-40 bg-white shadow-lg rounded-lg px-4 py-2 border flex items-center gap-2 max-w-[calc(100vw-3rem)] overflow-hidden"
+        >
+          <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
+          <span 
+            // 🛑 FIX APPLIED HERE: 
+            // 3. Added min-w-0 to the text element. This allows the text inside the flex container to shrink correctly and prevents the name from pushing the whole div wider.
+            className="text-sm font-medium truncate min-w-0"
+          >
             {getBaseName(selectedBase)}
           </span>
           <button
-            onClick={resetBase}
-            className="ml-2 text-xs text-red-500 hover:text-red-700 underline"
+            onClick={handleResetFromIndicator}
+            className="ml-2 text-xs text-red-500 hover:text-red-700 underline flex-shrink-0"
           >
             Reset
           </button>
         </div>
       )}
 
-      {/* ✅ Animated modal */}
+      {/* Animated modal */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 overflow-y-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden"
+              className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full overflow-hidden my-auto" 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}

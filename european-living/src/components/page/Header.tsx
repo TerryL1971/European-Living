@@ -9,12 +9,12 @@ interface MenuItem {
 
 export default function Header() {
   const resetBaseSelection = () => {
-  localStorage.removeItem("selectedBase");
-  localStorage.removeItem("hasVisitedSite");
-  
-  window.dispatchEvent(new CustomEvent("openBaseSelectionModal"));
-};
-
+    localStorage.removeItem("selectedBase");
+    localStorage.removeItem("hasVisitedSite");
+    
+    // Dispatch event to BaseSelectionModal to open itself
+    window.dispatchEvent(new CustomEvent("openBaseSelectionModal"));
+  };
 
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -49,6 +49,7 @@ export default function Header() {
         navigate("/");
       }
       setActiveItem("home");
+      // Menu closure included here
       setIsMobileMenuOpen(false);
       return;
     }
@@ -71,6 +72,7 @@ export default function Header() {
     }
 
     setActiveItem(sectionId);
+    // Menu closure included here for non-home navigation
     setIsMobileMenuOpen(false);
   };
 
@@ -121,7 +123,7 @@ export default function Header() {
               Contact Us
             </button>
 
-            {/* ✅ Reset Base Button */}
+            {/* Reset Base Button */}
             <button
               onClick={resetBaseSelection}
               className="text-sm text-red-500 hover:text-red-700 underline ml-2"
@@ -169,9 +171,13 @@ export default function Header() {
                 Contact Us
               </button>
 
-              {/* ✅ Add Reset Base also to mobile */}
+              {/* Reset Base button */}
               <button
-                onClick={resetBaseSelection}
+                // ✅ FIXED: Closing the menu after dispatching the reset event
+                onClick={() => {
+                  resetBaseSelection();
+                  setIsMobileMenuOpen(false); 
+                }}
                 className="text-sm text-red-500 hover:text-red-700 underline px-4 text-left"
               >
                 Reset Base

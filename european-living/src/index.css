@@ -7,7 +7,22 @@
 
 /* === Reset === */
 * { box-sizing: border-box; }
-html, body, #root { height: 100%; margin: 0; }
+
+/* 🛑 FINAL FIX: Apply overflow-x: hidden to the highest level element (html) */
+html { 
+  height: 100%; 
+  margin: 0;
+  scroll-behavior: smooth; 
+  overflow-x: hidden; 
+}
+
+body, #root { 
+  height: 100%; 
+  margin: 0; 
+  /* We keep it here for redundancy, but the html fix is the key */
+  overflow-x: hidden;
+}
+
 body {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
   background: #f7fafc;
@@ -54,7 +69,12 @@ body {
 }
 
 /* === App Container === */
-.app-root { min-height: 100vh; display: flex; flex-direction: column; }
+.app-root { 
+  min-height: 100vh; 
+  display: flex; 
+  flex-direction: column; 
+  overflow-x: hidden; /* Redundant fix, but safe to keep */
+}
 
 /* === Header === */
 .header {
@@ -235,7 +255,6 @@ body {
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-html { scroll-behavior: smooth; }
 .prose img {
   max-width: 100%;
   height: auto;
@@ -289,6 +308,33 @@ html { scroll-behavior: smooth; }
 .btn:hover {
   background-color: var(--brand-dark);
   color: var(--brand-bg-alt);
+}
+
+/* Fading Edge Scroll Effect */
+.fading-edge-scroll {
+    /* Required for the gradient to fade *over* the content */
+    position: relative;
+    
+    /* Creates the visual fade effect on the right side */
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    
+    /* Fallback for older browsers, though mask-image is widely supported */
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+}
+
+/* Optional: Add a fade on the left when scrolling */
+.fading-edge-scroll::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 20px; /* Width of the shadow */
+    pointer-events: none; /* Allows clicks to pass through */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%);
+    opacity: 0; /* Starts hidden */
+    transition: opacity 0.3s;
+    z-index: 10;
 }
 
 .prose {
@@ -399,4 +445,3 @@ html { scroll-behavior: smooth; }
   background: #f9fafb;
   font-weight: 600;
 }
-
