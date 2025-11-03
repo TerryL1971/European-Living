@@ -106,7 +106,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
 
   return (
     <section id="services" className="relative bg-white py-20">
-      <div className="absolute inset-0 bg-[url('https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/services.jpg')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-[url('/images/services.jpg')] bg-cover bg-center" />
       {/* Enhanced gradient overlay - darker and more dramatic */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
       

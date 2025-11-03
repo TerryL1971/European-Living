@@ -10,6 +10,19 @@ interface BaseSelectorProps {
 export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelectorProps) {
   const currentBase = BASES.find((b) => b.id === selectedBase);
 
+  const handleBaseChange = (newBase: string) => {
+    // Update parent component
+    onBaseChange(newBase);
+    
+    // ✅ Save to localStorage
+    localStorage.setItem('selectedBase', newBase);
+    
+    // ✅ Dispatch event so modal and other components know
+    window.dispatchEvent(new CustomEvent('baseChanged', { 
+      detail: { baseId: newBase } 
+    }));
+  };
+
   return (
     <div className="bg-[var(--brand-primary)] text-white py-4 sticky top-0 z-50 shadow-md mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,7 +42,7 @@ export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelecto
             <select
               id="base-select"
               value={selectedBase}
-              onChange={(e) => onBaseChange(e.target.value)}
+              onChange={(e) => handleBaseChange(e.target.value)} // ✅ Use new handler
               className="bg-white text-[var(--brand-dark)] px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
             >
               {BASES.map((base) => (

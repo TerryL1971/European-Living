@@ -139,13 +139,22 @@ function mapReviewRow(row: ReviewRow): Review {
 // Queries
 // =======================
 
-/** Get all active businesses, ordered by name */
-export async function getBusinesses(): Promise<Business[]> {
-  const { data, error } = await supabase
+/** Get all active businesses, optionally filtered by base */
+export async function getBusinesses(baseId?: string): Promise<Business[]> {
+  let query = supabase
     .from("businesses")
     .select("*")
     .eq("status", "active")
-    .order("name", { ascending: true });
+    .eq("is_on_base", false); // Exclude on-base businesses
+
+  // If a base is selected, filter by it
+  if (baseId && baseId !== "all") {
+    query = query.contains("bases_served", [baseId]);
+  }
+
+  query = query.order("name", { ascending: true });
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching businesses:", error);
@@ -204,14 +213,26 @@ export async function getReviewsByBusiness(businessId: string): Promise<Review[]
   return (data as ReviewRow[]).map(mapReviewRow);
 }
 
-/** Get businesses by category */
-export async function getBusinessesByCategory(category: string): Promise<Business[]> {
-  const { data, error } = await supabase
+/** Get businesses by category, optionally filtered by base */
+export async function getBusinessesByCategory(
+  category: string,
+  baseId?: string
+): Promise<Business[]> {
+  let query = supabase
     .from("businesses")
     .select("*")
     .eq("category", category)
     .eq("status", "active")
-    .order("name", { ascending: true });
+    .eq("is_on_base", false); // Exclude on-base businesses
+
+  // If a base is selected, filter by it
+  if (baseId && baseId !== "all") {
+    query = query.contains("bases_served", [baseId]);
+  }
+
+  query = query.order("name", { ascending: true });
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("Error fetching businesses by category:", error);

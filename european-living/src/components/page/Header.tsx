@@ -10,10 +10,12 @@ interface MenuItem {
 export default function Header() {
   const resetBaseSelection = () => {
   localStorage.removeItem("selectedBase");
-  localStorage.removeItem("hasVisitedSite"); // or set to false if you prefer
-  // localStorage.setItem("hasVisited", "false"); // alternative approach
-  window.location.reload();
+  localStorage.removeItem("hasVisitedSite");
+  
+  window.dispatchEvent(new CustomEvent("openBaseSelectionModal"));
 };
+
+
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<string>("home");

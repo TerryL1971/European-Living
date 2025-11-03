@@ -16,8 +16,8 @@ import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
 import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
 import ServicesDirectory from "./components/ServicesDirectory";
 import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
-import { DEFAULT_BASE } from "./data/bases";
 import BaseSelectionModal from './components/page/BaseSelectionModal';
+import { DEFAULT_BASE } from "./data/bases";
 
 // ✅ Reading Progress Bar Component
 const ReadingProgress = () => {

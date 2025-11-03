@@ -40,53 +40,71 @@ export default function ServicesDirectory() {
   }, []);
 
   useEffect(() => {
-    async function loadServices() {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Fetch all businesses from Supabase
-        const { data, error: fetchError } = await supabase
-          .from('businesses')
-          .select('*')
-          .eq('status', 'active'); // Only show active businesses
-        
-        if (fetchError) {
-          throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
-        }
-        
-        setServices(data || []);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
-        console.error('Failed to load services:', err);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
+  async function loadServices() {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // ✅ Get the selected base
+      const base = localStorage.getItem('selectedBase') || 'all';
+      
+      // ✅ Fetch businesses filtered by base and excluding on-base
+      let query = supabase
+        .from('businesses')
+        .select('*')
+        .eq('status', 'active')
+        .eq('is_on_base', false); // Exclude on-base businesses
+      
+      // ✅ Filter by base if not "all"
+      if (base !== 'all') {
+        query = query.contains('bases_served', [base]);
       }
+      
+      const { data, error: fetchError } = await query;
+      
+      if (fetchError) {
+        throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
+      }
+      
+      setServices(data || []);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
+      console.error('Failed to load services:', err);
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    
-    loadServices();
-  }, []);
+  }
+  
+  loadServices();
+
+  // ✅ Listen for base changes from modal
+  const handleBaseChange = (event: Event) => {
+    const customEvent = event as CustomEvent;
+    const newBase = customEvent.detail.baseId;
+    setSelectedBase(newBase);
+    localStorage.setItem('selectedBase', newBase);
+    loadServices(); // Reload services with new base
+  };
+
+  window.addEventListener('baseChanged', handleBaseChange);
+  return () => {
+    window.removeEventListener('baseChanged', handleBaseChange);
+  };
+}, [selectedBase]); // Re-run when selectedBase changes
 
   // ✅ UPDATED: include selectedBase in filtering logic
   const filteredServices = useMemo(() => {
-    let filtered = filterServices(services, {
-      category: selectedCategory === 'all' ? undefined : selectedCategory,
-      city: selectedCity === 'All Cities' ? undefined : selectedCity,
-      searchQuery: searchQuery || undefined,
-      militaryDiscount: militaryDiscountOnly || undefined,
-      minRating: minRating || undefined,
-    });
+  const filtered = filterServices(services, {
+    category: selectedCategory === 'all' ? undefined : selectedCategory,
+    city: selectedCity === 'All Cities' ? undefined : selectedCity,
+    searchQuery: searchQuery || undefined,
+    militaryDiscount: militaryDiscountOnly || undefined,
+    minRating: minRating || undefined,
+  });
 
-    // ✅ Filter by base if selectedBase exists
-    if (selectedBase) {
-      filtered = filtered.filter(svc => 
-        svc.location?.nearbyBases?.includes(selectedBase)
-      );
-    }
-
-    return sortServices(filtered, sortBy);
-  }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy, selectedBase]);
+  return sortServices(filtered, sortBy);
+}, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
 
   // ✅ Show which base is currently active (for testing)
   const currentBaseDisplay = selectedBase ? (
