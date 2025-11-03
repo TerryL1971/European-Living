@@ -17,9 +17,10 @@ import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
 import ServicesDirectory from "./components/ServicesDirectory";
 import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
 import BaseSelectionModal from './components/page/BaseSelectionModal';
-import { DEFAULT_BASE } from "./data/bases";
 
-// ✅ Reading Progress Bar Component
+const INITIAL_BASE = localStorage.getItem('selectedBase') || "all"; 
+
+// Reading Progress Bar Component
 const ReadingProgress = () => {
   const [scroll, setScroll] = useState(0);
 
@@ -48,35 +49,49 @@ const ReadingProgress = () => {
   );
 };
 
+
 export default function App() {
-  const [selectedBase] = useState(DEFAULT_BASE);
+  const [selectedBase, setSelectedBase] = useState(INITIAL_BASE);
   const location = useLocation();
+
+  // GLOBAL LISTENER: Sync state when base is changed anywhere (Modal, BaseSelector).
+  useEffect(() => {
+    const handleBaseChange = (event: CustomEvent) => {
+      setSelectedBase(event.detail.baseId);
+    };
+
+    window.addEventListener("baseChanged", handleBaseChange as EventListener);
+    
+    return () => {
+      window.removeEventListener("baseChanged", handleBaseChange as EventListener);
+    };
+  }, []);
+
+  // HANDLER: Function passed down to BaseSelector components to update central state.
+  const handleBaseUpdate = (baseId: string) => {
+    setSelectedBase(baseId);
+  };
 
   // Handle hash navigation and location.state scrolling on homepage
   useEffect(() => {
     if (location.pathname === '/') {
       let sectionId = null;
 
-      // Check if coming from location.state (from back button)
       if (location.state?.scrollTo) {
         sectionId = location.state.scrollTo;
-        // Clear the state so it doesn't scroll again on subsequent renders
         window.history.replaceState({}, document.title);
       } 
-      // Otherwise check for hash in URL
       else if (location.hash) {
-        sectionId = location.hash.substring(1); // Remove the #
+        sectionId = location.hash.substring(1);
       }
 
-      // Scroll to the section if we found one
       if (sectionId) {
-        // Add a longer delay to ensure section is rendered
         setTimeout(() => {
           const element = document.getElementById(sectionId);
           if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
           }
-        }, 300); // Increased from 100 to 300ms
+        }, 300);
       }
     }
   }, [location]);
@@ -86,6 +101,8 @@ export default function App() {
       <BaseSelectionModal />
       <ReadingProgress />
       <Header />
+      
+      {/* 🛑 BaseSelector is NOT included here, keeping it off the homepage. */}
 
       <Routes>
         {/* Home Page */}
@@ -103,21 +120,43 @@ export default function App() {
           }
         />
 
-        {/* Article & Destination Pages */}
+        {/* SERVICES DIRECTORY - PROPS PASSED HERE */}
+        <Route 
+          path="/services-directory" 
+          element={
+            <div className="pt-16">
+              <ServicesDirectory 
+                selectedBase={selectedBase} 
+                onBaseChange={handleBaseUpdate} 
+              />
+            </div>
+          } 
+        />
+        
+        {/* CATEGORY PAGE - PROPS PASSED HERE */}
+        <Route 
+          path="/services/:category" 
+          element={
+            <ServiceCategoryPage 
+              selectedBase={selectedBase} 
+              onBaseChange={handleBaseUpdate} 
+            />
+          } 
+        />
+        <Route 
+          path="/services/:category/:subcategory" 
+          element={
+            <ServiceCategoryPage 
+              selectedBase={selectedBase} 
+              onBaseChange={handleBaseUpdate} 
+            />
+          } 
+        />
+
+        {/* Other Routes */}
+        <Route path="/submit-business" element={<div className="pt-16"><BusinessSubmissionForm /></div>} />
         <Route path="/articles/:slug" element={<ArticlePage />} />
         <Route path="/destinations/:id" element={<DestinationPage />} />
-
-        {/* ✅ NEW: Services Directory (all services browsable) */}
-        <Route path="/services-directory" element={<div className="pt-16"><ServicesDirectory /></div>} />
-        
-        {/* ✅ NEW: Business Submission Form */}
-        <Route path="/submit-business" element={<div className="pt-16"><BusinessSubmissionForm /></div>} />
-
-        {/* ✅ Category Page (e.g. /services/automotive?base=ramstein) */}
-        <Route path="/services/:category" element={<ServiceCategoryPage />} />
-        <Route path="/services/:category/:subcategory" element={<ServiceCategoryPage />} />
-
-        {/* ✅ Business Detail Page (e.g. /businesses/ucg-ramstein) */}
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
       </Routes>
 

@@ -1,9 +1,11 @@
 // src/components/ServicesDirectory.tsx
 import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
+import BaseSelector from './page/BaseSelector'; 
 import { ServiceBusiness, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
-import { supabase } from '../services/supabaseClient'; // Make sure this import exists
+import { supabase } from '../services/supabaseClient'; 
 
+// ✅ FIX: Restored categories array definition
 const categories = [
   { id: 'all', name: 'All Services' },
   { id: 'restaurants', name: 'Restaurants' },
@@ -15,9 +17,15 @@ const categories = [
   { id: 'business', name: 'Business Services' }
 ];
 
+// ✅ FIX: Restored cities array definition
 const cities = ['All Cities', 'Stuttgart', 'Kaiserslautern', 'Wiesbaden', 'Ramstein'];
 
-export default function ServicesDirectory() {
+interface ServicesDirectoryProps {
+  selectedBase: string;
+  onBaseChange: (baseId: string) => void;
+}
+
+export default function ServicesDirectory({ selectedBase, onBaseChange }: ServicesDirectoryProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | ServiceCategory>('all');
   const [selectedCity, setSelectedCity] = useState('All Cities');
@@ -30,88 +38,64 @@ export default function ServicesDirectory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ NEW: track base selection from localStorage
-  const [selectedBase, setSelectedBase] = useState<string | null>(null);
-
   useEffect(() => {
-    // read saved base on mount
-    const base = localStorage.getItem('selectedBase');
-    if (base) setSelectedBase(base);
-  }, []);
-
-  useEffect(() => {
-  async function loadServices() {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // ✅ Get the selected base
-      const base = localStorage.getItem('selectedBase') || 'all';
-      
-      // ✅ Fetch businesses filtered by base and excluding on-base
-      let query = supabase
-        .from('businesses')
-        .select('*')
-        .eq('status', 'active')
-        .eq('is_on_base', false); // Exclude on-base businesses
-      
-      // ✅ Filter by base if not "all"
-      if (base !== 'all') {
-        query = query.contains('bases_served', [base]);
+    async function loadServices() {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const base = selectedBase || 'all'; 
+        
+        let query = supabase
+          .from('businesses')
+          .select('*')
+          .eq('status', 'active')
+          .eq('is_on_base', false); 
+        
+        if (base !== 'all') {
+          query = query.contains('bases_served', [base]);
+        }
+        
+        const { data, error: fetchError } = await query;
+        
+        if (fetchError) {
+          throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
+        }
+        
+        setServices(data || []);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
+        console.error('Failed to load services:', err);
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
       }
-      
-      const { data, error: fetchError } = await query;
-      
-      if (fetchError) {
-        throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
-      }
-      
-      setServices(data || []);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
-      console.error('Failed to load services:', err);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
     }
-  }
-  
-  loadServices();
+    
+    loadServices();
+  }, [selectedBase]); 
 
-  // ✅ Listen for base changes from modal
-  const handleBaseChange = (event: Event) => {
-    const customEvent = event as CustomEvent;
-    const newBase = customEvent.detail.baseId;
-    setSelectedBase(newBase);
-    localStorage.setItem('selectedBase', newBase);
-    loadServices(); // Reload services with new base
-  };
-
-  window.addEventListener('baseChanged', handleBaseChange);
-  return () => {
-    window.removeEventListener('baseChanged', handleBaseChange);
-  };
-}, [selectedBase]); // Re-run when selectedBase changes
-
-  // ✅ UPDATED: include selectedBase in filtering logic
   const filteredServices = useMemo(() => {
-  const filtered = filterServices(services, {
-    category: selectedCategory === 'all' ? undefined : selectedCategory,
-    city: selectedCity === 'All Cities' ? undefined : selectedCity,
-    searchQuery: searchQuery || undefined,
-    militaryDiscount: militaryDiscountOnly || undefined,
-    minRating: minRating || undefined,
-  });
+    const filtered = filterServices(services, {
+      category: selectedCategory === 'all' ? undefined : selectedCategory,
+      city: selectedCity === 'All Cities' ? undefined : selectedCity,
+      searchQuery: searchQuery || undefined,
+      militaryDiscount: militaryDiscountOnly || undefined,
+      minRating: minRating || undefined,
+    });
 
-  return sortServices(filtered, sortBy);
-}, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
+    return sortServices(filtered, sortBy);
+  }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
 
-  // ✅ Show which base is currently active (for testing)
-  const currentBaseDisplay = selectedBase ? (
+  const currentBaseDisplay = selectedBase && selectedBase !== 'all' ? (
     <div className="text-sm text-gray-600 mb-4">
       Showing results near: <span className="font-semibold text-blue-700">{selectedBase}</span>
     </div>
-  ) : null;
+  ) : (
+    <div className="text-sm text-gray-600 mb-4">
+      Showing results for: <span className="font-semibold text-blue-700">All Bases</span>
+    </div>
+  );
 
   const ServiceCard = ({ service }: { service: ServiceBusiness }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
@@ -203,12 +187,18 @@ export default function ServicesDirectory() {
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
+        
+        {/* Render Base Selector */}
+        <div className="mb-6">
+           <BaseSelector selectedBase={selectedBase} onBaseChange={onBaseChange} />
+        </div>
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Services Directory</h1>
           <p className="text-lg text-gray-600">English-friendly businesses serving Americans in Germany</p>
           {currentBaseDisplay}
         </div>
-
+        
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <p className="text-red-800">{error}</p>
@@ -234,7 +224,8 @@ export default function ServicesDirectory() {
             {categories.map(cat => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id as 'all' | ServiceCategory)}
+                // @ts-expect-error: cat.id is checked against 'all' or ServiceCategory in the component logic
+                onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === cat.id
                     ? 'bg-blue-600 text-white'
