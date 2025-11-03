@@ -1,4 +1,4 @@
-import{g as ui}from"./vendor-react-DSttHNcL.js";var Ln={exports:{}},Nt={};/**
+import{g as ui}from"./vendor-react-Cr8ibkBP.js";var Ln={exports:{}},Nt={};/**
  * @license React
  * react-jsx-runtime.production.js
  *
