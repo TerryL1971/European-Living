@@ -11,6 +11,8 @@ interface Base {
   description: string;
 }
 
+// NOTE: BASES array should ideally be imported from a separate file
+// but is kept here for a complete, self-contained component based on your prompt.
 const BASES: Base[] = [
   {
     id: "ramstein",
@@ -67,7 +69,7 @@ const BaseSelectionModal: React.FC = () => {
   const [selectedBase, setSelectedBase] = useState<string | null>(null);
   const [hasVisited, setHasVisited] = useState(false);
 
-  // ✅ Show modal only once for new visitors
+  // 1️⃣ EFFECT: Check localStorage and show modal on first visit.
   useEffect(() => {
     const storedBase = localStorage.getItem("selectedBase");
     const visited = localStorage.getItem("hasVisitedSite");
@@ -76,9 +78,27 @@ const BaseSelectionModal: React.FC = () => {
       setSelectedBase(storedBase);
       setHasVisited(true);
     } else if (!visited) {
+      // Delay opening for a better user experience on first load
       const timer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(timer);
     }
+  }, []);
+
+  // 2️⃣ NEW EFFECT: Listen for the "Reset Base" event from Header.tsx.
+  useEffect(() => {
+    const handleOpenModal = () => {
+      // Clear current selection and force the modal open
+      setSelectedBase(localStorage.getItem("selectedBase")); 
+      setIsOpen(true);
+    };
+
+    // Attach the event listener to the window
+    window.addEventListener("openBaseSelectionModal", handleOpenModal);
+
+    // Cleanup: remove the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("openBaseSelectionModal", handleOpenModal);
+    };
   }, []);
 
   const handleBaseSelect = (baseId: string) => setSelectedBase(baseId);
@@ -89,6 +109,8 @@ const BaseSelectionModal: React.FC = () => {
     localStorage.setItem("hasVisitedSite", "true");
     setIsOpen(false);
     setHasVisited(true);
+    
+    // Dispatch event to update global state (like in your Parent/App component)
     window.dispatchEvent(
       new CustomEvent("baseChanged", { detail: { baseId: selectedBase } })
     );
@@ -100,6 +122,11 @@ const BaseSelectionModal: React.FC = () => {
     setSelectedBase("all");
     setIsOpen(false);
     setHasVisited(true);
+
+    // Dispatch event to set "all" as the selected base globally
+    window.dispatchEvent(
+      new CustomEvent("baseChanged", { detail: { baseId: "all" } })
+    );
   };
 
   const resetBase = () => {
