@@ -1,8 +1,18 @@
 // src/pages/admin/BusinessDataEntry.tsx
 import { useState, useEffect, useMemo } from 'react';
-import { Search, Save, AlertCircle, CheckCircle, ChevronLeft, ChevronRight, ExternalLink, Loader, MapPin } from 'lucide-react';
+import {
+  Search,
+  Save,
+  AlertCircle,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,
+  Loader,
+  MapPin
+} from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
-import React from 'react'; 
+import React from 'react';
 
 // Placeholder for your base data (Replace with actual data source if needed)
 const BASES = [
@@ -10,7 +20,7 @@ const BASES = [
   { id: 'stuttgart', name: 'USAG Stuttgart' },
   { id: 'kaiserslautern', name: 'KMC Area' },
   { id: 'wiesbaden', name: 'USAG Wiesbaden' },
-  { id: 'grafenwoehr', 'name': 'USAG Bavaria' },
+  { id: 'grafenwoehr', name: 'USAG Bavaria' },
   { id: 'spangdahlem', name: 'Spangdahlem AB' },
 ];
 
@@ -88,7 +98,7 @@ function mapBusinessRow(row: BusinessRow): Business {
     englishFluency: row.english_fluency as Business["englishFluency"],
     verified: row.verified,
     featured: row.featured,
-    featuredTier: row.featured_tier as Business["featuredTier"], 
+    featuredTier: row.featured_tier as Business["featuredTier"],
     baseDistance: row.base_distance,
     notes: row.notes,
     imageUrl: row.image_url,
@@ -108,9 +118,9 @@ function mapBusinessRow(row: BusinessRow): Business {
 // ----------------------------------------------------------------------
 
 const generateGoogleMapsUrl = (lat: number, lon: number): string => {
-    // Standard format for direct Google Maps link via coordinates
-    return `http://googleusercontent.com/maps.google.com/9{lat},${lon}`;
-}
+  // Use the standard Google Maps query URL for coordinates
+  return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+};
 
 const isValidUrl = (url?: string): boolean => {
   if (!url) return true; // Treat empty strings as valid (not present)
@@ -120,7 +130,7 @@ const isValidUrl = (url?: string): boolean => {
   } catch {
     return false;
   }
-}
+};
 
 // ----------------------------------------------------------------------
 
@@ -133,7 +143,7 @@ export default function BusinessDataEntry() {
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [loading, setLoading] = useState(true);
   const [geocoding, setGeocoding] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]); 
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   useEffect(() => {
     async function loadBusinesses() {
@@ -142,15 +152,15 @@ export default function BusinessDataEntry() {
           .from('businesses')
           .select('*')
           .order('name');
-        
+
         if (error) throw error;
-        
+
         const mapped = (data as BusinessRow[]).map(mapBusinessRow);
         setBusinesses(mapped);
         if (mapped.length > 0) {
           const initialFilteredIndex = mapped.findIndex(b => getMissingFields(b).length > 0);
           const startIndex = initialFilteredIndex !== -1 ? initialFilteredIndex : 0;
-          
+
           setFormData(mapped[startIndex]);
           setCurrentIndex(startIndex);
         }
@@ -160,7 +170,7 @@ export default function BusinessDataEntry() {
         setLoading(false);
       }
     }
-    
+
     loadBusinesses();
   }, []);
 
@@ -180,14 +190,14 @@ export default function BusinessDataEntry() {
   const filteredBusinesses = useMemo(() => {
     return businesses.filter(b => {
       const matchesSearch = b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           b.location.toLowerCase().includes(searchTerm.toLowerCase());
-      
+        b.location.toLowerCase().includes(searchTerm.toLowerCase());
+
       if (filter === 'all') return matchesSearch;
       if (filter === 'missing-data') return matchesSearch && getMissingFields(b).length > 0;
       if (filter === 'unverified') return matchesSearch && !b.verified;
       if (filter === 'no-coordinates') return matchesSearch && (!b.latitude || !b.longitude);
       if (filter === 'no-contact') return matchesSearch && (!b.phone && !b.email && !b.website);
-      
+
       return matchesSearch;
     });
   }, [businesses, searchTerm, filter]);
@@ -199,7 +209,7 @@ export default function BusinessDataEntry() {
       setFormData(currentBusiness);
       setValidationErrors([]); // Clear validation errors on navigation
     } else {
-        setFormData(null);
+      setFormData(null);
     }
   }, [currentIndex, filteredBusinesses]);
 
@@ -208,7 +218,7 @@ export default function BusinessDataEntry() {
     if (!formData) return;
     setFormData(prev => prev ? { ...prev, [field]: value } : null);
   };
-  
+
   // 🌍 Handler for basesServed checkboxes
   const handleBasesServedChange = (baseId: string, isChecked: boolean) => {
     if (!formData) return;
@@ -225,11 +235,11 @@ export default function BusinessDataEntry() {
 
     handleInputChange('basesServed', updatedBases);
   };
-  
+
   // 🛡️ Validation Logic
   const validateForm = (data: Business): string[] => {
     const errors: string[] = [];
-    
+
     if (data.website && !isValidUrl(data.website)) {
       errors.push('Website URL is invalid.');
     }
@@ -242,13 +252,16 @@ export default function BusinessDataEntry() {
     if (!data.name || !data.location || !data.category) {
       errors.push('Name, Location, and Category are required fields.');
     }
-    
+
     return errors;
   };
 
+  // ------------------------------
+  // SAVE HANDLER WITH IMAGE URL FIX
+  // ------------------------------
   const handleSave = async () => {
     if (!formData) return;
-    
+
     const errors = validateForm(formData);
     if (errors.length > 0) {
       setValidationErrors(errors);
@@ -259,10 +272,15 @@ export default function BusinessDataEntry() {
 
     setSaveStatus('saving');
     setValidationErrors([]); // Clear errors before saving
-    
+
     try {
-      // Convert camelCase back to snake_case for database
-      const { error } = await supabase
+      // Debug: confirm the id we're updating
+      console.log('🆔 Attempting to update business id:', formData.id);
+      console.log("🆔 Updating record:", formData.id, typeof formData.id);
+
+
+      // Convert camelCase back to snake_case for database (match your table columns)
+      const { data, error, status, statusText } = await supabase
         .from('businesses')
         .update({
           name: formData.name,
@@ -277,21 +295,43 @@ export default function BusinessDataEntry() {
           english_fluency: formData.englishFluency,
           verified: formData.verified,
           featured: formData.featured,
-          featured_tier: formData.featuredTier, 
+          featured_tier: formData.featuredTier,
           latitude: formData.latitude,
           longitude: formData.longitude,
           google_maps_url: formData.googleMapsUrl,
           notes: formData.notes,
+          image_url: formData.imageUrl, // <-- FIX: Mapped imageUrl to image_url
           status: formData.status,
-          bases_served: formData.basesServed, 
+          bases_served: formData.basesServed,
           updated_at: new Date().toISOString()
         })
-        .eq('id', formData.id);
-      
-      if (error) throw error;
-      
+        .eq('id', formData.id)
+        .select(); // Return updated rows for inspection
+
+      // Log full response so you can inspect what happened
+      console.log('🧠 Supabase update result:', { data, error, status, statusText });
+
+      if (error) {
+        // Common errors: RLS, column mismatch, or permissions
+        console.error('Error saving to Supabase:', error);
+        setValidationErrors(['A database error occurred. See console for details.']);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 5000);
+        return;
+      }
+
+      if (!data || (Array.isArray(data) && data.length === 0)) {
+        // No rows returned — probably wrong ID or RLS blocked the update
+        console.warn('Update returned no rows. Possible causes: ID mismatch, RLS blocked the update, or no matching row.');
+        setValidationErrors(['Update executed but no rows were returned. Check console for details.']);
+        setSaveStatus('error');
+        setTimeout(() => setSaveStatus('idle'), 5000);
+        return;
+      }
+
+      // Update local state with saved data (best-effort — we trust formData is authoritative)
       setBusinesses(prev => prev.map(b => b.id === formData.id ? formData : b));
-      
+
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
@@ -333,23 +373,23 @@ export default function BusinessDataEntry() {
     setValidationErrors([]);
     try {
       const nominatimUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(formData.address + ', Germany')}`;
-      
+
       const response = await fetch(nominatimUrl);
       const data = await response.json();
-      
+
       if (data && data.length > 0) {
         const { lat, lon } = data[0];
         const latitude = parseFloat(lat);
         const longitude = parseFloat(lon);
         const url = generateGoogleMapsUrl(latitude, longitude);
-        
+
         setFormData(prev => prev ? {
           ...prev,
           latitude,
           longitude,
           googleMapsUrl: url
         } : null);
-        
+
         alert(`Coordinates added successfully! Latitude: ${latitude}, Longitude: ${longitude}. Google Maps URL generated.`);
       } else {
         alert('Could not find coordinates for this address. Try adding more detail.');
@@ -400,14 +440,12 @@ export default function BusinessDataEntry() {
                 type="text"
                 placeholder="Search businesses..."
                 value={searchTerm}
-                // ✅ All input handlers use destructuring: ({ target })
                 onChange={({ target }) => setSearchTerm(target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <select
               value={filter}
-              // ✅ All select handlers use destructuring: ({ target })
               onChange={({ target }) => {
                 setFilter(target.value);
                 setCurrentIndex(0); // Reset index on filter change
@@ -427,7 +465,6 @@ export default function BusinessDataEntry() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <button
-                // ✅ All non-event handlers use simple function reference
                 onClick={handlePrevious}
                 disabled={currentIndex === 0}
                 className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
@@ -438,7 +475,6 @@ export default function BusinessDataEntry() {
                 {currentIndex + 1} of {filteredBusinesses.length}
               </span>
               <button
-                // ✅ All non-event handlers use simple function reference
                 onClick={handleNext}
                 disabled={currentIndex === filteredBusinesses.length - 1}
                 className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
@@ -446,11 +482,11 @@ export default function BusinessDataEntry() {
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-600">Completion:</span>
               <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div 
+                <div
                   className="h-full bg-green-500 transition-all duration-300"
                   style={{ width: `${completionPercentage}%` }}
                 />
@@ -469,7 +505,7 @@ export default function BusinessDataEntry() {
               </div>
             </div>
           )}
-          
+
           {/* Display validation errors */}
           {validationErrors.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
@@ -488,7 +524,7 @@ export default function BusinessDataEntry() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{formData.name}</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
+
             {/* -------------------------------------------------------- */}
             {/* TOP ROW: Name, Category, Subcategory, Location */}
             {/* -------------------------------------------------------- */}
@@ -498,7 +534,6 @@ export default function BusinessDataEntry() {
               <input
                 type="text"
                 value={formData.name}
-                // ✅ All input handlers use destructuring: ({ target })
                 onChange={({ target }) => handleInputChange('name', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -509,7 +544,6 @@ export default function BusinessDataEntry() {
               <input
                 type="text"
                 value={formData.category || ''}
-                // ✅ All input handlers use destructuring: ({ target })
                 onChange={({ target }) => handleInputChange('category', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -519,9 +553,8 @@ export default function BusinessDataEntry() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory</label>
               <input
                 type="text"
-                value={formData.subcategory || ''} 
-                // ✅ All input handlers use destructuring: ({ target })
-                onChange={({ target }) => handleInputChange('subcategory', target.value)} 
+                value={formData.subcategory || ''}
+                onChange={({ target }) => handleInputChange('subcategory', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="e.g., car-dealerships"
               />
@@ -532,16 +565,15 @@ export default function BusinessDataEntry() {
               <input
                 type="text"
                 value={formData.location}
-                // ✅ All input handlers use destructuring: ({ target })
                 onChange={({ target }) => handleInputChange('location', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* ADDRESS & GEOCODING */}
             {/* -------------------------------------------------------- */}
-            
+
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Street Address {!formData.address && <span className="text-amber-600">⚠️ Missing</span>}
@@ -549,14 +581,12 @@ export default function BusinessDataEntry() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={formData.address || ''} 
-                  // ✅ All input handlers use destructuring: ({ target })
-                  onChange={({ target }) => handleInputChange('address', target.value)} 
+                  value={formData.address || ''}
+                  onChange={({ target }) => handleInputChange('address', target.value)}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Full street address"
                 />
                 <button
-                  // ✅ All non-event handlers use simple function reference
                   onClick={handleGeocodeAddress}
                   disabled={!formData.address || geocoding}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex items-center gap-2"
@@ -566,7 +596,7 @@ export default function BusinessDataEntry() {
                 </button>
               </div>
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* CONTACT INFO */}
             {/* -------------------------------------------------------- */}
@@ -577,9 +607,8 @@ export default function BusinessDataEntry() {
               </label>
               <input
                 type="text"
-                value={formData.phone || ''} 
-                // ✅ All input handlers use destructuring: ({ target })
-                onChange={({ target }) => handleInputChange('phone', target.value)} 
+                value={formData.phone || ''}
+                onChange={({ target }) => handleInputChange('phone', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="+49 123 456789"
               />
@@ -591,9 +620,8 @@ export default function BusinessDataEntry() {
               </label>
               <input
                 type="email"
-                value={formData.email || ''} 
-                // ✅ All input handlers use destructuring: ({ target })
-                onChange={({ target }) => handleInputChange('email', target.value)} 
+                value={formData.email || ''}
+                onChange={({ target }) => handleInputChange('email', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="contact@business.com"
               />
@@ -606,8 +634,7 @@ export default function BusinessDataEntry() {
               <div className="flex gap-2">
                 <input
                   type="url"
-                  value={formData.website || ''} 
-                  // ✅ All input handlers use destructuring: ({ target })
+                  value={formData.website || ''}
                   onChange={({ target }) => handleInputChange('website', target.value)}
                   className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     formData.website && !isValidUrl(formData.website) ? 'border-red-500' : 'border-gray-300'
@@ -626,7 +653,7 @@ export default function BusinessDataEntry() {
                 )}
               </div>
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* DESCRIPTION */}
             {/* -------------------------------------------------------- */}
@@ -636,8 +663,7 @@ export default function BusinessDataEntry() {
                 Description {(!formData.description || formData.description.length < 20) && <span className="text-amber-600">⚠️ Too short</span>}
               </label>
               <textarea
-                value={formData.description || ''} 
-                // ✅ All input handlers use destructuring: ({ target })
+                value={formData.description || ''}
                 onChange={({ target }) => handleInputChange('description', target.value)}
                 rows={3}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -645,7 +671,7 @@ export default function BusinessDataEntry() {
               />
               <p className="text-xs text-gray-500 mt-1">{formData.description?.length || 0} characters</p>
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* COORDINATES & MAP URL */}
             {/* -------------------------------------------------------- */}
@@ -657,8 +683,7 @@ export default function BusinessDataEntry() {
               <input
                 type="number"
                 step="0.000001"
-                value={formData.latitude ?? ''} 
-                // ✅ All input handlers use destructuring: ({ target })
+                value={formData.latitude ?? ''}
                 onChange={({ target }) => handleInputChange('latitude', target.value ? parseFloat(target.value) : undefined)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="48.1234"
@@ -672,8 +697,7 @@ export default function BusinessDataEntry() {
               <input
                 type="number"
                 step="0.000001"
-                value={formData.longitude ?? ''} 
-                // ✅ All input handlers use destructuring: ({ target })
+                value={formData.longitude ?? ''}
                 onChange={({ target }) => handleInputChange('longitude', target.value ? parseFloat(target.value) : undefined)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="9.5678"
@@ -687,13 +711,12 @@ export default function BusinessDataEntry() {
               <div className="flex gap-2">
                 <input
                   type="url"
-                  value={formData.googleMapsUrl || ''} 
-                  // ✅ All input handlers use destructuring: ({ target })
+                  value={formData.googleMapsUrl || ''}
                   onChange={({ target }) => handleInputChange('googleMapsUrl', target.value)}
                   className={`flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                     formData.googleMapsUrl && !isValidUrl(formData.googleMapsUrl) ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="http://googleusercontent.com/maps.google.com/9..."
+                  placeholder="https://www.google.com/maps/search/?api=1&query=lat,lon"
                 />
                 {formData.googleMapsUrl && isValidUrl(formData.googleMapsUrl) && (
                   <a
@@ -706,7 +729,6 @@ export default function BusinessDataEntry() {
                   </a>
                 )}
                 <button
-                  // ✅ All non-event handlers use simple function reference
                   onClick={handleGenerateGoogleMapsUrl}
                   disabled={!formData.latitude || !formData.longitude}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
@@ -715,7 +737,7 @@ export default function BusinessDataEntry() {
                 </button>
               </div>
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* BASES SERVED */}
             {/* -------------------------------------------------------- */}
@@ -728,7 +750,6 @@ export default function BusinessDataEntry() {
                     <input
                       type="checkbox"
                       checked={formData.basesServed?.includes(base.id) || false}
-                      // ✅ All checkbox handlers use destructuring: ({ target })
                       onChange={({ target }) => handleBasesServedChange(base.id, target.checked)}
                       className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                     />
@@ -741,66 +762,62 @@ export default function BusinessDataEntry() {
             {/* -------------------------------------------------------- */}
             {/* MISC CONTROLS */}
             {/* -------------------------------------------------------- */}
-            
+
             <div className="md:col-span-2 grid grid-cols-3 gap-6">
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">English Fluency</label>
-                    <select
-                        value={formData.englishFluency || 'conversational'} 
-                        // ✅ All select handlers use destructuring: ({ target })
-                        onChange={({ target }) => handleInputChange('englishFluency', target.value as 'fluent' | 'conversational' | 'basic')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="fluent">Fluent</option>
-                        <option value="conversational">Conversational</option>
-                        <option value="basic">Basic</option>
-                    </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">English Fluency</label>
+                <select
+                  value={formData.englishFluency || 'conversational'}
+                  onChange={({ target }) => handleInputChange('englishFluency', target.value as 'fluent' | 'conversational' | 'basic')}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="fluent">Fluent</option>
+                  <option value="conversational">Conversational</option>
+                  <option value="basic">Basic</option>
+                </select>
+              </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                    <select
-                        value={formData.status || 'active'} 
-                        // ✅ All select handlers use destructuring: ({ target })
-                        onChange={({ target }) => handleInputChange('status', target.value as 'active' | 'pending' | 'inactive')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="active">Active</option>
-                        <option value="pending">Pending</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                <select
+                  value={formData.status || 'active'}
+                  onChange={({ target }) => handleInputChange('status', target.value as 'active' | 'pending' | 'inactive')}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="active">Active</option>
+                  <option value="pending">Pending</option>
+                  <option value="inactive">Inactive</option>
+                </select>
+              </div>
 
-                {/* Featured Tier Select */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Featured Tier</label>
-                    <select
-                        value={formData.featuredTier || 'free'} 
-                        // ✅ All select handlers use destructuring: ({ target })
-                        onChange={({ target }) => handleInputChange('featuredTier', target.value as Business["featuredTier"])}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                        <option value="free">Free</option>
-                        <option value="verified">Verified</option>
-                        <option value="featured">Featured</option>
-                        <option value="sponsored">Sponsored</option>
-                    </select>
-                </div>
+              {/* Featured Tier Select */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Featured Tier</label>
+                <select
+                  value={formData.featuredTier || 'free'}
+                  onChange={({ target }) => handleInputChange('featuredTier', target.value as Business["featuredTier"])}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="free">Free</option>
+                  <option value="verified">Verified</option>
+                  <option value="featured">Featured</option>
+                  <option value="sponsored">Sponsored</option>
+                </select>
+              </div>
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
               <textarea
-                value={formData.notes || ''} 
-                // ✅ All textarea handlers use destructuring: ({ target })
+                value={formData.notes || ''}
                 onChange={({ target }) => handleInputChange('notes', target.value)}
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Internal notes..."
               />
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* IMAGE URL INPUT */}
             {/* -------------------------------------------------------- */}
@@ -808,14 +825,13 @@ export default function BusinessDataEntry() {
               <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
               <input
                 type="url"
-                value={formData.imageUrl || ''} 
-                // ✅ All input handlers use destructuring: ({ target })
+                value={formData.imageUrl || ''}
                 onChange={({ target }) => handleInputChange('imageUrl', target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="https://example.com/image.jpg"
               />
             </div>
-            
+
             {/* -------------------------------------------------------- */}
             {/* CHECKBOXES */}
             {/* -------------------------------------------------------- */}
@@ -825,7 +841,6 @@ export default function BusinessDataEntry() {
                 <input
                   type="checkbox"
                   checked={formData.verified || false}
-                  // ✅ All checkbox handlers use destructuring: ({ target })
                   onChange={({ target }) => handleInputChange('verified', target.checked)}
                   className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                 />
@@ -836,7 +851,6 @@ export default function BusinessDataEntry() {
                 <input
                   type="checkbox"
                   checked={formData.featured || false}
-                  // ✅ All checkbox handlers use destructuring: ({ target })
                   onChange={({ target }) => handleInputChange('featured', target.checked)}
                   className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                 />
@@ -855,14 +869,13 @@ export default function BusinessDataEntry() {
                   <span className="font-medium">Changes saved successfully!</span>
                 </div>
               )}
-              {/* Display errors here (either database or validation errors) */}
               {(saveStatus === 'error' && validationErrors.length === 0) && (
                 <div className="flex items-center gap-2 text-red-600">
                   <AlertCircle className="w-5 h-5" />
                   <span className="font-medium">Database Error saving changes</span>
                 </div>
               )}
-               {(saveStatus === 'error' && validationErrors.length > 0) && (
+              {(saveStatus === 'error' && validationErrors.length > 0) && (
                 <div className="flex items-center gap-2 text-red-600">
                   <AlertCircle className="w-5 h-5" />
                   <span className="font-medium">Validation Failed. See error section above.</span>
@@ -870,7 +883,6 @@ export default function BusinessDataEntry() {
               )}
             </div>
             <button
-              // ✅ All non-event handlers use simple function reference
               onClick={handleSave}
               disabled={saveStatus === 'saving'}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-semibold transition"
