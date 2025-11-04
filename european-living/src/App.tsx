@@ -17,6 +17,7 @@ import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
 import ServicesDirectory from "./components/ServicesDirectory";
 import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
 import BaseSelectionModal from './components/page/BaseSelectionModal';
+import BusinessDataEntry from './pages/admin/BusinessDataEntry';
 
 const INITIAL_BASE = localStorage.getItem('selectedBase') || "all"; 
 
@@ -119,6 +120,14 @@ export default function App() {
             </div>
           }
         />
+
+        {/* Admin Routes */}
+        <Route 
+          path="/admin/data-entry" 
+          element={
+            <div className="pt-16">
+              <BusinessDataEntry />
+            </div>} />
 
         {/* SERVICES DIRECTORY - PROPS PASSED HERE */}
         <Route 
