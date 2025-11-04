@@ -337,6 +337,14 @@ body {
     z-index: 10;
 }
 
+/* Show the bottom fade when scrolled */
+.scroll-fade-bottom {
+    /* Required to contain the mask */
+    position: relative;
+    mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 90%, transparent 100%);
+}
+
 .prose {
   line-height: 1.8;
   color: #374151;

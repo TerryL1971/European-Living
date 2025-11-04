@@ -113,6 +113,7 @@ const BaseSelectionModal: React.FC = () => {
     );
   };
 
+  // Corrected declaration
   const handleSkip = () => {
     localStorage.setItem("hasVisitedSite", "true");
     localStorage.setItem("selectedBase", "all");
@@ -154,15 +155,10 @@ const BaseSelectionModal: React.FC = () => {
       {/* Floating selected base indicator */}
       {hasVisited && selectedBase && (
         <div 
-          // 🛑 FIX APPLIED HERE:
-          // 1. Added max-w-[calc(100vw-3rem)] to ensure it never exceeds the screen width minus padding.
-          // 2. Added overflow-hidden to contain the contents if the name gets too long.
           className="fixed top-4 right-4 z-40 bg-white shadow-lg rounded-lg px-4 py-2 border flex items-center gap-2 max-w-[calc(100vw-3rem)] overflow-hidden"
         >
           <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
           <span 
-            // 🛑 FIX APPLIED HERE: 
-            // 3. Added min-w-0 to the text element. This allows the text inside the flex container to shrink correctly and prevents the name from pushing the whole div wider.
             className="text-sm font-medium truncate min-w-0"
           >
             {getBaseName(selectedBase)}
@@ -180,33 +176,36 @@ const BaseSelectionModal: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4 overflow-y-auto"
+            // Alignment is set to start, which is correct for positioning
+            className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full overflow-hidden my-auto" 
+              // 🛑 FIX: Added scroll-fade-bottom here (main scrolling container)
+              className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full mt-12 overflow-y-auto max-h-[90vh] scroll-fade-bottom" 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
             >
-              {/* Header */}
-              <div className="bg-blue-600 text-white p-6 flex justify-between items-center">
-                <h2 className="text-2xl font-bold">
+              {/* Header: Now scrolls with content */}
+              <div className="bg-blue-600 text-white p-6 flex justify-between items-center border-b border-gray-100">
+                <h2 className="text-2xl font-extrabold">
                   Welcome to European Living 🇺🇸
                 </h2>
                 <button
                   onClick={handleSkip}
                   className="text-white/80 hover:text-white"
+                  aria-label="Skip Base Selection"
                 >
                   <X className="w-6 h-6" />
                 </button>
               </div>
 
-              {/* Body */}
-              <div className="p-6">
-                <p className="text-gray-600 mb-6">
+              {/* Body: No internal overflow needed */}
+              <div className="p-6 pb-8">
+                <p className="text-gray-700 text-base mb-6">
                   Choose the U.S. military community closest to you to see
                   English-speaking services and local recommendations. You can
                   change this anytime later.
@@ -217,17 +216,17 @@ const BaseSelectionModal: React.FC = () => {
                     <button
                       key={base.id}
                       onClick={() => handleBaseSelect(base.id)}
-                      className={`p-4 rounded-xl border-2 text-left transition ${
+                      className={`p-4 rounded-xl border-2 text-left transition duration-200 shadow-sm ${
                         selectedBase === base.id
-                          ? "border-blue-600 bg-blue-50"
-                          : "border-gray-200 hover:border-blue-400"
+                          ? "border-blue-600 bg-blue-50 ring-2 ring-blue-500 shadow-lg" // Selection style
+                          : "border-gray-200 hover:border-blue-300 hover:shadow-md" // Subtle hover
                       }`}
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">{base.icon}</span>
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl mt-0.5">{base.icon}</span>
                         <div>
-                          <h4 className="font-semibold">{base.name}</h4>
-                          <p className="text-sm text-gray-500">
+                          <h4 className="font-extrabold text-gray-800">{base.name}</h4>
+                          <p className="text-sm text-gray-600">
                             {base.location}, {base.region}
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
@@ -242,34 +241,35 @@ const BaseSelectionModal: React.FC = () => {
                 {/* Show all locations */}
                 <button
                   onClick={() => handleBaseSelect("all")}
-                  className={`w-full p-3 border-2 rounded-lg mb-4 ${
+                  className={`w-full p-4 border-2 rounded-lg transition duration-200 ${
                     selectedBase === "all"
-                      ? "border-gray-400 bg-gray-50"
+                      ? "border-gray-500 bg-gray-100 shadow-inner"
                       : "border-gray-300 hover:border-gray-400"
-                  }`}
+                  } mb-6`} 
                 >
-                  🌍 Show All Locations
+                  <span className="font-semibold text-gray-800">🌍 Show All Locations</span>
                 </button>
-
+                
+                {/* Actions are part of the scrolling content */}
                 {/* Confirm button */}
                 <button
                   onClick={handleConfirm}
                   disabled={!selectedBase}
-                  className={`w-full py-3 rounded-lg font-semibold transition ${
+                  className={`w-full py-3 rounded-xl font-semibold text-lg transition duration-300 shadow-lg ${
                     selectedBase
                       ? "bg-blue-600 text-white hover:bg-blue-700"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  }`}
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
+                  } mt-4`} 
                 >
                   Continue
                 </button>
 
                 {/* Skip link */}
-                <p className="text-center text-sm text-gray-500 mt-3">
+                <p className="text-center text-sm text-gray-500 mt-4">
                   Not near a base?{" "}
                   <button
                     onClick={handleSkip}
-                    className="text-blue-600 hover:underline"
+                    className="text-blue-600 font-medium hover:underline"
                   >
                     Skip this step
                   </button>
