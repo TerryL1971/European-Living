@@ -177,7 +177,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/#contact"
+                to="/submit-business"
                 className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-gold)] hover:text-[var(--brand-dark)] transition font-semibold"
               >
                 List Your Business

@@ -1,10 +1,12 @@
 // src/components/BusinessSubmissionForm.tsx
 import React, { useState } from 'react';
-import { Building2, MapPin, Phone, Languages, Award, Clock, CheckCircle } from 'lucide-react';
+import { Building2, MapPin, Phone, Languages, Award, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
+import { supabase } from '../services/supabaseClient';
 
 interface FormData {
   businessName: string;
   category: string;
+  subcategory: string;
   description: string;
   address: string;
   city: string;
@@ -13,7 +15,6 @@ interface FormData {
   phone: string;
   email: string;
   website: string;
-  specialties: string[];
   priceRange: string;
   englishFluency: string;
   otherLanguages: string;
@@ -28,9 +29,12 @@ interface FormData {
 
 export default function BusinessSubmissionForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
     businessName: '',
     category: '',
+    subcategory: '',
     description: '',
     address: '',
     city: '',
@@ -39,7 +43,6 @@ export default function BusinessSubmissionForm() {
     phone: '',
     email: '',
     website: '',
-    specialties: [],
     priceRange: '',
     englishFluency: '',
     otherLanguages: '',
@@ -53,31 +56,105 @@ export default function BusinessSubmissionForm() {
   });
 
   const categories = [
-    'Restaurants & Dining',
-    'Shopping',
-    'Home Services',
-    'Real Estate',
-    'Legal Services',
-    'Education',
-    'Business Services'
+    { id: 'automotive', name: 'Automotive Services' },
+    { id: 'healthcare', name: 'Healthcare' },
+    { id: 'restaurants', name: 'Restaurants & Dining' },
+    { id: 'shopping', name: 'Shopping' },
+    { id: 'home-services', name: 'Home Services' },
+    { id: 'real-estate', name: 'Real Estate' },
+    { id: 'legal', name: 'Legal Services' },
+    { id: 'education', name: 'Education' },
+    { id: 'business', name: 'Business Services' }
   ];
 
   const bases = [
-    'Patch Barracks',
-    'Panzer Kaserne',
-    'Robinson Barracks',
-    'Ramstein Air Base',
-    'Vogelweh',
-    'Landstuhl',
-    'Clay Kaserne',
-    'Hainerberg',
-    'Sembach',
-    'Other'
+    { id: 'stuttgart', name: 'USAG Stuttgart' },
+    { id: 'ramstein', name: 'Ramstein Air Base' },
+    { id: 'kaiserslautern', name: 'KMC Area' },
+    { id: 'wiesbaden', name: 'USAG Wiesbaden' },
+    { id: 'grafenwoehr', name: 'USAG Bavaria' },
+    { id: 'spangdahlem', name: 'Spangdahlem AB' }
   ];
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSubmitting(true);
+
+    // Basic validation
+    if (!formData.businessName || !formData.category || !formData.city || 
+        !formData.phone || !formData.email || !formData.englishFluency) {
+      setError('Please fill in all required fields (marked with *)');
+      setSubmitting(false);
+      return;
+    }
+
+    if (formData.nearbyBases.length === 0) {
+      setError('Please select at least one nearby military base');
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      // Build location string
+      const locationParts = [formData.city];
+      if (formData.postalCode) locationParts.push(formData.postalCode);
+      const location = locationParts.join(', ');
+
+      // Build notes field with additional information
+      const notesArray = [];
+      if (formData.sofaFamiliar) notesArray.push('SOFA-familiar');
+      if (formData.militaryDiscount && formData.discountPercent) {
+        notesArray.push(`Military discount: ${formData.discountPercent}%`);
+      }
+      if (formData.onBaseAccess) notesArray.push('On-base access available');
+      if (formData.deliveryToBase) notesArray.push('Delivers to base');
+      if (formData.priceRange) notesArray.push(`Price range: ${formData.priceRange}`);
+      if (formData.hours) notesArray.push(`Hours: ${formData.hours}`);
+      if (formData.otherLanguages) notesArray.push(`Other languages: ${formData.otherLanguages}`);
+      if (formData.additionalNotes) notesArray.push(formData.additionalNotes);
+      const notes = notesArray.join(' | ');
+
+      // Insert into Supabase
+      const { data, error: insertError } = await supabase
+        .from('businesses')
+        .insert({
+          name: formData.businessName,
+          category: formData.category,
+          subcategory: formData.subcategory || null,
+          description: formData.description || null,
+          location: location,
+          address: formData.address || null,
+          phone: formData.phone,
+          email: formData.email,
+          website: formData.website || null,
+          english_fluency: formData.englishFluency,
+          verified: false,
+          featured: false,
+          status: 'pending', // ← KEY: Set as pending for review
+          bases_served: formData.nearbyBases,
+          notes: notes || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select();
+
+      if (insertError) throw insertError;
+
+      console.log('✅ Business submission created:', data);
+
+      // TODO: Send email notification to admin
+      // You can use Supabase Edge Functions or a service like Resend here
+      // For now, we'll just log it
+      console.log('📧 TODO: Send email notification to admin about new business submission');
+
+      setSubmitted(true);
+      setSubmitting(false);
+    } catch (err) {
+      console.error('Error submitting business:', err);
+      setError('An error occurred while submitting your business. Please try again or contact us directly.');
+      setSubmitting(false);
+    }
   };
 
   const handleChange = (name: keyof FormData, value: string | boolean) => {
@@ -109,12 +186,45 @@ export default function BusinessSubmissionForm() {
             <p className="text-lg text-[var(--muted-foreground)] mb-6">
               Your business submission has been received. We'll review it and get back to you within 2-3 business days.
             </p>
-            <button
-              onClick={() => setSubmitted(false)}
-              className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200"
-            >
-              Submit Another Business
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => {
+                  setSubmitted(false);
+                  setFormData({
+                    businessName: '',
+                    category: '',
+                    subcategory: '',
+                    description: '',
+                    address: '',
+                    city: '',
+                    postalCode: '',
+                    nearbyBases: [],
+                    phone: '',
+                    email: '',
+                    website: '',
+                    priceRange: '',
+                    englishFluency: '',
+                    otherLanguages: '',
+                    sofaFamiliar: false,
+                    militaryDiscount: false,
+                    discountPercent: '',
+                    onBaseAccess: false,
+                    deliveryToBase: false,
+                    hours: '',
+                    additionalNotes: ''
+                  });
+                }}
+                className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200"
+              >
+                Submit Another Business
+              </button>
+              <a
+                href="/"
+                className="px-6 py-3 bg-white border-2 border-gray-300 text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-gray-50 transition-colors duration-200"
+              >
+                Return Home
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -131,7 +241,17 @@ export default function BusinessSubmissionForm() {
           </p>
         </div>
 
-        <div className="space-y-8">
+        {error && (
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-red-900">Submission Error</p>
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
           <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
@@ -146,6 +266,7 @@ export default function BusinessSubmissionForm() {
                 </label>
                 <input
                   type="text"
+                  required
                   value={formData.businessName}
                   onChange={(e) => handleChange('businessName', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
@@ -158,15 +279,29 @@ export default function BusinessSubmissionForm() {
                   Category *
                 </label>
                 <select
+                  required
                   value={formData.category}
                   onChange={(e) => handleChange('category', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                 >
                   <option value="">Select a category</option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--brand-dark)] mb-2">
+                  Subcategory (optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.subcategory}
+                  onChange={(e) => handleChange('subcategory', e.target.value)}
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  placeholder="e.g., car-dealerships, general-practitioners"
+                />
               </div>
 
               <div>
@@ -174,6 +309,7 @@ export default function BusinessSubmissionForm() {
                   Description *
                 </label>
                 <textarea
+                  required
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
                   rows={4}
@@ -211,6 +347,7 @@ export default function BusinessSubmissionForm() {
                 </label>
                 <input
                   type="text"
+                  required
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
@@ -233,18 +370,18 @@ export default function BusinessSubmissionForm() {
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-[var(--brand-dark)] mb-3">
-                  Nearby Military Bases (select all that apply)
+                  Nearby Military Bases * (select all that apply)
                 </label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {bases.map(base => (
-                    <label key={base} className="flex items-center cursor-pointer hover:bg-[var(--muted)] p-2 rounded transition-colors">
+                    <label key={base.id} className="flex items-center cursor-pointer hover:bg-[var(--muted)] p-2 rounded transition-colors">
                       <input
                         type="checkbox"
-                        checked={formData.nearbyBases.includes(base)}
-                        onChange={() => handleMultiSelect('nearbyBases', base)}
+                        checked={formData.nearbyBases.includes(base.id)}
+                        onChange={() => handleMultiSelect('nearbyBases', base.id)}
                         className="w-4 h-4 text-[var(--brand-primary)] rounded focus:ring-2 focus:ring-[var(--brand-primary)]"
                       />
-                      <span className="ml-2 text-sm text-[var(--brand-dark)]">{base}</span>
+                      <span className="ml-2 text-sm text-[var(--brand-dark)]">{base.name}</span>
                     </label>
                   ))}
                 </div>
@@ -266,6 +403,7 @@ export default function BusinessSubmissionForm() {
                 </label>
                 <input
                   type="tel"
+                  required
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
@@ -279,6 +417,7 @@ export default function BusinessSubmissionForm() {
                 </label>
                 <input
                   type="email"
+                  required
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
@@ -314,6 +453,7 @@ export default function BusinessSubmissionForm() {
                   English Fluency Level *
                 </label>
                 <select
+                  required
                   value={formData.englishFluency}
                   onChange={(e) => handleChange('englishFluency', e.target.value)}
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
@@ -459,9 +599,9 @@ export default function BusinessSubmissionForm() {
                 >
                   <option value="">Select price range</option>
                   <option value="$">$ - Budget-friendly</option>
-                  <option value="$$">$$ - Moderate</option>
-                  <option value="$$$">$$$ - Upscale</option>
-                  <option value="$$$$">$$$$ - Premium</option>
+                  <option value="$">$ - Moderate</option>
+                  <option value="$$">$$ - Upscale</option>
+                  <option value="$$">$$ - Premium</option>
                 </select>
               </div>
 
@@ -483,19 +623,28 @@ export default function BusinessSubmissionForm() {
           {/* Submit Button */}
           <div className="flex justify-end gap-4">
             <button
+              type="button"
               onClick={() => window.history.back()}
               className="px-6 py-3 border-2 border-[var(--border)] rounded-lg text-[var(--brand-dark)] font-medium hover:bg-[var(--muted)] transition-colors duration-200"
             >
               Cancel
             </button>
             <button
-              onClick={handleSubmit}
-              className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200 shadow-md"
+              type="submit"
+              disabled={submitting}
+              className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              Submit for Review
+              {submitting ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                'Submit for Review'
+              )}
             </button>
           </div>
-        </div>
+        </form>
 
         {/* Info Box */}
         <div className="mt-8 bg-[var(--brand-bg-alt)] border-2 border-[var(--secondary)] rounded-lg p-6">
