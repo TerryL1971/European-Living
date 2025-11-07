@@ -1,5 +1,5 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
-import { useParams, useNavigate, Link } from "react-router-dom"; // useSearchParams removed
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getBusinesses, Business } from "../../services/businessServices";
 import { ArrowLeft } from "lucide-react";
@@ -7,7 +7,6 @@ import { getBaseById } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
 import BaseSelector from "../../components/page/BaseSelector"; 
 import { formatSubcategoryName } from "../../lib/utils";
-
 
 // Define required props
 interface ServiceCategoryPageProps {
@@ -27,88 +26,53 @@ const categoryTitles: Record<string, string> = {
   business: "Business Services",
 };
 
-// Subcategory display names
-const subcategoryTitles: Record<string, string> = {
-  "car-dealerships": "Car Dealerships",
-  "mechanics": "Mechanics & Repair Shops",
-  "inspection-stations": "Inspection Stations (TÜV)",
-  "auto-parts": "Auto Parts Stores",
-  "general-practitioners": "General Practitioners",
-  "dentists": "Dentists",
-  "specialists": "Medical Specialists",
-  "pharmacies": "Pharmacies",
-  "american-food": "American Cuisine",
-  "international": "International Cuisine",
-  "cafes": "Cafés & Coffee Shops",
-  "grocery": "Grocery Stores",
-  "clothing": "Clothing & Fashion",
-  "electronics": "Electronics",
-  "plumbers": "Plumbers",
-  "electricians": "Electricians",
-  "handymen": "Handymen",
-  "rental-agents": "Rental Agents",
-  "property-management": "Property Management",
-  "sofa-lawyers": "SOFA Status Lawyers",
-  "immigration": "Immigration Lawyers",
-  "international-schools": "International Schools",
-  "tutors": "Tutors",
-  "tax-advisors": "Tax Advisors",
-  "accountants": "Accountants",
-};
-
 // Define subcategory order for each category
+// Any subcategories not listed here will appear after these, sorted alphabetically
 const subcategoryOrder: Record<string, string[]> = {
   automotive: ["car-dealerships", "mechanics", "inspection-stations", "auto-parts"], 
-  healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies"],
+  healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies", "veterinary-services"],
   restaurants: ["american-food", "international", "cafes"],
 };
 
-// ✅ ACCEPT PROPS
 export default function ServiceCategoryPage({ selectedBase, onBaseChange }: ServiceCategoryPageProps) {
   const { category: categoryId } = useParams<{ category: string }>();
-  // 🛑 REMOVED: const [searchParams, setSearchParams] = useSearchParams();
-  // 🛑 baseId is now selectedBase prop
   const navigate = useNavigate();
   const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🛑 REMOVED: handleBaseChange function is no longer needed. Use prop 'onBaseChange'.
-
   useEffect(() => {
-  async function loadData() {
-    if (!categoryId) {
-      console.log('❌ No categoryId found');
-      return;
-    }
+    async function loadData() {
+      if (!categoryId) {
+        console.log('❌ No categoryId found');
+        return;
+      }
 
-    // ✅ USE PROP: Use selectedBase directly
-    const baseIdToUse = selectedBase || "stuttgart"; 
+      const baseIdToUse = selectedBase || "stuttgart"; 
 
-    console.log('🔍 Starting loadData for:', { categoryId, baseId: baseIdToUse });
+      console.log('🔍 Starting loadData for:', { categoryId, baseId: baseIdToUse });
 
-    try {
-      console.log('📡 Calling getBusinesses...');
-      const allBusinesses = await getBusinesses(); 
-      console.log('✅ Fetched all businesses:', allBusinesses.length);
+      try {
+        console.log('📡 Calling getBusinesses...');
+        const allBusinesses = await getBusinesses(); 
+        console.log('✅ Fetched all businesses:', allBusinesses.length);
+        
+        // Filter by category AND base
+        const filtered = allBusinesses.filter((b: Business) => 
+          b.category === categoryId && 
+          b.basesServed?.includes(baseIdToUse)
+        );
+        console.log('✅ Filtered for category "' + categoryId + '" and base "' + baseIdToUse + '":', filtered.length);
       
-      // Filter by category AND base
-      const filtered = allBusinesses.filter((b: Business) => 
-        b.category === categoryId && 
-        b.basesServed?.includes(baseIdToUse) // ✅ USE PROP
-      );
-      console.log('✅ Filtered for category "' + categoryId + '" and base "' + baseIdToUse + '":', filtered.length);
-    
-      setCategoryBusinesses(filtered);
-    } catch (error) {
-      console.error("❌ Error loading businesses:", error);
-    } finally {
-      setLoading(false);
+        setCategoryBusinesses(filtered);
+      } catch (error) {
+        console.error("❌ Error loading businesses:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-  
-  loadData();
-// ✅ UPDATE DEPENDENCY: Depend on selectedBase prop
-}, [categoryId, selectedBase]); 
+    
+    loadData();
+  }, [categoryId, selectedBase]); 
 
   if (loading) {
     return (
@@ -119,7 +83,7 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
   }
 
   const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
-  const currentBase = getBaseById(selectedBase); // ✅ USE PROP: Get base details from selectedBase prop
+  const currentBase = getBaseById(selectedBase);
 
   // Group ALL businesses by subcategory
   const groupedBySubcategory: Record<string, Business[]> = {};
@@ -156,14 +120,14 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]"> 
-      {/* 🛑 REPLACE CUSTOM SELECTOR WITH BASE SELECTOR COMPONENT */}
+      {/* Base Selector */}
       <div className="bg-[var(--brand-primary)] py-4 sticky top-16 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <BaseSelector 
-                selectedBase={selectedBase} 
-                onBaseChange={onBaseChange} 
-            />
-          </div>
+          <BaseSelector 
+            selectedBase={selectedBase} 
+            onBaseChange={onBaseChange} 
+          />
+        </div>
       </div>
       
       {/* Content */}
@@ -190,7 +154,6 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
           {/* Sticky Subcategory Navigation */}
           {orderedSubcats.filter(id => groupedBySubcategory[id]?.length > 0).length > 1 && (
             <div className="sticky top-[72px] z-30 bg-white/95 backdrop-blur-sm border-y border-gray-200 -mx-4 px-4 py-4 mb-8 shadow-sm">
-              {/* 🛑 FIX: Added 'fading-edge-scroll' for visual cue */}
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide fading-edge-scroll">
                 <span className="text-sm font-semibold text-[var(--brand-dark)] whitespace-nowrap mr-2">
                   Jump to:
@@ -211,7 +174,6 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
                           window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                         }
                       }}
-                      // 🛑 FIX: Added 'flex-shrink-0' to links for better spacing/readability
                       className="bg-[var(--brand-primary)] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[var(--brand-dark)] transition whitespace-nowrap flex-shrink-0"
                     >
                       {formatSubcategoryName(subcatId)}
@@ -234,7 +196,7 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
                   <div key={subcatId} id={`subcategory-${subcatId}`}>
                     {(subcatId !== "other" || orderedSubcats.length > 1) && (
                       <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6 border-b-2 border-[var(--brand-primary)] pb-2">
-                        {subcategoryTitles[subcatId] || subcatId}
+                        {formatSubcategoryName(subcatId)}
                       </h2>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
