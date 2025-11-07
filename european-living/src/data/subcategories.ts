@@ -63,6 +63,11 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
         name: "Pharmacies",
         description: "Prescription medications and health supplies",
       },
+      {
+        id: "veterinary-services",
+        name: "Veterinary Services",
+        description: "English-speaking veterinary care for pets and American families",
+      },
     ],
   },
   {

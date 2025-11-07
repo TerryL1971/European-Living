@@ -115,44 +115,62 @@ export default function BusinessSubmissionForm() {
       if (formData.additionalNotes) notesArray.push(formData.additionalNotes);
       const notes = notesArray.join(' | ');
 
+      // Prepare the insert payload
+      const insertPayload = {
+        name: formData.businessName,
+        category: formData.category,
+        subcategory: formData.subcategory || null,
+        description: formData.description || null,
+        location: location,
+        address: formData.address || null,
+        phone: formData.phone,
+        email: formData.email,
+        website: formData.website || null,
+        english_fluency: formData.englishFluency,
+        verified: false,
+        featured: false,
+        status: 'pending',
+        bases_served: formData.nearbyBases,
+        notes: notes || null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('📤 Attempting to insert business:', insertPayload);
+
       // Insert into Supabase
       const { data, error: insertError } = await supabase
         .from('businesses')
-        .insert({
-          name: formData.businessName,
-          category: formData.category,
-          subcategory: formData.subcategory || null,
-          description: formData.description || null,
-          location: location,
-          address: formData.address || null,
-          phone: formData.phone,
-          email: formData.email,
-          website: formData.website || null,
-          english_fluency: formData.englishFluency,
-          verified: false,
-          featured: false,
-          status: 'pending', // ← KEY: Set as pending for review
-          bases_served: formData.nearbyBases,
-          notes: notes || null,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
+        .insert(insertPayload)
         .select();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('❌ Supabase insert error:', insertError);
+        console.error('Error details:', {
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          code: insertError.code
+        });
+        
+        // Provide more specific error messages
+        if (insertError.code === '42501') {
+          throw new Error('Permission denied. Please contact support.');
+        } else if (insertError.code === '23505') {
+          throw new Error('A business with this information already exists.');
+        } else {
+          throw new Error(`Database error: ${insertError.message}`);
+        }
+      }
 
       console.log('✅ Business submission created:', data);
-
-      // TODO: Send email notification to admin
-      // You can use Supabase Edge Functions or a service like Resend here
-      // For now, we'll just log it
-      console.log('📧 TODO: Send email notification to admin about new business submission');
 
       setSubmitted(true);
       setSubmitting(false);
     } catch (err) {
-      console.error('Error submitting business:', err);
-      setError('An error occurred while submitting your business. Please try again or contact us directly.');
+      console.error('❌ Error submitting business:', err);
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(`Submission failed: ${errorMessage}. Please try again or contact us at support@europeanlivingguide.com`);
       setSubmitting(false);
     }
   };

@@ -6,6 +6,8 @@ import { ArrowLeft } from "lucide-react";
 import { getBaseById } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
 import BaseSelector from "../../components/page/BaseSelector"; 
+import { formatSubcategoryName } from "../../lib/utils";
+
 
 // Define required props
 interface ServiceCategoryPageProps {
@@ -212,7 +214,7 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
                       // 🛑 FIX: Added 'flex-shrink-0' to links for better spacing/readability
                       className="bg-[var(--brand-primary)] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[var(--brand-dark)] transition whitespace-nowrap flex-shrink-0"
                     >
-                      {subcategoryTitles[subcatId] || subcatId}
+                      {formatSubcategoryName(subcatId)}
                       <span className="ml-1.5 opacity-75">({businesses.length})</span>
                     </button>
                   );

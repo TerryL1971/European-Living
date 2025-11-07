@@ -9,12 +9,13 @@ import {
   ChevronRight,
   ExternalLink,
   Loader,
-  MapPin
+  MapPin,
+  Plus,
+  X
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import React from 'react';
 
-// Placeholder for your base data (Replace with actual data source if needed)
 const BASES = [
   { id: 'ramstein', name: 'Ramstein AB' },
   { id: 'stuttgart', name: 'USAG Stuttgart' },
@@ -24,7 +25,6 @@ const BASES = [
   { id: 'spangdahlem', name: 'Spangdahlem AB' },
 ];
 
-// Match your existing Business interface structure
 interface Business {
   id: string;
   name: string;
@@ -44,7 +44,7 @@ interface Business {
   notes?: string;
   imageUrl?: string;
   status?: "active" | "pending" | "inactive";
-  basesServed?: string[]; // Array of base IDs
+  basesServed?: string[];
   latitude?: number;
   longitude?: number;
   googleMapsUrl?: string;
@@ -53,7 +53,6 @@ interface Business {
   city?: string;
 }
 
-// Database row type (snake_case as stored in Supabase)
 interface BusinessRow {
   id: string;
   name: string;
@@ -82,7 +81,6 @@ interface BusinessRow {
   city?: string;
 }
 
-// Convert database row to Business object
 function mapBusinessRow(row: BusinessRow): Business {
   return {
     id: row.id,
@@ -113,17 +111,12 @@ function mapBusinessRow(row: BusinessRow): Business {
   };
 }
 
-// ----------------------------------------------------------------------
-// URL Helper Functions
-// ----------------------------------------------------------------------
-
 const generateGoogleMapsUrl = (lat: number, lon: number): string => {
-  // Use the standard Google Maps query URL for coordinates
   return `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 };
 
 const isValidUrl = (url?: string): boolean => {
-  if (!url) return true; // Treat empty strings as valid (not present)
+  if (!url) return true;
   try {
     new URL(url);
     return true;
@@ -132,47 +125,74 @@ const isValidUrl = (url?: string): boolean => {
   }
 };
 
-// ----------------------------------------------------------------------
+// Empty business template for new entries
+const createEmptyBusiness = (): Business => ({
+  id: 'new-' + Date.now(),
+  name: '',
+  category: '',
+  subcategory: '',
+  description: '',
+  location: '',
+  address: '',
+  phone: '',
+  email: '',
+  website: '',
+  englishFluency: 'conversational',
+  verified: false,
+  featured: false,
+  featuredTier: 'free',
+  notes: '',
+  imageUrl: '',
+  status: 'pending',
+  basesServed: [],
+  latitude: undefined,
+  longitude: undefined,
+  googleMapsUrl: '',
+  city: ''
+});
 
 export default function BusinessDataEntry() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [formData, setFormData] = useState<Business | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('missing-data');
+  const [filter, setFilter] = useState('pending');
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [loading, setLoading] = useState(true);
   const [geocoding, setGeocoding] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isNewBusiness, setIsNewBusiness] = useState(false);
 
   useEffect(() => {
-    async function loadBusinesses() {
-      try {
-        const { data, error } = await supabase
-          .from('businesses')
-          .select('*')
-          .order('name');
-
-        if (error) throw error;
-
-        const mapped = (data as BusinessRow[]).map(mapBusinessRow);
-        setBusinesses(mapped);
-        if (mapped.length > 0) {
-          const initialFilteredIndex = mapped.findIndex(b => getMissingFields(b).length > 0);
-          const startIndex = initialFilteredIndex !== -1 ? initialFilteredIndex : 0;
-
-          setFormData(mapped[startIndex]);
-          setCurrentIndex(startIndex);
-        }
-      } catch (error) {
-        console.error('Error loading businesses:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadBusinesses();
   }, []);
+
+  async function loadBusinesses() {
+    try {
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+
+      const mapped = (data as BusinessRow[]).map(mapBusinessRow);
+      setBusinesses(mapped);
+      
+      if (mapped.length > 0) {
+        // Start with first pending business if available
+        const initialFilteredIndex = mapped.findIndex(b => b.status === 'pending');
+        const startIndex = initialFilteredIndex !== -1 ? initialFilteredIndex : 0;
+
+        setFormData(mapped[startIndex]);
+        setCurrentIndex(startIndex);
+      }
+    } catch (error) {
+      console.error('Error loading businesses:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const getMissingFields = (business: Business) => {
     const missing: string[] = [];
@@ -186,7 +206,6 @@ export default function BusinessDataEntry() {
     return missing;
   };
 
-  // Memoize filtered businesses to prevent redundant filtering on every render
   const filteredBusinesses = useMemo(() => {
     return businesses.filter(b => {
       const matchesSearch = b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -195,6 +214,7 @@ export default function BusinessDataEntry() {
       if (filter === 'all') return matchesSearch;
       if (filter === 'missing-data') return matchesSearch && getMissingFields(b).length > 0;
       if (filter === 'unverified') return matchesSearch && !b.verified;
+      if (filter === 'pending') return matchesSearch && b.status === 'pending';
       if (filter === 'no-coordinates') return matchesSearch && (!b.latitude || !b.longitude);
       if (filter === 'no-contact') return matchesSearch && (!b.phone && !b.email && !b.website);
 
@@ -202,24 +222,19 @@ export default function BusinessDataEntry() {
     });
   }, [businesses, searchTerm, filter]);
 
-  // Effect to sync formData with the current business index
   useEffect(() => {
-    if (filteredBusinesses.length > 0) {
+    if (!isNewBusiness && filteredBusinesses.length > 0) {
       const currentBusiness = filteredBusinesses[currentIndex];
       setFormData(currentBusiness);
-      setValidationErrors([]); // Clear validation errors on navigation
-    } else {
-      setFormData(null);
+      setValidationErrors([]);
     }
-  }, [currentIndex, filteredBusinesses]);
-
+  }, [currentIndex, filteredBusinesses, isNewBusiness]);
 
   const handleInputChange = (field: keyof Business, value: unknown) => {
     if (!formData) return;
     setFormData(prev => prev ? { ...prev, [field]: value } : null);
   };
 
-  // 🌍 Handler for basesServed checkboxes
   const handleBasesServedChange = (baseId: string, isChecked: boolean) => {
     if (!formData) return;
 
@@ -236,7 +251,6 @@ export default function BusinessDataEntry() {
     handleInputChange('basesServed', updatedBases);
   };
 
-  // 🛡️ Validation Logic
   const validateForm = (data: Business): string[] => {
     const errors: string[] = [];
 
@@ -246,9 +260,6 @@ export default function BusinessDataEntry() {
     if (data.googleMapsUrl && !isValidUrl(data.googleMapsUrl)) {
       errors.push('Google Maps URL is invalid.');
     }
-    if (!data.latitude || !data.longitude) {
-      errors.push('Coordinates (Latitude/Longitude) are required for map link generation.');
-    }
     if (!data.name || !data.location || !data.category) {
       errors.push('Name, Location, and Category are required fields.');
     }
@@ -256,9 +267,6 @@ export default function BusinessDataEntry() {
     return errors;
   };
 
-  // ------------------------------
-  // SAVE HANDLER WITH IMAGE URL FIX
-  // ------------------------------
   const handleSave = async () => {
     if (!formData) return;
 
@@ -271,74 +279,109 @@ export default function BusinessDataEntry() {
     }
 
     setSaveStatus('saving');
-    setValidationErrors([]); // Clear errors before saving
+    setValidationErrors([]);
 
     try {
-      // Debug: confirm the id we're updating
-      console.log('🆔 Attempting to update business id:', formData.id);
-      console.log("🆔 Updating record:", formData.id, typeof formData.id);
+      const payload = {
+        name: formData.name,
+        category: formData.category,
+        subcategory: formData.subcategory,
+        location: formData.location,
+        address: formData.address,
+        phone: formData.phone,
+        email: formData.email,
+        website: formData.website,
+        description: formData.description,
+        english_fluency: formData.englishFluency,
+        verified: formData.verified,
+        featured: formData.featured,
+        featured_tier: formData.featuredTier,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        google_maps_url: formData.googleMapsUrl,
+        notes: formData.notes,
+        image_url: formData.imageUrl,
+        status: formData.status,
+        bases_served: formData.basesServed,
+        updated_at: new Date().toISOString()
+      };
 
+      if (isNewBusiness) {
+        // INSERT new business
+        const { data, error } = await supabase
+          .from('businesses')
+          .insert({
+            ...payload,
+            created_at: new Date().toISOString()
+          })
+          .select();
 
-      // Convert camelCase back to snake_case for database (match your table columns)
-      const { data, error, status, statusText } = await supabase
-        .from('businesses')
-        .update({
-          name: formData.name,
-          category: formData.category,
-          subcategory: formData.subcategory,
-          location: formData.location,
-          address: formData.address,
-          phone: formData.phone,
-          email: formData.email,
-          website: formData.website,
-          description: formData.description,
-          english_fluency: formData.englishFluency,
-          verified: formData.verified,
-          featured: formData.featured,
-          featured_tier: formData.featuredTier,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-          google_maps_url: formData.googleMapsUrl,
-          notes: formData.notes,
-          image_url: formData.imageUrl, // <-- FIX: Mapped imageUrl to image_url
-          status: formData.status,
-          bases_served: formData.basesServed,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', formData.id)
-        .select(); // Return updated rows for inspection
+        if (error) {
+          console.error('Error inserting business:', error);
+          setValidationErrors([`Insert failed: ${error.message}`]);
+          setSaveStatus('error');
+          setTimeout(() => setSaveStatus('idle'), 5000);
+          return;
+        }
 
-      // Log full response so you can inspect what happened
-      console.log('🧠 Supabase update result:', { data, error, status, statusText });
+        if (data && data.length > 0) {
+          const newBusiness = mapBusinessRow(data[0] as BusinessRow);
+          setBusinesses(prev => [...prev, newBusiness]);
+          setFormData(newBusiness);
+          setIsNewBusiness(false);
+          setSaveStatus('saved');
+          setTimeout(() => {
+            setSaveStatus('idle');
+            loadBusinesses(); // Refresh the list
+          }, 2000);
+        }
+      } else {
+        // UPDATE existing business
+        const { data, error } = await supabase
+          .from('businesses')
+          .update(payload)
+          .eq('id', formData.id)
+          .select();
 
-      if (error) {
-        // Common errors: RLS, column mismatch, or permissions
-        console.error('Error saving to Supabase:', error);
-        setValidationErrors(['A database error occurred. See console for details.']);
-        setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 5000);
-        return;
+        if (error) {
+          console.error('Error updating business:', error);
+          setValidationErrors([`Update failed: ${error.message}`]);
+          setSaveStatus('error');
+          setTimeout(() => setSaveStatus('idle'), 5000);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          setValidationErrors(['Update returned no rows. Check console for details.']);
+          setSaveStatus('error');
+          setTimeout(() => setSaveStatus('idle'), 5000);
+          return;
+        }
+
+        setBusinesses(prev => prev.map(b => b.id === formData.id ? formData : b));
+        setSaveStatus('saved');
+        setTimeout(() => setSaveStatus('idle'), 2000);
       }
-
-      if (!data || (Array.isArray(data) && data.length === 0)) {
-        // No rows returned — probably wrong ID or RLS blocked the update
-        console.warn('Update returned no rows. Possible causes: ID mismatch, RLS blocked the update, or no matching row.');
-        setValidationErrors(['Update executed but no rows were returned. Check console for details.']);
-        setSaveStatus('error');
-        setTimeout(() => setSaveStatus('idle'), 5000);
-        return;
-      }
-
-      // Update local state with saved data (best-effort — we trust formData is authoritative)
-      setBusinesses(prev => prev.map(b => b.id === formData.id ? formData : b));
-
-      setSaveStatus('saved');
-      setTimeout(() => setSaveStatus('idle'), 2000);
     } catch (error) {
       console.error('Error saving:', error);
       setValidationErrors(['A database error occurred. See console for details.']);
       setSaveStatus('error');
       setTimeout(() => setSaveStatus('idle'), 5000);
+    }
+  };
+
+  const handleAddNew = () => {
+    const newBusiness = createEmptyBusiness();
+    setFormData(newBusiness);
+    setIsNewBusiness(true);
+    setSaveStatus('idle');
+    setValidationErrors([]);
+  };
+
+  const handleCancelNew = () => {
+    setIsNewBusiness(false);
+    if (filteredBusinesses.length > 0) {
+      setFormData(filteredBusinesses[currentIndex]);
     }
   };
 
@@ -390,7 +433,7 @@ export default function BusinessDataEntry() {
           googleMapsUrl: url
         } : null);
 
-        alert(`Coordinates added successfully! Latitude: ${latitude}, Longitude: ${longitude}. Google Maps URL generated.`);
+        alert(`Coordinates added successfully! Latitude: ${latitude}, Longitude: ${longitude}`);
       } else {
         alert('Could not find coordinates for this address. Try adding more detail.');
       }
@@ -413,122 +456,176 @@ export default function BusinessDataEntry() {
     );
   }
 
-  if (!formData || filteredBusinesses.length === 0) {
+  if (!formData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-600">No businesses found matching current filter/search.</p>
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">No businesses found matching current filter/search.</p>
+          <button
+            onClick={handleAddNew}
+            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 mx-auto"
+          >
+            <Plus className="w-5 h-5" />
+            Add New Business
+          </button>
+        </div>
       </div>
     );
   }
 
   const missingFields = getMissingFields(formData);
   const completionPercentage = Math.round(((7 - missingFields.length) / 7) * 100);
+  const pendingCount = businesses.filter(b => b.status === 'pending').length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Data Entry</h1>
-          <p className="text-gray-600">Fill in missing information for businesses in the directory</p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search businesses..."
-                value={searchTerm}
-                onChange={({ target }) => setSearchTerm(target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Business Data Entry</h1>
+              <p className="text-gray-600">
+                {isNewBusiness ? 'Add a new business to the directory' : 'Fill in missing information for businesses'}
+              </p>
             </div>
-            <select
-              value={filter}
-              onChange={({ target }) => {
-                setFilter(target.value);
-                setCurrentIndex(0); // Reset index on filter change
-              }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            <button
+              onClick={isNewBusiness ? handleCancelNew : handleAddNew}
+              className={`px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition ${
+                isNewBusiness
+                  ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
             >
-              <option value="all">All Businesses ({businesses.length})</option>
-              <option value="missing-data">Missing Data ({businesses.filter(b => getMissingFields(b).length > 0).length})</option>
-              <option value="unverified">Unverified ({businesses.filter(b => !b.verified).length})</option>
-              <option value="no-coordinates">No Coordinates ({businesses.filter(b => !b.latitude || !b.longitude).length})</option>
-              <option value="no-contact">No Contact Info ({businesses.filter(b => !b.phone && !b.email && !b.website).length})</option>
-            </select>
+              {isNewBusiness ? (
+                <>
+                  <X className="w-5 h-5" />
+                  Cancel
+                </>
+              ) : (
+                <>
+                  <Plus className="w-5 h-5" />
+                  Add New Business
+                </>
+              )}
+            </button>
           </div>
         </div>
 
+        {!isNewBusiness && (
+          <>
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search businesses..."
+                    value={searchTerm}
+                    onChange={({ target }) => setSearchTerm(target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <select
+                  value={filter}
+                  onChange={({ target }) => {
+                    setFilter(target.value);
+                    setCurrentIndex(0);
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="all">All Businesses ({businesses.length})</option>
+                  <option value="pending">
+                    Pending Review ({pendingCount})
+                    {pendingCount > 0 && ' 🔔'}
+                  </option>
+                  <option value="missing-data">Missing Data ({businesses.filter(b => getMissingFields(b).length > 0).length})</option>
+                  <option value="unverified">Unverified ({businesses.filter(b => !b.verified).length})</option>
+                  <option value="no-coordinates">No Coordinates ({businesses.filter(b => !b.latitude || !b.longitude).length})</option>
+                  <option value="no-contact">No Contact Info ({businesses.filter(b => !b.phone && !b.email && !b.website).length})</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={handlePrevious}
+                    disabled={currentIndex === 0}
+                    className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <span className="font-semibold text-gray-700">
+                    {currentIndex + 1} of {filteredBusinesses.length}
+                  </span>
+                  <button
+                    onClick={handleNext}
+                    disabled={currentIndex === filteredBusinesses.length - 1}
+                    className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-600">Completion:</span>
+                  <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-green-500 transition-all duration-300"
+                      style={{ width: `${completionPercentage}%` }}
+                    />
+                  </div>
+                  <span className="font-semibold text-gray-700">{completionPercentage}%</span>
+                </div>
+              </div>
+
+              {missingFields.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2 mb-4">
+                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-900">Missing Fields:</p>
+                    <p className="text-sm text-amber-700">{missingFields.join(', ')}</p>
+                  </div>
+                </div>
+              )}
+
+              {validationErrors.length > 0 && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-red-900">Validation Errors:</p>
+                    <ul className="text-sm text-red-700 list-disc ml-4">
+                      {validationErrors.map((error, index) => <li key={index}>{error}</li>)}
+                    </ul>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        {isNewBusiness && (
+          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-blue-900">Adding New Business</p>
+              <p className="text-sm text-blue-700">Fill in as much information as possible. Required fields: Name, Category, Location</p>
+            </div>
+          </div>
+        )}
+
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handlePrevious}
-                disabled={currentIndex === 0}
-                className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <span className="font-semibold text-gray-700">
-                {currentIndex + 1} of {filteredBusinesses.length}
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {isNewBusiness ? 'New Business' : formData.name}
+            {formData.status === 'pending' && !isNewBusiness && (
+              <span className="ml-3 px-3 py-1 text-sm bg-amber-100 text-amber-800 rounded-full">
+                Pending Review
               </span>
-              <button
-                onClick={handleNext}
-                disabled={currentIndex === filteredBusinesses.length - 1}
-                className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-600">Completion:</span>
-              <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-green-500 transition-all duration-300"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-              <span className="font-semibold text-gray-700">{completionPercentage}%</span>
-            </div>
-          </div>
-
-          {/* Display data completeness warnings */}
-          {missingFields.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2 mb-4">
-              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-amber-900">Missing Fields:</p>
-                <p className="text-sm text-amber-700">{missingFields.join(', ')}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Display validation errors */}
-          {validationErrors.length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-red-900">Validation Errors:</p>
-                <ul className="text-sm text-red-700 list-disc ml-4">
-                  {validationErrors.map((error, index) => <li key={index}>{error}</li>)}
-                </ul>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">{formData.name}</h2>
+            )}
+          </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            {/* -------------------------------------------------------- */}
-            {/* TOP ROW: Name, Category, Subcategory, Location */}
-            {/* -------------------------------------------------------- */}
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Business Name *</label>
               <input
@@ -570,10 +667,6 @@ export default function BusinessDataEntry() {
               />
             </div>
 
-            {/* -------------------------------------------------------- */}
-            {/* ADDRESS & GEOCODING */}
-            {/* -------------------------------------------------------- */}
-
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Street Address {!formData.address && <span className="text-amber-600">⚠️ Missing</span>}
@@ -596,10 +689,6 @@ export default function BusinessDataEntry() {
                 </button>
               </div>
             </div>
-
-            {/* -------------------------------------------------------- */}
-            {/* CONTACT INFO */}
-            {/* -------------------------------------------------------- */}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -654,10 +743,6 @@ export default function BusinessDataEntry() {
               </div>
             </div>
 
-            {/* -------------------------------------------------------- */}
-            {/* DESCRIPTION */}
-            {/* -------------------------------------------------------- */}
-
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description {(!formData.description || formData.description.length < 20) && <span className="text-amber-600">⚠️ Too short</span>}
@@ -671,10 +756,6 @@ export default function BusinessDataEntry() {
               />
               <p className="text-xs text-gray-500 mt-1">{formData.description?.length || 0} characters</p>
             </div>
-
-            {/* -------------------------------------------------------- */}
-            {/* COORDINATES & MAP URL */}
-            {/* -------------------------------------------------------- */}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -738,10 +819,6 @@ export default function BusinessDataEntry() {
               </div>
             </div>
 
-            {/* -------------------------------------------------------- */}
-            {/* BASES SERVED */}
-            {/* -------------------------------------------------------- */}
-
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Bases Served</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
@@ -759,12 +836,7 @@ export default function BusinessDataEntry() {
               </div>
             </div>
 
-            {/* -------------------------------------------------------- */}
-            {/* MISC CONTROLS */}
-            {/* -------------------------------------------------------- */}
-
             <div className="md:col-span-2 grid grid-cols-3 gap-6">
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">English Fluency</label>
                 <select
@@ -791,7 +863,6 @@ export default function BusinessDataEntry() {
                 </select>
               </div>
 
-              {/* Featured Tier Select */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Featured Tier</label>
                 <select
@@ -818,9 +889,6 @@ export default function BusinessDataEntry() {
               />
             </div>
 
-            {/* -------------------------------------------------------- */}
-            {/* IMAGE URL INPUT */}
-            {/* -------------------------------------------------------- */}
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
               <input
@@ -831,10 +899,6 @@ export default function BusinessDataEntry() {
                 placeholder="https://example.com/image.jpg"
               />
             </div>
-
-            {/* -------------------------------------------------------- */}
-            {/* CHECKBOXES */}
-            {/* -------------------------------------------------------- */}
 
             <div className="md:col-span-2 flex gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -866,7 +930,9 @@ export default function BusinessDataEntry() {
               {saveStatus === 'saved' && (
                 <div className="flex items-center gap-2 text-green-600">
                   <CheckCircle className="w-5 h-5" />
-                  <span className="font-medium">Changes saved successfully!</span>
+                  <span className="font-medium">
+                    {isNewBusiness ? 'Business added successfully!' : 'Changes saved successfully!'}
+                  </span>
                 </div>
               )}
               {(saveStatus === 'error' && validationErrors.length === 0) && (
@@ -890,12 +956,12 @@ export default function BusinessDataEntry() {
               {saveStatus === 'saving' ? (
                 <>
                   <Loader className="w-5 h-5 animate-spin" />
-                  Saving...
+                  {isNewBusiness ? 'Adding...' : 'Saving...'}
                 </>
               ) : (
                 <>
                   <Save className="w-5 h-5" />
-                  Save Changes
+                  {isNewBusiness ? 'Add Business' : 'Save Changes'}
                 </>
               )}
             </button>

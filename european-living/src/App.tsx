@@ -121,13 +121,14 @@ export default function App() {
           }
         />
 
-        {/* Admin Routes */}
-        <Route 
-          path="/admin/data-entry" 
-          element={
-            <div className="pt-16">
-              <BusinessDataEntry />
-            </div>} />
+      {/* Admin Routes */}
+       <Route 
+        path="/admin/data-entry" 
+        element={
+          <div className="pt-16">
+            <BusinessDataEntry />
+          </div>} 
+        />
 
         {/* SERVICES DIRECTORY - PROPS PASSED HERE */}
         <Route 
