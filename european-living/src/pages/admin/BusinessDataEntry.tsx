@@ -151,6 +151,16 @@ const createEmptyBusiness = (): Business => ({
   city: ''
 });
 
+// ✅ ADD THIS NEW FUNCTION HERE
+const normalizeSubcategory = (subcategory: string): string => {
+  if (!subcategory) return '';
+  return subcategory
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')  // Convert spaces to hyphens
+    .replace(/_/g, '-');    // Convert underscores to hyphens
+};
+
 export default function BusinessDataEntry() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -285,7 +295,7 @@ export default function BusinessDataEntry() {
       const payload = {
         name: formData.name,
         category: formData.category,
-        subcategory: formData.subcategory,
+        subcategory: normalizeSubcategory(formData.subcategory || ''),  // ← UPDATED LINE
         location: formData.location,
         address: formData.address,
         phone: formData.phone,
