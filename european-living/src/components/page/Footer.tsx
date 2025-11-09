@@ -1,16 +1,122 @@
-export default function Footer() {
+import React from 'react';
+import { Cookie } from 'lucide-react';
+
+const Footer: React.FC = () => {
+  const handleOpenCookieSettings = () => {
+    // Clear consent to force the banner to show again
+    localStorage.removeItem('cookieConsent');
+    // Dispatch custom event that CookieConsentModal listens for
+    window.dispatchEvent(new Event('openCookieSettings'));
+  };
+
   return (
-    <footer className="bg-brand-dark text-white py-8 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
-        <p className="text-gray-300">&copy; {new Date().getFullYear()} European Living. All rights reserved.</p>
-        <div className="flex space-x-6 mt-4 md:mt-0">
-          <a href="#home" className="hover:text-brand-gold">Home</a>
-          <a href="#destinations" className="hover:text-brand-gold">Destinations</a>
-          <a href="#tips" className="hover:text-brand-gold">Travel Tips</a>
-          <a href="#phrases" className="hover:text-brand-gold">Phrases</a>
-          <a href="#services" className="hover:text-brand-gold">Services</a>
+    <footer className="bg-gray-900 text-gray-300 mt-auto">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* About */}
+          <div>
+            <h3 className="text-white font-bold text-lg mb-4">
+              European Living
+            </h3>
+            <p className="text-sm text-gray-400">
+              Your guide to living, working, and exploring Germany and Europe 
+              as a U.S. military member or expat.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="/" className="hover:text-white transition-colors">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/destinations" className="hover:text-white transition-colors">
+                  Destinations
+                </a>
+              </li>
+              <li>
+                <a href="/practical-guides" className="hover:text-white transition-colors">
+                  Practical Guides
+                </a>
+              </li>
+              <li>
+                <a href="/day-trips" className="hover:text-white transition-colors">
+                  Day Trips
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Resources</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="/cultural-tips" className="hover:text-white transition-colors">
+                  Cultural Tips
+                </a>
+              </li>
+              <li>
+                <a href="/travel-tips" className="hover:text-white transition-colors">
+                  Travel Tips
+                </a>
+              </li>
+              <li>
+                <a href="/essential-phrases" className="hover:text-white transition-colors">
+                  Essential Phrases
+                </a>
+              </li>
+              <li>
+                <a href="/business-directory" className="hover:text-white transition-colors">
+                  Business Directory
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div>
+            <h4 className="text-white font-semibold mb-4">Legal</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="/privacy-policy" className="hover:text-white transition-colors">
+                  Privacy Policy
+                </a>
+              </li>
+              <li>
+                <a href="/terms-of-service" className="hover:text-white transition-colors">
+                  Terms of Service
+                </a>
+              </li>
+              <li>
+                <button
+                  onClick={handleOpenCookieSettings}
+                  className="hover:text-white transition-colors flex items-center gap-2"
+                >
+                  <Cookie className="w-4 h-4" />
+                  Cookie Settings
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-gray-400">
+            © {new Date().getFullYear()} European Living. All rights reserved.
+          </p>
+          <p className="text-sm text-gray-400">
+            Made with ❤️ for U.S. military families in Europe
+          </p>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

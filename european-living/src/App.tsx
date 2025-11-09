@@ -16,8 +16,11 @@ import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
 import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
 import ServicesDirectory from "./components/ServicesDirectory";
 import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
+import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
 import BusinessDataEntry from './pages/admin/BusinessDataEntry';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+// import { DAY_TRIPS, getDayTripsForBase } from './data/baseDayTrips';
 
 const INITIAL_BASE = localStorage.getItem('selectedBase') || "all"; 
 
@@ -99,6 +102,7 @@ export default function App() {
   
   return (
     <>
+      <CookieConsentModal />
       <BaseSelectionModal />
       <ReadingProgress />
       <Header />
@@ -168,6 +172,7 @@ export default function App() {
         <Route path="/articles/:slug" element={<ArticlePage />} />
         <Route path="/destinations/:id" element={<DestinationPage />} />
         <Route path="/businesses/:id" element={<BusinessDetailPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
 
       <Footer />
