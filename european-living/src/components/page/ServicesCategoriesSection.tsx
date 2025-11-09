@@ -79,8 +79,6 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
   async function loadData() {
     try {
       const businesses = await getBusinesses(); // ← Changed from getBusinessesByBase
-      console.log("✅ All businesses loaded:", businesses);
-      console.log("✅ Total business count:", businesses.length);
       setAllBusinesses(businesses);
     } catch (error) {
       console.error("❌ Error loading businesses:", error);

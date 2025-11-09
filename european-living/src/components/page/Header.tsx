@@ -173,7 +173,6 @@ export default function Header() {
 
               {/* Reset Base button */}
               <button
-                // ✅ FIXED: Closing the menu after dispatching the reset event
                 onClick={() => {
                   resetBaseSelection();
                   setIsMobileMenuOpen(false); 

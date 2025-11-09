@@ -113,7 +113,6 @@ const BaseSelectionModal: React.FC = () => {
     );
   };
 
-  // Corrected declaration
   const handleSkip = () => {
     localStorage.setItem("hasVisitedSite", "true");
     localStorage.setItem("selectedBase", "all");
@@ -176,20 +175,17 @@ const BaseSelectionModal: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            // Alignment is set to start, which is correct for positioning
             className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              // 🛑 FIX: Added scroll-fade-bottom here (main scrolling container)
               className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full mt-12 overflow-y-auto max-h-[90vh] scroll-fade-bottom" 
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
             >
-              {/* Header: Now scrolls with content */}
               <div className="bg-blue-600 text-white p-6 flex justify-between items-center border-b border-gray-100">
                 <h2 className="text-2xl font-extrabold">
                   Welcome to European Living 🇺🇸
@@ -203,7 +199,6 @@ const BaseSelectionModal: React.FC = () => {
                 </button>
               </div>
 
-              {/* Body: No internal overflow needed */}
               <div className="p-6 pb-8">
                 <p className="text-gray-700 text-base mb-6">
                   Choose the U.S. military community closest to you to see
@@ -250,8 +245,6 @@ const BaseSelectionModal: React.FC = () => {
                   <span className="font-semibold text-gray-800">🌍 Show All Locations</span>
                 </button>
                 
-                {/* Actions are part of the scrolling content */}
-                {/* Confirm button */}
                 <button
                   onClick={handleConfirm}
                   disabled={!selectedBase}
@@ -264,7 +257,6 @@ const BaseSelectionModal: React.FC = () => {
                   Continue
                 </button>
 
-                {/* Skip link */}
                 <p className="text-center text-sm text-gray-500 mt-4">
                   Not near a base?{" "}
                   <button
