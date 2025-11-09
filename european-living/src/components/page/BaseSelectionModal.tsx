@@ -1,7 +1,8 @@
+// src/components/page/BaseSelectionModal.tsx
+
 import React, { useState, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
 interface Base {
   id: string;
   name: string;

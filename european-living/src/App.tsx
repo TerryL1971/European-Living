@@ -20,7 +20,7 @@ import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
 import BusinessDataEntry from './pages/admin/BusinessDataEntry';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-// import { DAY_TRIPS, getDayTripsForBase } from './data/baseDayTrips';
+
 
 const INITIAL_BASE = localStorage.getItem('selectedBase') || "all"; 
 
