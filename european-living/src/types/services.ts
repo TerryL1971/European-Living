@@ -1,4 +1,14 @@
-// types/services.ts
+// src/types/services.ts
+
+/**
+ * @deprecated This file is deprecated. Use types/business.ts instead.
+ * 
+ * This file will be removed in a future version.
+ * Migration guide:
+ * - ServiceBusiness → Business (from types/business.ts)
+ * - Use mapSupabaseToBusiness() for database queries
+ * - Import SERVICE_SUBCATEGORIES from types/business.ts
+ */
 
 export interface ServiceLocation {
   city: string;

@@ -1,4 +1,5 @@
 // src/App.tsx
+
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -20,9 +21,6 @@ import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
 import BusinessDataEntry from './pages/admin/BusinessDataEntry';
 import PrivacyPolicy from './pages/PrivacyPolicy';
-
-
-const INITIAL_BASE = localStorage.getItem('selectedBase') || "all"; 
 
 // Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -53,10 +51,29 @@ const ReadingProgress = () => {
   );
 };
 
-
 export default function App() {
-  const [selectedBase, setSelectedBase] = useState(INITIAL_BASE);
+  // ✅ FIXED: Initialize with default, then hydrate from localStorage
+  const [selectedBase, setSelectedBase] = useState("all");
+  const [isBaseLoaded, setIsBaseLoaded] = useState(false);
   const location = useLocation();
+
+  // ✅ Hydrate selectedBase from localStorage on mount (client-side only)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedBase = localStorage.getItem('selectedBase');
+      if (storedBase) {
+        setSelectedBase(storedBase);
+      }
+      setIsBaseLoaded(true);
+    }
+  }, []);
+
+  // ✅ Save to localStorage whenever selectedBase changes
+  useEffect(() => {
+    if (isBaseLoaded && typeof window !== 'undefined') {
+      localStorage.setItem('selectedBase', selectedBase);
+    }
+  }, [selectedBase, isBaseLoaded]);
 
   // GLOBAL LISTENER: Sync state when base is changed anywhere (Modal, BaseSelector).
   useEffect(() => {
@@ -99,6 +116,13 @@ export default function App() {
       }
     }
   }, [location]);
+
+  // ✅ Optional: Show loading state until localStorage is read
+  // if (!isBaseLoaded) {
+  //   return <div className="min-h-screen flex items-center justify-center">
+  //     <div>Loading...</div>
+  //   </div>;
+  // }
   
   return (
     <>
@@ -125,13 +149,14 @@ export default function App() {
           }
         />
 
-      {/* Admin Routes */}
-       <Route 
-        path="/admin/data-entry" 
-        element={
-          <div className="pt-16">
-            <BusinessDataEntry />
-          </div>} 
+        {/* Admin Routes */}
+        <Route 
+          path="/admin/data-entry" 
+          element={
+            <div className="pt-16">
+              <BusinessDataEntry />
+            </div>
+          } 
         />
 
         {/* SERVICES DIRECTORY - PROPS PASSED HERE */}
@@ -179,4 +204,3 @@ export default function App() {
     </>
   );
 }
-
