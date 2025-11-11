@@ -18,7 +18,7 @@ interface UseAsyncReturn<T> extends UseAsyncState<T> {
  * 
  * @example
  * const { data, loading, error, execute } = useAsync(
- *   () => fetchBusinesses(),
+ *   () => getBusinesses(),
  *   true // auto-execute on mount
  * );
  */
@@ -70,7 +70,7 @@ export function useAsync<T>(
  * 
  * @example
  * const { data, loading, error } = useAsyncWithDeps(
- *   () => fetchBusinessesByCategory(category),
+ *   () => getBusinessesByCategory(category),
  *   [category]
  * );
  */

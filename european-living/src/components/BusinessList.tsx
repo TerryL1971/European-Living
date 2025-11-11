@@ -2,7 +2,7 @@
 // This shows how to use the new loading/error states
 
 import { useAsyncWithDeps } from '../hooks/useAsync';
-import { fetchBusinesses } from '../services/businessServices';
+import { getBusinesses } from '../services/businessServices';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
 import EmptyState from './EmptyState';
@@ -16,7 +16,7 @@ interface BusinessListProps {
 export default function BusinessList({ category, baseId }: BusinessListProps) {
   // ✅ Use the custom hook for automatic loading/error handling
   const { data: businesses, loading, error, execute } = useAsyncWithDeps(
-    () => fetchBusinesses({ 
+    () => getBusinesses({ 
       category, // Now properly typed as ServiceCategory
       baseId 
     }),

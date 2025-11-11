@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { getBusinesses, Business } from "../../services/businessServices";
+import { Business } from "../../types/business";
+import { fetchBusinesses } from "../../services/businessServices";
 
 const serviceCategories = [
   {
@@ -71,23 +72,28 @@ const serviceCategories = [
   },
 ];
 
-export default function ServicesCategoriesSection({ selectedBase }: { selectedBase: string }) {
+interface ServicesCategoriesSectionProps {
+  selectedBase: string;
+}
+
+export default function ServicesCategoriesSection({ selectedBase }: ServicesCategoriesSectionProps) {
   const [allBusinesses, setAllBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  async function loadData() {
-    try {
-      const businesses = await getBusinesses(); // ← Changed from getBusinessesByBase
-      setAllBusinesses(businesses);
-    } catch (error) {
-      console.error("❌ Error loading businesses:", error);
-    } finally {
-      setLoading(false);
+    async function loadData() {
+      try {
+        // Load ALL businesses (no base filter for the homepage display)
+        const businesses = await fetchBusinesses();
+        setAllBusinesses(businesses);
+      } catch (error) {
+        console.error("❌ Error loading businesses:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-  loadData();
-}, []); // ← Remove selectedBase dependency since we're loading ALL businesses
+    loadData();
+  }, []); // No dependencies - load all businesses once
 
   const getBusinessCount = (categoryId: string) =>
     allBusinesses.filter((b) => b.category === categoryId).length;
@@ -104,7 +110,9 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
 
   return (
     <section id="services" className="relative bg-white py-20">
+      {/* Background Image */}
       <div className="absolute inset-0 bg-[url('https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/services.jpg')] bg-cover bg-center" />
+      
       {/* Enhanced gradient overlay - darker and more dramatic */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
       
@@ -112,6 +120,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
      
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-bg)] mb-4">
             Trusted English-Speaking Services Helping Americans Feel at Home in Europe
@@ -163,7 +172,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
           })}
         </div>
 
-        {/* CTA Sections */}
+        {/* CTA - List Your Business */}
         <div className="bg-[var(--brand-dark)] rounded-xl p-8 mb-8 shadow-xl">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-white mb-4">
@@ -190,6 +199,7 @@ export default function ServicesCategoriesSection({ selectedBase }: { selectedBa
           </div>
         </div>
 
+        {/* CTA - Services Guide */}
         <div className="text-center bg-white rounded-xl p-8 shadow-lg">
           <h3 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
             Need More Help Finding Services?

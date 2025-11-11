@@ -5,182 +5,39 @@
  * 
  * This file will be removed in a future version.
  * Migration guide:
- * - ServiceBusiness → Business (from types/business.ts)
- * - Use mapSupabaseToBusiness() for database queries
- * - Import SERVICE_SUBCATEGORIES from types/business.ts
+ * - Import directly from types/business.ts
  */
 
-export interface ServiceLocation {
-  city: string;
-  state?: string;
-  address?: string;
-  postalCode?: string;
-  country: string;
-  nearbyBases?: string[];
-}
+// ✅ Simple re-exports (no renaming)
+export type {
+  Business,
+  Review,
+  ServiceCategory,
+  EnglishFluency,
+  FeaturedTier,
+  BusinessStatus,
+  PriceRange,
+} from './business';
 
-export interface ContactInfo {
-  phone?: string;
-  email?: string;
-  website?: string;
-  facebook?: string;
-  instagram?: string;
-  whatsapp?: string;
-}
+export {
+  SERVICE_SUBCATEGORIES,
+  getCategoryDisplayName,
+  servesBase,
+  formatPriceRange,
+  formatRating,
+  getCategoryIcon,
+  mapSupabaseToBusiness,
+  mapBusinessToSupabase,
+  mapSupabaseToReview,
+} from './business';
 
-export interface BusinessHours {
-  monday?: string;
-  tuesday?: string;
-  wednesday?: string;
-  thursday?: string;
-  friday?: string;
-  saturday?: string;
-  sunday?: string;
-  notes?: string;
-}
+// Legacy alias for backward compatibility
+import { Business } from './business';
+export type ServiceBusiness = Business;
 
-export interface LanguageSupport {
-  english: boolean;
-  german: boolean;
-  other?: string[];
-  englishFluency?: 'fluent' | 'conversational' | 'basic';
-}
-
-export interface MilitaryFeatures {
-  sofaFamiliar: boolean;
-  usInsuranceAccepted?: boolean;
-  militaryDiscount?: boolean;
-  discountPercent?: number;
-  vaTricare?: boolean;
-  onBaseAccess?: boolean;
-  deliveryToBase?: boolean;
-}
-
-export interface ServiceBusiness {
-  id: string;
-  name: string;
-  category: ServiceCategory;
-  description: string;
-  location: ServiceLocation;
-  contact: ContactInfo;
-  hours?: BusinessHours;
-  languages: LanguageSupport;
-  militaryFeatures: MilitaryFeatures;
-  specialties?: string[];
-  priceRange?: '$' | '$$' | '$$$' | '$$$$';
-  rating?: number;
-  reviewCount?: number;
-  verified: boolean;
-  featured?: boolean;
-  addedDate: string;
-  lastUpdated: string;
-  tags?: string[];
-  images?: string[];
-  notes?: string;
-}
-
-export type ServiceCategory = 
-  | 'restaurants'
-  | 'shopping'
-  | 'home-services'
-  | 'real-estate'
-  | 'legal'
-  | 'education'
-  | 'business';
-
-export interface ServiceCategoryInfo {
-  id: ServiceCategory;
-  title: string;
-  description: string;
-  icon: string;
-  subcategories?: string[];
-}
-
-export const SERVICE_SUBCATEGORIES: Record<ServiceCategory, string[]> = {
-  restaurants: [
-    'American',
-    'Italian',
-    'Asian',
-    'German/Traditional',
-    'Fast Food',
-    'Pizza',
-    'Breakfast/Brunch',
-    'Vegetarian/Vegan',
-    'Steakhouse',
-    'Seafood',
-    'Mexican',
-    'Mediterranean',
-    'Bakery/Café'
-  ],
-  shopping: [
-    'Grocery Stores',
-    'American Food Stores',
-    'Clothing',
-    'Electronics',
-    'Home Goods',
-    'Furniture',
-    'Toys',
-    'Sports Equipment',
-    'Pet Supplies',
-    'Pharmacies',
-    'Beauty/Cosmetics'
-  ],
-  'home-services': [
-    'Plumbing',
-    'Electrical',
-    'HVAC',
-    'General Handyman',
-    'Painting',
-    'Cleaning Services',
-    'Landscaping',
-    'Moving Services',
-    'Appliance Repair',
-    'Pest Control',
-    'Internet/TV Installation'
-  ],
-  'real-estate': [
-    'Rental Agents',
-    'Home Purchase Agents',
-    'Property Management',
-    'Relocation Services',
-    'Furniture Rental',
-    'Storage'
-  ],
-  legal: [
-    'Immigration Law',
-    'SOFA Status',
-    'Family Law',
-    'Contract Review',
-    'Estate Planning',
-    'Notary Services',
-    'Traffic Violations',
-    'Tax Law'
-  ],
-  education: [
-    'International Schools',
-    'DoDEA Schools',
-    'Preschools/Kindergartens',
-    'English Tutoring',
-    'German Language Schools',
-    'Music Lessons',
-    'Sports Programs',
-    'After-School Care',
-    'University Programs'
-  ],
-  business: [
-    'Tax Advisors',
-    'Accountants',
-    'US Tax Preparation',
-    'Business Formation',
-    'Translation Services',
-    'Insurance Agents',
-    'Financial Planning',
-    'Consulting'
-  ]
-};
-
+// Legacy filter and sort functions
 export interface ServiceFilters {
-  category?: ServiceCategory;
+  category?: string;
   subcategory?: string;
   city?: string;
   nearbyBase?: string;
@@ -193,40 +50,44 @@ export interface ServiceFilters {
 }
 
 export function filterServices(
-  services: ServiceBusiness[],
+  services: Business[],
   filters: ServiceFilters
-): ServiceBusiness[] {
+): Business[] {
   return services.filter(service => {
     if (filters.category && service.category !== filters.category) {
       return false;
     }
 
-    if (filters.subcategory && !service.specialties?.includes(filters.subcategory)) {
+    if (filters.subcategory && service.subcategory !== filters.subcategory) {
       return false;
     }
 
-    if (filters.city && service.location.city.toLowerCase() !== filters.city.toLowerCase()) {
+    if (filters.city && service.city?.toLowerCase() !== filters.city.toLowerCase()) {
       return false;
     }
 
-    if (filters.nearbyBase && !service.location.nearbyBases?.includes(filters.nearbyBase)) {
+    if (filters.nearbyBase && !service.basesServed?.includes(filters.nearbyBase)) {
       return false;
     }
 
-    if (filters.englishFluency && service.languages.englishFluency !== filters.englishFluency) {
+    if (filters.englishFluency && service.englishFluency !== filters.englishFluency) {
       return false;
     }
 
-    if (filters.militaryDiscount && !service.militaryFeatures.militaryDiscount) {
+    if (filters.militaryDiscount && !service.militaryDiscount) {
       return false;
     }
 
-    if (filters.sofaFamiliar && !service.militaryFeatures.sofaFamiliar) {
+    if (filters.sofaFamiliar && !service.sofaFamiliar) {
       return false;
     }
 
-    if (filters.priceRange?.length && service.priceRange && !filters.priceRange.includes(service.priceRange)) {
-      return false;
+    if (filters.priceRange?.length && service.priceRange) {
+      const validPriceRanges: Array<'$' | '$$' | '$$$' | '$$$$'> = ['$', '$$', '$$$', '$$$$'];
+      const priceRange = service.priceRange as '$' | '$$' | '$$$' | '$$$$';
+      if (validPriceRanges.includes(priceRange) && !filters.priceRange.includes(priceRange)) {
+        return false;
+      }
     }
 
     if (filters.minRating && (!service.rating || service.rating < filters.minRating)) {
@@ -238,10 +99,10 @@ export function filterServices(
       const searchableText = [
         service.name,
         service.description,
-        service.location.city,
-        ...(service.specialties || []),
+        service.city,
+        service.subcategory,
         ...(service.tags || [])
-      ].join(' ').toLowerCase();
+      ].filter(Boolean).join(' ').toLowerCase();
 
       if (!searchableText.includes(query)) {
         return false;
@@ -263,9 +124,9 @@ export type SortOption =
   | 'featured';
 
 export function sortServices(
-  services: ServiceBusiness[],
+  services: Business[],
   sortBy: SortOption
-): ServiceBusiness[] {
+): Business[] {
   const sorted = [...services];
 
   switch (sortBy) {
@@ -298,9 +159,11 @@ export function sortServices(
       return sorted.sort((a, b) => b.name.localeCompare(a.name));
     
     case 'newest':
-      return sorted.sort((a, b) => 
-        new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
-      );
+      return sorted.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
     
     case 'featured':
       return sorted.sort((a, b) => {

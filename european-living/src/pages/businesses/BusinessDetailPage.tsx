@@ -1,15 +1,12 @@
 // src/pages/businesses/BusinessDetailPage.tsx
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  getBusinessById,
-  getReviewsByBusiness,
-  Business,
-  Review,
-} from "../../services/businessServices";
 import { Star, MapPin, Phone, Mail, Globe, ArrowLeft, Navigation } from "lucide-react";
 import MapView from "../../components/MapView";
 import ReviewForm from "../../components/ReviewForm";
+// ✅ FIX: Updated imports to use correct function names and types
+import { Business, Review } from "../../types/business";
+import { fetchBusinessById, fetchReviews } from "../../services/businessServices";
 
 export default function BusinessDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,9 +20,10 @@ export default function BusinessDetailPage() {
       if (!id) return;
 
       try {
+        // ✅ FIX: Updated function names
         const [bizData, reviewData] = await Promise.all([
-          getBusinessById(id),
-          getReviewsByBusiness(id),
+          fetchBusinessById(id),
+          fetchReviews(id),
         ]);
         setBusiness(bizData);
         setReviews(reviewData);
@@ -42,7 +40,8 @@ export default function BusinessDetailPage() {
   const refreshReviews = async () => {
     if (!id) return;
     try {
-      const reviewData = await getReviewsByBusiness(id);
+      // ✅ FIX: Updated function name
+      const reviewData = await fetchReviews(id);
       setReviews(reviewData);
     } catch (error) {
       console.error("Error refreshing reviews:", error);
@@ -77,7 +76,7 @@ export default function BusinessDetailPage() {
 
   const avgRating =
     reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+      ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
       : 0;
 
   return (
@@ -121,7 +120,7 @@ export default function BusinessDetailPage() {
                       {
                         position: [business.latitude, business.longitude],
                         title: business.name,
-                        description: business.address,
+                        description: business.address || undefined,
                       },
                     ]}
                   />
@@ -185,7 +184,7 @@ export default function BusinessDetailPage() {
                     <strong>✉️ Email:</strong>{" "}
                     <a 
                       href={`mailto:${business.email}`} 
-                      className="underline hover:text-[var(--brand-gold)] break-all" // 🛑 FIX APPLIED HERE
+                      className="underline hover:text-[var(--brand-gold)] break-all"
                     >
                       {business.email}
                     </a>
@@ -198,7 +197,7 @@ export default function BusinessDetailPage() {
                       href={business.website} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="underline hover:text-[var(--brand-gold)] break-all" // 🛑 FIX APPLIED HERE
+                      className="underline hover:text-[var(--brand-gold)] break-all"
                     >
                       Visit Site
                     </a>
@@ -227,13 +226,13 @@ export default function BusinessDetailPage() {
                   {reviews.map((review) => (
                     <div key={review.id} className="bg-white/10 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
-                        <p className="font-semibold text-white">{review.userName}</p>
+                        <p className="font-semibold text-white">{review.authorName}</p>
                         <div className="flex items-center gap-1">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
                               className={`w-4 h-4 ${
-                                i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                                i < (review.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
                               }`}
                             />
                           ))}
@@ -252,7 +251,7 @@ export default function BusinessDetailPage() {
                 </div>
               ) : (
                 <p className="text-white opacity-80">No reviews yet. Be the first to review!</p>
-           )}
+              )}
               {/* Review Form */}
               <div className="mt-8">
                 <ReviewForm businessId={business.id} onSuccess={refreshReviews} />
@@ -356,7 +355,7 @@ export default function BusinessDetailPage() {
                         <p className="font-semibold text-[var(--brand-dark)]">Email</p>
                         <a
                           href={`mailto:${business.email}`}
-                          className="text-[var(--brand-primary)] hover:underline break-all" // 🛑 FIX APPLIED HERE
+                          className="text-[var(--brand-primary)] hover:underline break-all"
                         >
                           {business.email}
                         </a>
@@ -373,7 +372,7 @@ export default function BusinessDetailPage() {
                           href={business.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[var(--brand-primary)] hover:underline break-all" // 🛑 FIX APPLIED HERE
+                          className="text-[var(--brand-primary)] hover:underline break-all"
                         >
                           Visit Website
                         </a>
@@ -414,14 +413,14 @@ export default function BusinessDetailPage() {
                       <div key={review.id} className="bg-[var(--brand-bg)] rounded-lg p-4">
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-semibold text-[var(--brand-dark)]">
-                            {review.userName}
+                            {review.authorName}
                           </p>
                           <div className="flex items-center gap-1">
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
                                 className={`w-4 h-4 ${
-                                  i < review.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                                  i < (review.rating || 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
                                 }`}
                               />
                             ))}

@@ -2,8 +2,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
 import BaseSelector from './page/BaseSelector'; 
-import { ServiceBusiness, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
-import { supabase } from '../services/supabaseClient'; 
+import { Business, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
+import { supabase } from '../services/supabaseClient';
+import { mapSupabaseToBusiness } from '../types/business';
 
 // ✅ FIX: Restored categories array definition
 const categories = [
@@ -34,7 +35,8 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
-  const [services, setServices] = useState<ServiceBusiness[]>([]);
+  // ✅ FIX: Changed ServiceBusiness to Business
+  const [services, setServices] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,7 +64,9 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
           throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
         }
         
-        setServices(data || []);
+        // ✅ FIX: Map Supabase data to Business type
+        const mappedData = (data || []).map(mapSupabaseToBusiness);
+        setServices(mappedData);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
         console.error('Failed to load services:', err);
@@ -97,7 +101,8 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
     </div>
   );
 
-  const ServiceCard = ({ service }: { service: ServiceBusiness }) => (
+  // ✅ FIX: Changed ServiceBusiness to Business
+  const ServiceCard = ({ service }: { service: Business }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
@@ -122,24 +127,25 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
       {/* Description */}
       <p className="text-gray-700 mb-4">{service?.description ?? 'No description available.'}</p>
 
-      {/* Specialties */}
+      {/* Specialties/Tags */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {service?.specialties?.map(specialty => (
-          <span key={specialty} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
-            {specialty}
+        {/* ✅ FIX: Changed specialties to tags and added type */}
+        {service?.tags?.map((tag: string) => (
+          <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
+            {tag}
           </span>
         ))}
       </div>
 
       {/* Military Features */}
-      {(service?.militaryFeatures?.militaryDiscount || service?.militaryFeatures?.sofaFamiliar) && (
+      {(service?.militaryDiscount || service?.sofaFamiliar) && (
         <div className="flex flex-wrap gap-2 mb-4">
-          {service?.militaryFeatures?.militaryDiscount && (
+          {service?.militaryDiscount && (
             <span className="px-3 py-1 bg-green-50 text-green-700 text-sm rounded-full font-medium">
-              🎖️ {service?.militaryFeatures?.discountPercent ?? 0}% Military Discount
+              🎖️ {service?.discountPercent ?? 0}% Military Discount
             </span>
           )}
-          {service?.militaryFeatures?.sofaFamiliar && (
+          {service?.sofaFamiliar && (
             <span className="px-3 py-1 bg-purple-50 text-purple-700 text-sm rounded-full font-medium">
               ✓ SOFA Familiar
             </span>
@@ -151,23 +157,23 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
       <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-gray-400" />
-          <span>{service?.location?.city ?? 'Unknown City'}</span>
-          {service?.location?.nearbyBases?.length ? (
-            <span className="text-gray-400">• Near {service.location.nearbyBases[0]}</span>
+          <span>{service?.city ?? 'Unknown City'}</span>
+          {service?.basesServed?.length ? (
+            <span className="text-gray-400">• Near {service.basesServed[0]}</span>
           ) : null}
         </div>
-        {service?.contact?.phone && (
+        {service?.phone && (
           <div className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-gray-400" />
-            <a href={`tel:${service.contact.phone}`} className="text-blue-600 hover:underline">
-              {service.contact.phone}
+            <a href={`tel:${service.phone}`} className="text-blue-600 hover:underline">
+              {service.phone}
             </a>
           </div>
         )}
-        {service?.contact?.website && (
+        {service?.website && (
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-gray-400" />
-            <a href={service.contact.website} target="_blank" rel="noopener noreferrer" 
+            <a href={service.website} target="_blank" rel="noopener noreferrer" 
                className="text-blue-600 hover:underline">
               Visit Website
             </a>
@@ -178,7 +184,7 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
       {/* Language Badge */}
       <div className="mt-4 pt-4 border-t">
         <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
-          🗣️ {service?.languages?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
+          🗣️ {service?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
         </span>
       </div>
     </div>
@@ -224,8 +230,7 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
             {categories.map(cat => (
               <button
                 key={cat.id}
-                // @ts-expect-error: cat.id is checked against 'all' or ServiceCategory in the component logic
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => setSelectedCategory(cat.id as 'all' | ServiceCategory)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === cat.id
                     ? 'bg-blue-600 text-white'

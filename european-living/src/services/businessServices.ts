@@ -2,13 +2,16 @@
 
 import { supabase } from './supabaseClient';
 import { 
-  Business, 
-  Review, 
-  ServiceCategory,
+  type Business, 
+  type Review, 
+  type ServiceCategory,
   mapSupabaseToBusiness,
   mapBusinessToSupabase,
   mapSupabaseToReview 
 } from '../types/business';
+
+// ✅ Re-export types with 'export type' for isolatedModules
+export type { Business, Review, ServiceCategory } from '../types/business';
 
 // ==================== FETCH FUNCTIONS ====================
 
@@ -327,3 +330,23 @@ export async function getFeaturedBusinesses(limit: number = 6): Promise<Business
     return [];
   }
 }
+
+// ==================== BACKWARD COMPATIBILITY ALIASES ====================
+
+/**
+ * @deprecated Use fetchBusinesses instead
+ * Legacy alias for backward compatibility
+ */
+export const getBusinesses = fetchBusinesses;
+
+/**
+ * @deprecated Use fetchBusinessById instead
+ * Legacy alias for backward compatibility
+ */
+export const getBusinessById = fetchBusinessById;
+
+/**
+ * @deprecated Use fetchReviews instead
+ * Legacy alias for backward compatibility
+ */
+export const getReviewsByBusiness = fetchReviews;
