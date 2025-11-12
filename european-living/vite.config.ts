@@ -1,70 +1,60 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+// vite.config.ts
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+// @ts-expect-error: Tailwind Vite plugin types not fully compatible with TS
+import tailwindcss from "@tailwindcss/vite";
+import { plugin as markdown, Mode } from "vite-plugin-markdown";
+import path from "path";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/",
   plugins: [
     react(),
+    tailwindcss(),
+    markdown({ mode: [Mode.HTML] }),
     ViteImageOptimizer({
-      /* Image optimization settings */
-      png: {
-        quality: 80,
-      },
-      jpeg: {
-        quality: 80,
-      },
-      jpg: {
-        quality: 80,
-      },
-      webp: {
-        quality: 80,
-      },
-      avif: {
-        quality: 70,
-      },
+      png: { quality: 80 },
+      jpeg: { quality: 80 },
+      jpg: { quality: 80 },
+      webp: { quality: 80 },
+      avif: { quality: 70 },
     }),
   ],
   resolve: {
     alias: {
-      '@': '/src',
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   build: {
-    // Optimize chunk splitting
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
-          // Vendor chunks
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-ui': ['framer-motion', 'lucide-react'],
-          'vendor-maps': ['leaflet', 'react-leaflet'],
-          
-          // Code chunks by feature
-          'pages-articles': ['./src/pages/articles/ArticlePage.tsx'],
-          'pages-businesses': [
-            './src/pages/businesses/BusinessDetailPage.tsx',
-            './src/pages/businesses/ServiceCategoryPage.tsx',
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-markdown": [
+            "react-markdown",
+            "remark-gfm",
+            "rehype-raw",
+            "rehype-sanitize",
           ],
-          'pages-destinations': ['./src/pages/destinations/DestinationPage.tsx'],
+          "vendor-ui": ["framer-motion", "lucide-react"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-maps": ["leaflet", "react-leaflet"],
         },
       },
     },
-    // Increase chunk size warning limit (optional)
-    chunkSizeWarningLimit: 1000,
-    // Enable source maps in production for better debugging (optional)
-    sourcemap: false,
   },
-  // Optimize deps
   optimizeDeps: {
     include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      '@tanstack/react-query',
-      'framer-motion',
-      'lucide-react',
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "@tanstack/react-query",
+      "framer-motion",
+      "lucide-react",
     ],
   },
-})
+});
