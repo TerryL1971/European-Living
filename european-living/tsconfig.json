@@ -13,11 +13,12 @@
 
     /* -------------------- Module + JSX -------------------- */
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
 
     /* -------------------- Type Definitions -------------------- */
     "types": ["vite/client", "react", "react-dom", "node"],

@@ -1,9 +1,11 @@
 // src/App.tsx
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useBase } from "./contexts/BaseContext";
+
+// ✅ Eagerly load components needed immediately
 import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
@@ -12,16 +14,19 @@ import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
 import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
 import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
-import ArticlePage from "./pages/articles/ArticlePage";
-import DestinationPage from "./pages/destinations/DestinationPage";
-import BusinessDetailPage from "./pages/businesses/BusinessDetailPage";
-import ServiceCategoryPage from "./pages/businesses/ServiceCategoryPage";
-import ServicesDirectory from "./components/ServicesDirectory";
-import BusinessSubmissionForm from "./components/BusinessSubmissionForm";
 import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
-import BusinessDataEntry from './pages/admin/BusinessDataEntry';
-import PrivacyPolicy from './pages/PrivacyPolicy';
+import LoadingSpinner from './components/LoadingSpinner';
+
+// ✅ Lazy load components that aren't needed immediately
+const ArticlePage = lazy(() => import('./pages/articles/ArticlePage'));
+const DestinationPage = lazy(() => import('./pages/destinations/DestinationPage'));
+const BusinessDetailPage = lazy(() => import('./pages/businesses/BusinessDetailPage'));
+const ServiceCategoryPage = lazy(() => import('./pages/businesses/ServiceCategoryPage'));
+const ServicesDirectory = lazy(() => import('./components/ServicesDirectory'));
+const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissionForm'));
+const BusinessDataEntry = lazy(() => import('./pages/admin/BusinessDataEntry'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 
 // Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -52,8 +57,14 @@ const ReadingProgress = () => {
   );
 };
 
+// Loading fallback for lazy routes
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
+    <LoadingSpinner size="lg" message="Loading page..." />
+  </div>
+);
+
 export default function App() {
-  // ✅ Use context for selectedBase
   const { selectedBase } = useBase();
   const location = useLocation();
 
@@ -88,59 +99,68 @@ export default function App() {
       <ReadingProgress />
       <Header />
 
-      <Routes>
-        {/* Home Page */}
-        <Route
-          path="/"
-          element={
-            <div className="pt-16">
-              <HeroSection />
-              <DestinationsSection />
-              <FeaturesSection />
-              <GermanPhrasesSection />
-              <ServicesCategoriesSection selectedBase={selectedBase} />
-              <ContactSection />
-            </div>
-          }
-        />
+      {/* ✅ Wrap lazy routes in Suspense */}
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          {/* Home Page - Not lazy loaded */}
+          <Route
+            path="/"
+            element={
+              <div className="pt-16">
+                <HeroSection />
+                <DestinationsSection />
+                <FeaturesSection />
+                <GermanPhrasesSection />
+                <ServicesCategoriesSection selectedBase={selectedBase} />
+                <ContactSection />
+              </div>
+            }
+          />
 
-        {/* Admin Routes */}
-        <Route 
-          path="/admin/data-entry" 
-          element={
-            <div className="pt-16">
-              <BusinessDataEntry />
-            </div>
-          } 
-        />
+          {/* Admin Routes - Lazy loaded */}
+          <Route 
+            path="/admin/data-entry" 
+            element={
+              <div className="pt-16">
+                <BusinessDataEntry />
+              </div>
+            } 
+          />
 
-        {/* SERVICES DIRECTORY - No props needed (uses context) */}
-        <Route 
-          path="/services-directory" 
-          element={
-            <div className="pt-16">
-              <ServicesDirectory />
-            </div>
-          } 
-        />
-        
-        {/* CATEGORY PAGES - No props needed (uses context) */}
-        <Route 
-          path="/services/:category" 
-          element={<ServiceCategoryPage />} 
-        />
-        <Route 
-          path="/services/:category/:subcategory" 
-          element={<ServiceCategoryPage />} 
-        />
+          {/* Services Routes - Lazy loaded */}
+          <Route 
+            path="/services-directory" 
+            element={
+              <div className="pt-16">
+                <ServicesDirectory />
+              </div>
+            } 
+          />
+          
+          <Route 
+            path="/services/:category" 
+            element={<ServiceCategoryPage />} 
+          />
+          <Route 
+            path="/services/:category/:subcategory" 
+            element={<ServiceCategoryPage />} 
+          />
 
-        {/* Other Routes */}
-        <Route path="/submit-business" element={<div className="pt-16"><BusinessSubmissionForm /></div>} />
-        <Route path="/articles/:slug" element={<ArticlePage />} />
-        <Route path="/destinations/:id" element={<DestinationPage />} />
-        <Route path="/businesses/:id" element={<BusinessDetailPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      </Routes>
+          {/* Other Routes - Lazy loaded */}
+          <Route 
+            path="/submit-business" 
+            element={
+              <div className="pt-16">
+                <BusinessSubmissionForm />
+              </div>
+            } 
+          />
+          <Route path="/articles/:slug" element={<ArticlePage />} />
+          <Route path="/destinations/:id" element={<DestinationPage />} />
+          <Route path="/businesses/:id" element={<BusinessDetailPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        </Routes>
+      </Suspense>
 
       <Footer />
     </>

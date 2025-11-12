@@ -1,33 +1,49 @@
-import { defineConfig } from "vite";
-// @ts-expect-error: Vite plugin types not fully compatible with TS
-import react from "@vitejs/plugin-react";
-// @ts-expect-error: Tailwind Vite plugin types not fully compatible with TS
-import tailwindcss from "@tailwindcss/vite";
-import { plugin as markdown, Mode } from "vite-plugin-markdown";
-import path from "path";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  base: "/",
-  plugins: [
-    react(),
-    tailwindcss(),
-    markdown({ mode: [Mode.HTML] })
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': '/src',
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    // Optimize chunk splitting
     rollupOptions: {
       output: {
         manualChunks: {
+          // Vendor chunks
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-markdown': ['react-markdown', 'remark-gfm', 'rehype-raw', 'rehype-sanitize'],
+          'vendor-query': ['@tanstack/react-query'],
           'vendor-ui': ['framer-motion', 'lucide-react'],
+          'vendor-maps': ['leaflet', 'react-leaflet'],
+          
+          // Code chunks by feature
+          'pages-articles': ['./src/pages/articles/ArticlePage.tsx'],
+          'pages-businesses': [
+            './src/pages/businesses/BusinessDetailPage.tsx',
+            './src/pages/businesses/ServiceCategoryPage.tsx',
+          ],
+          'pages-destinations': ['./src/pages/destinations/DestinationPage.tsx'],
         },
       },
     },
+    // Increase chunk size warning limit (optional)
+    chunkSizeWarningLimit: 1000,
+    // Enable source maps in production for better debugging (optional)
+    sourcemap: false,
   },
-});
+  // Optimize deps
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@tanstack/react-query',
+      'framer-motion',
+      'lucide-react',
+    ],
+  },
+})
