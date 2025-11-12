@@ -11,9 +11,8 @@ import {
   Home,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Business } from "../../types/business";
-import { fetchBusinesses } from "../../services/businessServices";
+import { useMemo } from "react";
+import { useBusinesses } from "../../hooks/useBusinessQueries";
 
 const serviceCategories = [
   {
@@ -77,28 +76,19 @@ interface ServicesCategoriesSectionProps {
 }
 
 export default function ServicesCategoriesSection({ selectedBase }: ServicesCategoriesSectionProps) {
-  const [allBusinesses, setAllBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
+  // ✅ Use React Query - data is cached and shared across all components!
+  const { data: allBusinesses = [], isLoading } = useBusinesses();
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        // Load ALL businesses (no base filter for the homepage display)
-        const businesses = await fetchBusinesses();
-        setAllBusinesses(businesses);
-      } catch (error) {
-        console.error("❌ Error loading businesses:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, []); // No dependencies - load all businesses once
+  // Calculate category counts from cached data
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allBusinesses.forEach(business => {
+      counts[business.category] = (counts[business.category] || 0) + 1;
+    });
+    return counts;
+  }, [allBusinesses]);
 
-  const getBusinessCount = (categoryId: string) =>
-    allBusinesses.filter((b) => b.category === categoryId).length;
-
-  if (loading) {
+  if (isLoading) {
     return (
       <section className="relative bg-white py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
@@ -113,10 +103,10 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
       {/* Background Image */}
       <div className="absolute inset-0 bg-[url('https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/services.jpg')] bg-cover bg-center" />
       
-      {/* Enhanced gradient overlay - darker and more dramatic */}
+      {/* Enhanced gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
       
-      {/* Additional subtle vignette effect */}
+      {/* Vignette effect */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
      
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -134,7 +124,7 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {serviceCategories.map((category) => {
             const Icon = category.icon;
-            const count = getBusinessCount(category.id);
+            const count = categoryCounts[category.id] || 0;
 
             return (
               <Link

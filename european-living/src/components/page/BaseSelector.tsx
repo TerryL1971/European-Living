@@ -1,23 +1,19 @@
 // src/components/page/BaseSelector.tsx
 import { MapPin } from "lucide-react";
 import { BASES } from "../../data/bases";
+import { useBase } from "../../contexts/BaseContext";
 
-interface BaseSelectorProps {
-  selectedBase: string;
-  onBaseChange: (baseId: string) => void;
-}
-
-export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelectorProps) {
+export default function BaseSelector() {
+  // ✅ Use context instead of props
+  const { selectedBase, setSelectedBase } = useBase();
+  
   const currentBase = BASES.find((b) => b.id === selectedBase);
 
   const handleBaseChange = (newBase: string) => {
-    // Update parent component
-    onBaseChange(newBase);
+    // Update context (which handles localStorage automatically)
+    setSelectedBase(newBase);
     
-    // Save to localStorage
-    localStorage.setItem('selectedBase', newBase);
-    
-    // Dispatch event so modal and other components know
+    // Dispatch event for any legacy components still listening
     window.dispatchEvent(new CustomEvent('baseChanged', { 
       detail: { baseId: newBase } 
     }));
@@ -28,25 +24,23 @@ export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelecto
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
           
-          {/* 1. Base Info Container: items-start for better multi-line alignment */}
+          {/* 1. Base Info Container */}
           <div className="flex items-start gap-3 min-w-0">
             <MapPin className="w-5 h-5 flex-shrink-0 mt-1" />
-            <div className="min-w-0"> {/* Allows text container to shrink */}
+            <div className="min-w-0">
               <p className="text-xs opacity-80 whitespace-nowrap">Your Base</p>
               
-              {/* Line 2: Base Name (Truncated) */}
               <p className="font-semibold truncate">
                 {currentBase?.name || "Select a base"}
               </p>
               
-              {/* 🛑 Line 3 FIX: Now always visible and truncated for safety */}
               <p className="text-xs opacity-80 mt-0.5 truncate">
                 {currentBase?.location} • Serving {currentBase?.nearbyTowns.join(", ")}
               </p>
             </div>
           </div>
 
-          {/* 2. Base Selector Container (Shrink-Proof) */}
+          {/* 2. Base Selector */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <label htmlFor="base-select" className="text-sm opacity-80 hidden sm:block">
               Change Base:
@@ -55,7 +49,7 @@ export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelecto
               id="base-select"
               value={selectedBase}
               onChange={(e) => handleBaseChange(e.target.value)}
-              className="bg-white text-[var(--brand-dark)] px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-gray-100 transition focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] max-w-xs flex-shrink-0"
+              className="bg-white text-[var(--brand-dark)] px-4 py-2 rounded-lg font-medium cursor-pointer hover:bg-100 transition focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] max-w-xs flex-shrink-0"
             >
               {BASES.map((base) => (
                 <option key={base.id} value={base.id}>
@@ -65,8 +59,6 @@ export default function BaseSelector({ selectedBase, onBaseChange }: BaseSelecto
             </select>
           </div>
         </div>
-        
-        {/* Removed redundant mobile-friendly div */}
       </div>
     </div>
   );

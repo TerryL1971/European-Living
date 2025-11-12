@@ -1,12 +1,13 @@
 // src/components/ServicesDirectory.tsx
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
 import BaseSelector from './page/BaseSelector'; 
 import { Business, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
-import { supabase } from '../services/supabaseClient';
-import { mapSupabaseToBusiness } from '../types/business';
+import { useBase } from '../contexts/BaseContext';
+import { useBusinesses } from '../hooks/useBusinessQueries';
+import LoadingSpinner from './LoadingSpinner';
+import ErrorMessage from './ErrorMessage';
 
-// ✅ FIX: Restored categories array definition
 const categories = [
   { id: 'all', name: 'All Services' },
   { id: 'restaurants', name: 'Restaurants' },
@@ -18,15 +19,11 @@ const categories = [
   { id: 'business', name: 'Business Services' }
 ];
 
-// ✅ FIX: Restored cities array definition
 const cities = ['All Cities', 'Stuttgart', 'Kaiserslautern', 'Wiesbaden', 'Ramstein'];
 
-interface ServicesDirectoryProps {
-  selectedBase: string;
-  onBaseChange: (baseId: string) => void;
-}
-
-export default function ServicesDirectory({ selectedBase, onBaseChange }: ServicesDirectoryProps) {
+export default function ServicesDirectory() {
+  const { selectedBase } = useBase();
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | ServiceCategory>('all');
   const [selectedCity, setSelectedCity] = useState('All Cities');
@@ -35,49 +32,10 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
-  // ✅ FIX: Changed ServiceBusiness to Business
-  const [services, setServices] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function loadServices() {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const base = selectedBase || 'all'; 
-        
-        let query = supabase
-          .from('businesses')
-          .select('*')
-          .eq('status', 'active')
-          .eq('is_on_base', false); 
-        
-        if (base !== 'all') {
-          query = query.contains('bases_served', [base]);
-        }
-        
-        const { data, error: fetchError } = await query;
-        
-        if (fetchError) {
-          throw new Error(`Failed to fetch businesses: ${fetchError.message}`);
-        }
-        
-        // ✅ FIX: Map Supabase data to Business type
-        const mappedData = (data || []).map(mapSupabaseToBusiness);
-        setServices(mappedData);
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load services';
-        console.error('Failed to load services:', err);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    loadServices();
-  }, [selectedBase]); 
+  // ✅ Use React Query hook - automatically cached!
+  const { data: services = [], isLoading, error, refetch } = useBusinesses({
+    baseId: selectedBase === 'all' ? undefined : selectedBase,
+  });
 
   const filteredServices = useMemo(() => {
     const filtered = filterServices(services, {
@@ -101,10 +59,8 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
     </div>
   );
 
-  // ✅ FIX: Changed ServiceBusiness to Business
   const ServiceCard = ({ service }: { service: Business }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
-      {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -124,12 +80,9 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
         </div>
       </div>
 
-      {/* Description */}
       <p className="text-gray-700 mb-4">{service?.description ?? 'No description available.'}</p>
 
-      {/* Specialties/Tags */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {/* ✅ FIX: Changed specialties to tags and added type */}
         {service?.tags?.map((tag: string) => (
           <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
             {tag}
@@ -137,7 +90,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
         ))}
       </div>
 
-      {/* Military Features */}
       {(service?.militaryDiscount || service?.sofaFamiliar) && (
         <div className="flex flex-wrap gap-2 mb-4">
           {service?.militaryDiscount && (
@@ -153,7 +105,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
         </div>
       )}
 
-      {/* Location & Contact */}
       <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-gray-400" />
@@ -181,7 +132,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
         )}
       </div>
 
-      {/* Language Badge */}
       <div className="mt-4 pt-4 border-t">
         <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
           🗣️ {service?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
@@ -191,29 +141,28 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-[var(--brand-bg)] py-8 px-4">
       <div className="max-w-7xl mx-auto">
         
-        {/* Render Base Selector */}
         <div className="mb-6">
-           <BaseSelector selectedBase={selectedBase} onBaseChange={onBaseChange} />
+           <BaseSelector />
         </div>
 
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Services Directory</h1>
-          <p className="text-lg text-gray-600">English-friendly businesses serving Americans in Germany</p>
+          <h1 className="text-4xl font-bold text-[var(--brand-dark)] mb-2">Services Directory</h1>
+          <p className="text-lg text-[var(--brand-dark)] opacity-80">English-friendly businesses serving Americans in Germany</p>
           {currentBaseDisplay}
         </div>
         
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-800">{error}</p>
-          </div>
+          <ErrorMessage
+            title="Failed to load businesses"
+            message={error.message}
+            onRetry={() => refetch()}
+          />
         )}
 
-        {/* Search & Filters */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -225,7 +174,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
             />
           </div>
 
-          {/* Category Filters */}
           <div className="flex flex-wrap gap-2 mb-4">
             {categories.map(cat => (
               <button
@@ -242,7 +190,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
             ))}
           </div>
 
-          {/* Advanced Filters Toggle */}
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
@@ -251,7 +198,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
             {showFilters ? 'Hide' : 'Show'} Advanced Filters
           </button>
 
-          {/* Advanced Filters */}
           {showFilters && (
             <div className="mt-4 pt-4 border-t grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
@@ -314,20 +260,14 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
           )}
         </div>
 
-        {/* Loading State */}
-        {loading ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 text-lg">Loading services...</p>
-          </div>
+        {isLoading ? (
+          <LoadingSpinner size="lg" message="Loading services..." />
         ) : (
           <>
-            {/* Results Count */}
             <div className="mb-4 text-gray-600">
               Found <span className="font-semibold">{filteredServices.length}</span> services
             </div>
 
-            {/* Services Grid */}
             {filteredServices.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredServices.map(service => (
@@ -343,7 +283,6 @@ export default function ServicesDirectory({ selectedBase, onBaseChange }: Servic
           </>
         )}
 
-        {/* Add Business CTA */}
         <div className="mt-12 bg-blue-50 border-2 border-blue-200 rounded-lg p-8 text-center">
           <h3 className="text-2xl font-bold text-gray-900 mb-2">Own a Business?</h3>
           <p className="text-gray-600 mb-4">

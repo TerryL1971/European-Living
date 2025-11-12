@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useBase } from "../../contexts/BaseContext";
+
 interface Base {
   id: string;
   name: string;
@@ -12,7 +14,6 @@ interface Base {
   description: string;
 }
 
-// NOTE: BASES array should ideally be imported from a separate file
 const BASES: Base[] = [
   {
     id: "ramstein",
@@ -65,83 +66,65 @@ const BASES: Base[] = [
 ];
 
 const BaseSelectionModal: React.FC = () => {
+  // ✅ Use context instead of local state
+  const { selectedBase: contextBase, setSelectedBase: setContextBase } = useBase();
+  
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedBase, setSelectedBase] = useState<string | null>(null);
+  const [localSelection, setLocalSelection] = useState<string | null>(null);
   const [hasVisited, setHasVisited] = useState(false);
 
-  // 1️⃣ EFFECT: Check localStorage and show modal on first visit.
+  // Check if user has visited before
   useEffect(() => {
-    const storedBase = localStorage.getItem("selectedBase");
     const visited = localStorage.getItem("hasVisitedSite");
-
-    if (storedBase) {
-      setSelectedBase(storedBase);
+    
+    if (contextBase && contextBase !== 'all') {
       setHasVisited(true);
     } else if (!visited) {
-      // Delay opening for a better user experience on first load
+      // First visit - show modal after delay
       const timer = setTimeout(() => setIsOpen(true), 800);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [contextBase]);
 
-  // 2️⃣ EFFECT: Listen for the "Reset Base" event from Header.tsx.
+  // Listen for reset events
   useEffect(() => {
     const handleOpenModal = () => {
-      // Base has been cleared by Header.tsx. We just force the open state.
-      setSelectedBase(null); 
+      setLocalSelection(null);
       setIsOpen(true);
     };
 
     window.addEventListener("openBaseSelectionModal", handleOpenModal);
-
     return () => {
       window.removeEventListener("openBaseSelectionModal", handleOpenModal);
     };
   }, []);
 
-  const handleBaseSelect = (baseId: string) => setSelectedBase(baseId);
+  const handleBaseSelect = (baseId: string) => setLocalSelection(baseId);
 
   const handleConfirm = () => {
-    if (!selectedBase) return;
-    localStorage.setItem("selectedBase", selectedBase);
-    localStorage.setItem("hasVisitedSite", "true");
-    setIsOpen(false); // Closes the modal
-    setHasVisited(true);
+    if (!localSelection) return;
     
-    // Dispatch event to update global state (App.tsx)
-    window.dispatchEvent(
-      new CustomEvent("baseChanged", { detail: { baseId: selectedBase } })
-    );
+    // Update context (which handles localStorage)
+    setContextBase(localSelection);
+    localStorage.setItem("hasVisitedSite", "true");
+    
+    setIsOpen(false);
+    setHasVisited(true);
   };
 
   const handleSkip = () => {
     localStorage.setItem("hasVisitedSite", "true");
-    localStorage.setItem("selectedBase", "all");
-    setSelectedBase("all");
-    setIsOpen(false); // Closes the modal
+    setContextBase("all");
+    setIsOpen(false);
     setHasVisited(true);
-
-    // Dispatch event to set "all" as the selected base globally
-    window.dispatchEvent(
-      new CustomEvent("baseChanged", { detail: { baseId: "all" } })
-    );
   };
 
-  // Handles the reset click from the floating indicator
   const handleResetFromIndicator = () => {
-    // 1. Clear local storage for a fresh start
-    localStorage.removeItem("selectedBase");
     localStorage.removeItem("hasVisitedSite");
-    
-    // 2. Clear component state and open the modal
-    setSelectedBase(null);
+    setLocalSelection(null);
     setHasVisited(false);
-    setIsOpen(true); // Opens the modal for re-selection
-    
-    // 3. Dispatch an event to clear the base in App.tsx 
-    window.dispatchEvent(
-      new CustomEvent("baseChanged", { detail: { baseId: "all" } })
-    );
+    setIsOpen(true);
+    setContextBase("all");
   };
 
   const getBaseName = (id: string | null) => {
@@ -153,15 +136,11 @@ const BaseSelectionModal: React.FC = () => {
   return (
     <>
       {/* Floating selected base indicator */}
-      {hasVisited && selectedBase && (
-        <div 
-          className="fixed top-4 right-4 z-40 bg-white shadow-lg rounded-lg px-4 py-2 border flex items-center gap-2 max-w-[calc(100vw-3rem)] overflow-hidden"
-        >
+      {hasVisited && contextBase && (
+        <div className="fixed top-4 right-4 z-40 bg-white shadow-lg rounded-lg px-4 py-2 border flex items-center gap-2 max-w-[calc(100vw-3rem)] overflow-hidden">
           <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <span 
-            className="text-sm font-medium truncate min-w-0"
-          >
-            {getBaseName(selectedBase)}
+          <span className="text-sm font-medium truncate min-w-0">
+            {getBaseName(contextBase)}
           </span>
           <button
             onClick={handleResetFromIndicator}
@@ -182,7 +161,7 @@ const BaseSelectionModal: React.FC = () => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full mt-12 overflow-y-auto max-h-[90vh] scroll-fade-bottom" 
+              className="bg-white rounded-2xl shadow-2xl max-w-md md:max-w-4xl w-full mt-12 overflow-y-auto max-h-[90vh]"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -213,9 +192,9 @@ const BaseSelectionModal: React.FC = () => {
                       key={base.id}
                       onClick={() => handleBaseSelect(base.id)}
                       className={`p-4 rounded-xl border-2 text-left transition duration-200 shadow-sm ${
-                        selectedBase === base.id
-                          ? "border-blue-600 bg-blue-50 ring-2 ring-blue-500 shadow-lg" // Selection style
-                          : "border-gray-200 hover:border-blue-300 hover:shadow-md" // Subtle hover
+                        localSelection === base.id
+                          ? "border-blue-600 bg-blue-50 ring-2 ring-blue-500 shadow-lg"
+                          : "border-gray-200 hover:border-blue-300 hover:shadow-md"
                       }`}
                     >
                       <div className="flex items-start gap-4">
@@ -234,26 +213,25 @@ const BaseSelectionModal: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Show all locations */}
                 <button
                   onClick={() => handleBaseSelect("all")}
                   className={`w-full p-4 border-2 rounded-lg transition duration-200 ${
-                    selectedBase === "all"
+                    localSelection === "all"
                       ? "border-gray-500 bg-gray-100 shadow-inner"
                       : "border-gray-300 hover:border-gray-400"
-                  } mb-6`} 
+                  } mb-6`}
                 >
                   <span className="font-semibold text-gray-800">🌍 Show All Locations</span>
                 </button>
                 
                 <button
                   onClick={handleConfirm}
-                  disabled={!selectedBase}
+                  disabled={!localSelection}
                   className={`w-full py-3 rounded-xl font-semibold text-lg transition duration-300 shadow-lg ${
-                    selectedBase
+                    localSelection
                       ? "bg-blue-600 text-white hover:bg-blue-700"
                       : "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none"
-                  } mt-4`} 
+                  } mt-4`}
                 >
                   Continue
                 </button>

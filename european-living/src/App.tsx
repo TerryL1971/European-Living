@@ -3,6 +3,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useBase } from "./contexts/BaseContext";
 import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
 import DestinationsSection from "./components/DestinationsSection";
@@ -52,46 +53,9 @@ const ReadingProgress = () => {
 };
 
 export default function App() {
-  // ✅ FIXED: Initialize with default, then hydrate from localStorage
-  const [selectedBase, setSelectedBase] = useState("all");
-  const [isBaseLoaded, setIsBaseLoaded] = useState(false);
+  // ✅ Use context for selectedBase
+  const { selectedBase } = useBase();
   const location = useLocation();
-
-  // ✅ Hydrate selectedBase from localStorage on mount (client-side only)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedBase = localStorage.getItem('selectedBase');
-      if (storedBase) {
-        setSelectedBase(storedBase);
-      }
-      setIsBaseLoaded(true);
-    }
-  }, []);
-
-  // ✅ Save to localStorage whenever selectedBase changes
-  useEffect(() => {
-    if (isBaseLoaded && typeof window !== 'undefined') {
-      localStorage.setItem('selectedBase', selectedBase);
-    }
-  }, [selectedBase, isBaseLoaded]);
-
-  // GLOBAL LISTENER: Sync state when base is changed anywhere (Modal, BaseSelector).
-  useEffect(() => {
-    const handleBaseChange = (event: CustomEvent) => {
-      setSelectedBase(event.detail.baseId);
-    };
-
-    window.addEventListener("baseChanged", handleBaseChange as EventListener);
-    
-    return () => {
-      window.removeEventListener("baseChanged", handleBaseChange as EventListener);
-    };
-  }, []);
-
-  // HANDLER: Function passed down to BaseSelector components to update central state.
-  const handleBaseUpdate = (baseId: string) => {
-    setSelectedBase(baseId);
-  };
 
   // Handle hash navigation and location.state scrolling on homepage
   useEffect(() => {
@@ -116,13 +80,6 @@ export default function App() {
       }
     }
   }, [location]);
-
-  // ✅ Optional: Show loading state until localStorage is read
-  // if (!isBaseLoaded) {
-  //   return <div className="min-h-screen flex items-center justify-center">
-  //     <div>Loading...</div>
-  //   </div>;
-  // }
   
   return (
     <>
@@ -130,8 +87,6 @@ export default function App() {
       <BaseSelectionModal />
       <ReadingProgress />
       <Header />
-      
-      {/* 🛑 BaseSelector is NOT included here, keeping it off the homepage. */}
 
       <Routes>
         {/* Home Page */}
@@ -159,37 +114,24 @@ export default function App() {
           } 
         />
 
-        {/* SERVICES DIRECTORY - PROPS PASSED HERE */}
+        {/* SERVICES DIRECTORY - No props needed (uses context) */}
         <Route 
           path="/services-directory" 
           element={
             <div className="pt-16">
-              <ServicesDirectory 
-                selectedBase={selectedBase} 
-                onBaseChange={handleBaseUpdate} 
-              />
+              <ServicesDirectory />
             </div>
           } 
         />
         
-        {/* CATEGORY PAGE - PROPS PASSED HERE */}
+        {/* CATEGORY PAGES - No props needed (uses context) */}
         <Route 
           path="/services/:category" 
-          element={
-            <ServiceCategoryPage 
-              selectedBase={selectedBase} 
-              onBaseChange={handleBaseUpdate} 
-            />
-          } 
+          element={<ServiceCategoryPage />} 
         />
         <Route 
           path="/services/:category/:subcategory" 
-          element={
-            <ServiceCategoryPage 
-              selectedBase={selectedBase} 
-              onBaseChange={handleBaseUpdate} 
-            />
-          } 
+          element={<ServiceCategoryPage />} 
         />
 
         {/* Other Routes */}

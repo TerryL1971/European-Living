@@ -1,18 +1,15 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { getBusinesses, Business } from "../../services/businessServices";
+import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
+import { useBase } from "../../contexts/BaseContext";
+import { useBusinesses } from "../../hooks/useBusinessQueries";
 import { getBaseById } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
-import BaseSelector from "../../components/page/BaseSelector"; 
+import BaseSelector from "../../components/page/BaseSelector";
 import { formatSubcategoryName } from "../../lib/utils";
-
-// Define required props
-interface ServiceCategoryPageProps {
-  selectedBase: string;
-  onBaseChange: (baseId: string) => void;
-}
+import LoadingSpinner from "../../components/LoadingSpinner";
+import ErrorMessage from "../../components/ErrorMessage";
 
 const categoryTitles: Record<string, string> = {
   automotive: "Automotive Services",
@@ -26,58 +23,49 @@ const categoryTitles: Record<string, string> = {
   business: "Business Services",
 };
 
-// Define subcategory order for each category
-// Any subcategories not listed here will appear after these, sorted alphabetically
 const subcategoryOrder: Record<string, string[]> = {
   automotive: ["car-dealerships", "mechanics", "inspection-stations", "auto-parts"], 
   healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies", "veterinary-services"],
   restaurants: ["american-food", "international", "cafes"],
 };
 
-export default function ServiceCategoryPage({ selectedBase, onBaseChange }: ServiceCategoryPageProps) {
+export default function ServiceCategoryPage() {
+  const { selectedBase } = useBase();
   const { category: categoryId } = useParams<{ category: string }>();
   const navigate = useNavigate();
-  const [categoryBusinesses, setCategoryBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function loadData() {
-      if (!categoryId) {
-        console.log('❌ No categoryId found');
-        return;
-      }
+  // ✅ Use React Query - data is cached!
+  const { data: allBusinesses = [], isLoading, error, refetch } = useBusinesses();
 
-      const baseIdToUse = selectedBase || "stuttgart"; 
-
-      console.log('🔍 Starting loadData for:', { categoryId, baseId: baseIdToUse });
-
-      try {
-        console.log('📡 Calling getBusinesses...');
-        const allBusinesses = await getBusinesses(); 
-        console.log('✅ Fetched all businesses:', allBusinesses.length);
-        
-        // Filter by category AND base
-        const filtered = allBusinesses.filter((b: Business) => 
-          b.category === categoryId && 
-          b.basesServed?.includes(baseIdToUse)
-        );
-        console.log('✅ Filtered for category "' + categoryId + '" and base "' + baseIdToUse + '":', filtered.length);
-      
-        setCategoryBusinesses(filtered);
-      } catch (error) {
-        console.error("❌ Error loading businesses:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+  // Filter businesses by category and base
+  const categoryBusinesses = useMemo(() => {
+    if (!categoryId || !allBusinesses.length) return [];
     
-    loadData();
-  }, [categoryId, selectedBase]); 
+    const baseIdToUse = selectedBase || "all";
+    
+    return allBusinesses.filter(b => 
+      b.category === categoryId && 
+      (baseIdToUse === 'all' || b.basesServed?.includes(baseIdToUse))
+    );
+  }, [allBusinesses, categoryId, selectedBase]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
-        <p className="text-[var(--brand-dark)]">Loading businesses...</p>
+        <LoadingSpinner size="lg" message="Loading businesses..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
+        <ErrorMessage
+          title="Failed to load businesses"
+          message={error.message}
+          onRetry={() => refetch()}
+          fullScreen
+        />
       </div>
     );
   }
@@ -85,8 +73,8 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
   const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
   const currentBase = getBaseById(selectedBase);
 
-  // Group ALL businesses by subcategory
-  const groupedBySubcategory: Record<string, Business[]> = {};
+  // Group businesses by subcategory
+  const groupedBySubcategory: Record<string, typeof categoryBusinesses> = {};
   
   categoryBusinesses.forEach((business) => {
     const subcat = business.subcategory || "other";
@@ -96,18 +84,16 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
     groupedBySubcategory[subcat].push(business);
   });
 
-  // Sort businesses within each subcategory: featured first, then alphabetically
+  // Sort businesses: featured first, then alphabetically
   Object.keys(groupedBySubcategory).forEach((subcat) => {
     groupedBySubcategory[subcat].sort((a, b) => {
-      // Featured businesses come first
       if (a.featured && !b.featured) return -1;
       if (!a.featured && b.featured) return 1;
-      // Then sort alphabetically
       return a.name.localeCompare(b.name);
     });
   });
 
-  // Get ordered subcategories for this category
+  // Get ordered subcategories
   const orderedSubcats = categoryId && subcategoryOrder[categoryId] 
     ? [
         ...subcategoryOrder[categoryId],
@@ -116,17 +102,13 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
         ).sort()
       ]
     : Object.keys(groupedBySubcategory).sort();
-  
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]"> 
       {/* Base Selector */}
       <div className="bg-[var(--brand-primary)] py-4 sticky top-16 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <BaseSelector 
-            selectedBase={selectedBase} 
-            onBaseChange={onBaseChange} 
-          />
+          <BaseSelector />
         </div>
       </div>
       
@@ -154,7 +136,7 @@ export default function ServiceCategoryPage({ selectedBase, onBaseChange }: Serv
           {/* Sticky Subcategory Navigation */}
           {orderedSubcats.filter(id => groupedBySubcategory[id]?.length > 0).length > 1 && (
             <div className="sticky top-[72px] z-30 bg-white/95 backdrop-blur-sm border-y border-gray-200 -mx-4 px-4 py-4 mb-8 shadow-sm">
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide fading-edge-scroll">
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
                 <span className="text-sm font-semibold text-[var(--brand-dark)] whitespace-nowrap mr-2">
                   Jump to:
                 </span>
