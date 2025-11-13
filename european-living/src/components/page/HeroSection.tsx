@@ -47,8 +47,8 @@ export default function HeroSection(): JSX.Element {
               "0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)",
           }}
         >
-          Explore Europe with{" "}
-          <span className="text-[var(--brand-gold,#F5C04A)]">Confidence</span>
+          Discover Europe{" "}
+          <br></br><span className="text-[var(--brand-gold,#F5C04A)]">Beyond the Base</span>
         </h1>
 
         <p
@@ -61,7 +61,11 @@ export default function HeroSection(): JSX.Element {
           Your complete guide to traveling across Europe. Find destinations,
           transportation, accommodations, English-speaking services, and
           essential German phrases — all in one place.
+          <br></br>
+          <br></br>
+          We get it — stepping off base can feel intimidating. That’s why European Living was built by Americans in Germany who’ve done it — and want to help you do the same.
         </p>
+        <br></br>
 
         <div className="mt-8">
           <button
