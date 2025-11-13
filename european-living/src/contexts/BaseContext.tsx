@@ -55,6 +55,3 @@ export function useBase() {
   }
   return context;
 }
-
-// Suppress fast-refresh warning for context hook
-// eslint-disable-next-line react-refresh/only-export-components

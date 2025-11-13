@@ -1,6 +1,6 @@
 // src/components/ErrorBoundary.tsx
-
-import { Component, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import * as Sentry from "@sentry/react";
 
 interface Props {
   children: ReactNode;
@@ -9,64 +9,40 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error: Error | null;
-  errorInfo: string | null;
+  error?: Error;
 }
 
-/**
- * Error Boundary to catch React component errors
- * Prevents entire app from crashing when a component fails
- */
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    };
+    this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<State> {
-    // Update state so next render shows fallback UI
-    return {
-      hasError: true,
-      error,
-    };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to console (in production, send to error tracking service)
-    console.error('🔴 Error Boundary Caught:', error);
-    console.error('📍 Component Stack:', errorInfo.componentStack);
-
-    this.setState({
-      error,
-      errorInfo: errorInfo.componentStack || null,
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Log error to console in development
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    
+    // Send error to Sentry with additional context
+    Sentry.withScope((scope) => {
+      scope.setContext("errorInfo", {
+        componentStack: errorInfo.componentStack,
+      });
+      Sentry.captureException(error);
     });
-
-    // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
-    // if (import.meta.env.PROD) {
-    //   sendToErrorTracking({ error, errorInfo });
-    // }
   }
-
-  handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    });
-  };
 
   render() {
     if (this.state.hasError) {
-      // Custom fallback UI provided by parent
+      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default fallback UI
+      // Default error UI
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
           <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
@@ -87,59 +63,38 @@ class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-              Something went wrong
+              Oops! Something went wrong
             </h1>
 
             <p className="text-gray-600 text-center mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
+              We've been notified and are working on a fix. Please try refreshing the page.
             </p>
 
-            {/* Show error details in development */}
-            {import.meta.env.DEV && this.state.error && (
-              <details className="mb-6 p-4 bg-gray-100 rounded text-sm">
+            {this.state.error && import.meta.env.DEV && (
+              <details className="mb-4 p-4 bg-gray-100 rounded text-sm">
                 <summary className="cursor-pointer font-semibold text-gray-700 mb-2">
-                  Error Details (Dev Only)
+                  Error Details (Development Only)
                 </summary>
-                <div className="mt-2 space-y-2">
-                  <div>
-                    <strong className="text-red-600">Error:</strong>
-                    <p className="text-gray-800 font-mono text-xs mt-1">
-                      {this.state.error.message}
-                    </p>
-                  </div>
-                  {this.state.errorInfo && (
-                    <div>
-                      <strong className="text-red-600">Stack:</strong>
-                      <pre className="text-gray-700 font-mono text-xs mt-1 overflow-x-auto whitespace-pre-wrap">
-                        {this.state.errorInfo}
-                      </pre>
-                    </div>
-                  )}
-                </div>
+                <pre className="text-xs text-red-600 overflow-auto">
+                  {this.state.error.toString()}
+                </pre>
               </details>
             )}
 
             <div className="flex gap-3">
               <button
-                onClick={this.handleReset}
-                className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+                onClick={() => window.location.reload()}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors"
               >
-                Try Again
+                Refresh Page
               </button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition-colors"
               >
                 Go Home
               </button>
             </div>
-
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full mt-3 px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              Refresh Page
-            </button>
           </div>
         </div>
       );
