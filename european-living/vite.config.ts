@@ -2,7 +2,7 @@
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-// @ts-expect-error: Tailwind Vite plugin types not fully compatible with TS
+
 import tailwindcss from "@tailwindcss/vite";
 import { plugin as markdown, Mode } from "vite-plugin-markdown";
 import path from "path";
