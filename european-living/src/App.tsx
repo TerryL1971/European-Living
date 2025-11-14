@@ -4,6 +4,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useBase } from "./contexts/BaseContext";
+import { trackPageView } from './utils/analytics';
 
 // ✅ Eagerly load components needed immediately
 import Header from "./components/page/Header";
@@ -67,6 +68,11 @@ const PageLoader = () => (
 export default function App() {
   const { selectedBase } = useBase();
   const location = useLocation();
+
+  // Track page views on route change
+  useEffect(() => {
+    trackPageView(location.pathname + location.search, document.title);
+  }, [location]);
 
   // Handle hash navigation and location.state scrolling on homepage
   useEffect(() => {

@@ -1,5 +1,6 @@
 // src/components/CookieConsentModal.tsx
 
+import { initGA } from '../utils/analytics';
 import React, { useState, useEffect } from 'react';
 import { Cookie, Settings, X, Shield, BarChart, Target } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -52,63 +53,47 @@ const CookieConsentModal: React.FC = () => {
   }, []);
 
   const applyConsent = (prefs: CookiePreferences) => {
-    // Define gtag type for TypeScript
-    interface WindowWithGtag extends Window {
-      gtag?: (
-        command: string,
-        action: string,
-        params: Record<string, string>
-      ) => void;
+    // Check if gtag is available
+    if (typeof window.gtag === 'undefined') {
+      console.log('gtag not loaded yet');
+      return;
     }
-
-    const windowWithGtag = window as WindowWithGtag;
 
     // Apply analytics consent
     if (prefs.analytics) {
-      // Enable Google Analytics
-      if (typeof window !== 'undefined' && windowWithGtag.gtag) {
-        windowWithGtag.gtag('consent', 'update', {
-          analytics_storage: 'granted'
-        });
-      }
+      window.gtag('consent', 'update', {
+        analytics_storage: 'granted'
+      });
     } else {
-      // Disable Google Analytics
-      if (typeof window !== 'undefined' && windowWithGtag.gtag) {
-        windowWithGtag.gtag('consent', 'update', {
-          analytics_storage: 'denied'
-        });
-      }
+      window.gtag('consent', 'update', {
+        analytics_storage: 'denied'
+      });
     }
 
     // Apply marketing consent
     if (prefs.marketing) {
-      // Enable marketing cookies (Facebook Pixel, etc.)
-      if (typeof window !== 'undefined' && windowWithGtag.gtag) {
-        windowWithGtag.gtag('consent', 'update', {
-          ad_storage: 'granted',
-          ad_user_data: 'granted',
-          ad_personalization: 'granted'
-        });
-      }
+      window.gtag('consent', 'update', {
+        ad_storage: 'granted',
+        ad_user_data: 'granted',
+        ad_personalization: 'granted'
+      });
     } else {
-      // Disable marketing cookies
-      if (typeof window !== 'undefined' && windowWithGtag.gtag) {
-        windowWithGtag.gtag('consent', 'update', {
-          ad_storage: 'denied',
-          ad_user_data: 'denied',
-          ad_personalization: 'denied'
-        });
-      }
+      window.gtag('consent', 'update', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied'
+      });
     }
   };
 
   const handleAcceptAll = () => {
-    const allAccepted: CookiePreferences = {
-      necessary: true,
-      analytics: true,
-      marketing: true,
-    };
+  const allAccepted: CookiePreferences = {
+    necessary: true,
+    analytics: true,
+    marketing: true,
+  };
     savePreferences(allAccepted);
+    initGA(); // ← ADD THIS LINE
     setShowBanner(false);
     setShowSettings(false);
   };
@@ -126,6 +111,9 @@ const CookieConsentModal: React.FC = () => {
 
   const handleSavePreferences = () => {
     savePreferences(preferences);
+    if (preferences.analytics) {
+      initGA(); // ← ADD THIS LINE
+    }
     setShowBanner(false);
     setShowSettings(false);
   };

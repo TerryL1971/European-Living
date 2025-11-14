@@ -48,7 +48,7 @@ export default function HeroSection(): JSX.Element {
           }}
         >
           Discover Europe{" "}
-          <br></br><span className="text-[var(--brand-gold,#F5C04A)]">Beyond the Base</span>
+          <br></br><span className="text-[var(--brand-gold,#F5C04A)]">Beyond</span>{" "}the Base
         </h1>
 
         <p

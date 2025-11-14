@@ -8,6 +8,8 @@ import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
 import { BaseProvider } from './contexts/BaseContext';
 import { setupRoutePreloading, preloadCriticalRoutes } from './utils/routePreloader';
+import { initGA } from './utils/analytics';
+import { initWebVitals } from './utils/webVitals';
 import './index.css';
 
 // Initialize Sentry FIRST (before anything else)
@@ -46,6 +48,12 @@ Sentry.init({
     'Network request failed',
   ],
 });
+
+// Initialize Google Analytics (respects user consent)
+initGA();
+
+// Initialize Web Vitals monitoring (Core Web Vitals for SEO)
+initWebVitals();
 
 // Create a query client with optimized settings
 const queryClient = new QueryClient({
