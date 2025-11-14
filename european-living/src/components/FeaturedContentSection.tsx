@@ -1,4 +1,5 @@
 // src/components/FeaturedContentSection.tsx
+
 import { useState, useEffect } from 'react';
 import { useBase } from '../contexts/BaseContext';
 import { getFeaturedContent } from '../services/featuredContentService';
