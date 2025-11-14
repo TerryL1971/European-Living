@@ -58,12 +58,10 @@ export default function HeroSection(): JSX.Element {
               "0 2px 8px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6)",
           }}
         >
-          Your complete guide to traveling across Europe. Find destinations,
-          transportation, accommodations, English-speaking services, and
-          essential German phrases — all in one place.
+          Your complete guide to traveling across Europe. Find destinations, transportation, accommodations, English-speaking services, and essential German phrases — all in one place.
           <br></br>
           <br></br>
-          We get it — stepping off base can feel intimidating. That’s why European Living was built by Americans in Germany who’ve done it — and want to help you do the same.
+          Built by Americans who've lived in Germany for over 10 years and worked with thousands of military families. We understand the hesitation about leaving base — and we're here to make exploring Europe feel accessible, safe, and exciting.
         </p>
         <br></br>
 
