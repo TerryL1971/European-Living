@@ -39,9 +39,15 @@ The platform is built with **React + TypeScript + Vite**, styled with **Tailwind
 
 ### **Home Page**
 
-![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/stuttgart-city.jpg)
+![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Home-Screen-1.jpg)
 
-*(More screenshots can be added here later — just provide the URLs.)*
+![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Home-Screen-2.jpg)
+
+![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Home-Screen-3.jpg)
+
+![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Home-Screen-4.jpg)
+
+![Home Page](https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Home-Screen-5.jpg)
 
 ---
 
