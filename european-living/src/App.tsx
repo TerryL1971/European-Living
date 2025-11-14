@@ -9,6 +9,7 @@ import { trackPageView } from './utils/analytics';
 // ✅ Eagerly load components needed immediately
 import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
+import FeaturedContentSection from './components/FeaturedContentSection';
 import DestinationsSection from "./components/DestinationsSection";
 import FeaturesSection from "./components/page/FeaturesSection";
 import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
@@ -29,6 +30,8 @@ const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissio
 const BusinessDataEntry = lazy(() => import('./pages/admin/BusinessDataEntry'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
+const AboutPage = lazy(() => import('./pages/AboutPage')); // NEW!
+
 
 // Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -115,6 +118,7 @@ export default function App() {
             element={
               <div className="pt-16">
                 <HeroSection />
+                <FeaturedContentSection />
                 <DestinationsSection />
                 <FeaturesSection />
                 <GermanPhrasesSection />
@@ -176,6 +180,7 @@ export default function App() {
           <Route path="/destinations/:id" element={<DestinationPage />} />
           <Route path="/businesses/:id" element={<BusinessDetailPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/about" element={ <div className="pt-16"><AboutPage /></div>} />
         </Routes>
       </Suspense>
 

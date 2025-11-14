@@ -20,6 +20,8 @@ export default function DayTripsPage() {
     return DAY_TRIPS.filter(b => b.baseId === selectedBase);
   }, [selectedBase]);
 
+  // ✅ REMOVED: currentBaseName (unused variable)
+
   // Get all unique categories from all trips
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
@@ -177,7 +179,7 @@ export default function DayTripsPage() {
           <div className="mb-6">
             <p className="text-[var(--muted-foreground)]">
               Found <strong className="text-[var(--brand-dark)]">{filteredTrips.length}</strong> day trip{filteredTrips.length !== 1 ? 's' : ''}
-              {selectedBase !== 'all' && ` from ${baseTrips[0]?.baseName}`}
+              {selectedBase !== 'all' && baseTrips[0] && ` from ${baseTrips[0].baseName}`}
             </p>
           </div>
 

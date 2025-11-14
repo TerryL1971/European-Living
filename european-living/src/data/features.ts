@@ -1,3 +1,5 @@
+// src/data/tips.ts
+
 import {
   Bus,
   Hotel,

@@ -1,3 +1,5 @@
+// src/components/DestinationsSection.tsx
+
 import { useState } from "react";
 import DestinationCard from "./DestinationCard";
 import { destinations } from "../data/destinations";
