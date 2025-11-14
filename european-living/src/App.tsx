@@ -28,6 +28,7 @@ const ServicesDirectory = lazy(() => import('./components/ServicesDirectory'));
 const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissionForm'));
 const BusinessDataEntry = lazy(() => import('./pages/admin/BusinessDataEntry'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
 
 // Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -121,6 +122,16 @@ export default function App() {
                 <ContactSection />
               </div>
             }
+          />
+
+          {/* Day Trips Page - NEW! */}
+          <Route 
+            path="/day-trips" 
+            element={
+              <div className="pt-16">
+                <DayTripsPage />
+              </div>
+            } 
           />
 
           {/* Admin Routes - Lazy loaded */}
