@@ -47,6 +47,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     }
 
     setToc(items);
+    console.log('TOC items generated:', items); // Debug log
   }, [content]);
 
   useEffect(() => {
@@ -66,13 +67,20 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
 
     // Observe all heading elements
     const headings = document.querySelectorAll("h2, h3");
-    headings.forEach((heading) => observer.observe(heading));
+    headings.forEach((heading) => {
+      if (heading.id) {
+        observer.observe(heading);
+      }
+    });
 
     return () => observer.disconnect();
   }, [toc]);
 
   const scrollToSection = (id: string) => {
+    console.log('Trying to scroll to:', id); // Debug log
     const element = document.getElementById(id);
+    console.log('Found element:', element); // Debug log
+    
     if (element) {
       const offset = 80; // Header height
       const elementPosition = element.getBoundingClientRect().top;
@@ -82,6 +90,11 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
         top: offsetPosition,
         behavior: "smooth",
       });
+    } else {
+      console.error('Element not found with id:', id);
+      // Try to find the heading by text content as fallback
+      const allHeadings = document.querySelectorAll('h2, h3');
+      console.log('All heading IDs:', Array.from(allHeadings).map(h => ({ id: h.id, text: h.textContent })));
     }
   };
 

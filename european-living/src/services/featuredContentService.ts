@@ -9,6 +9,7 @@ import { FeaturedContent, FeaturedContentCreate } from '../types/featuredContent
  */
 export async function getFeaturedContent(baseId: string = 'all'): Promise<FeaturedContent[]> {
   try {
+    // ✅ FIXED: Changed from 'let' to 'const'
     const query = supabase
       .from('featured_content')
       .select('*')
@@ -24,19 +25,51 @@ export async function getFeaturedContent(baseId: string = 'all'): Promise<Featur
 
     if (!data) return [];
 
+    console.log('Raw featured content from DB:', data); // Debug log
+
     // Filter by base on the client side (because Supabase has limited array query support)
     const filtered = data.filter((item: FeaturedContent) => {
+      console.log('Checking item:', item.title, 'bases_served:', item.bases_served); // Debug each item
+      
+      // Handle bases_served - ensure it's an array
+      let basesArray: string[] = [];
+      
+      if (Array.isArray(item.bases_served)) {
+        basesArray = item.bases_served;
+      } else if (typeof item.bases_served === 'string') {
+        // Handle case where it might be stored as a string
+        try {
+          basesArray = JSON.parse(item.bases_served);
+        } catch {
+          basesArray = [item.bases_served];
+        }
+      }
+
+      console.log('  → basesArray:', basesArray); // Debug parsed array
+
       // Show if 'all' is in bases_served
-      if (item.bases_served.includes('all')) return true;
+      if (basesArray.includes('all')) {
+        console.log('  → Included (has "all")');
+        return true;
+      }
       
       // Show if user's base is in bases_served
-      if (baseId !== 'all' && item.bases_served.includes(baseId)) return true;
+      if (baseId !== 'all' && basesArray.includes(baseId)) {
+        console.log('  → Included (matches base)');
+        return true;
+      }
       
       // If user selected 'all', show items for any base
-      if (baseId === 'all') return true;
+      if (baseId === 'all') {
+        console.log('  → Included (showing all)');
+        return true;
+      }
       
+      console.log('  → Excluded');
       return false;
     });
+
+    console.log('Filtered featured content count:', filtered.length); // Debug log
 
     // Filter by date (only show current items)
     const now = new Date();
@@ -44,14 +77,29 @@ export async function getFeaturedContent(baseId: string = 'all'): Promise<Featur
       const startDate = item.start_date ? new Date(item.start_date) : null;
       const endDate = item.end_date ? new Date(item.end_date) : null;
 
+      console.log('Date check for:', item.title, {
+        startDate: startDate?.toISOString(),
+        endDate: endDate?.toISOString(),
+        now: now.toISOString()
+      });
+
       // Check start date
-      if (startDate && startDate > now) return false;
+      if (startDate && startDate > now) {
+        console.log('  → Excluded (not started yet)');
+        return false;
+      }
       
       // Check end date
-      if (endDate && endDate < now) return false;
+      if (endDate && endDate < now) {
+        console.log('  → Excluded (already ended)');
+        return false;
+      }
       
+      console.log('  → Included (date valid)');
       return true;
     });
+
+    console.log('After date filter:', currentItems.length); // Debug log
 
     // Limit to 3 items
     return currentItems.slice(0, 3);

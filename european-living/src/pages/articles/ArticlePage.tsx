@@ -1,25 +1,21 @@
 // src/pages/articles/ArticlePage.tsx
-import { useEffect, useState } from 'react';
+import { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
 import ReactMarkdown, { Components } from 'react-markdown'; 
 import { Clock, Calendar, Tag, ArrowLeft } from 'lucide-react';
 import remarkGfm from 'remark-gfm'; 
-import { HTMLProps } from 'react'; 
+import { HTMLProps } from 'react';
+import TableOfContents from '../../components/TableOfContents';
 
 // --- Custom Image Renderer Component ---
-
-// Define the required props explicitly to satisfy TypeScript
 type MarkdownImageProps = HTMLProps<HTMLImageElement>;
 
 const MarkdownImage = ({ alt, src, ...props }: MarkdownImageProps) => {
-  // IMPORTANT: Since the migration script ensures the 'src' in the Markdown
-  // is the full, absolute Supabase URL, we simply use it as-is.
   if (!src) return null;
   
   return (
     <img 
-      // Use the src directly, as it is already the absolute URL from the DB.
       src={src} 
       alt={alt || ''} 
       className="w-full h-auto rounded-lg shadow-md my-8" 
@@ -29,6 +25,28 @@ const MarkdownImage = ({ alt, src, ...props }: MarkdownImageProps) => {
   );
 };
 
+// --- Custom Heading Renderer with IDs (matching TableOfContents logic) ---
+const createHeadingComponent = (level: number) => {
+  const HeadingComponent = ({ children }: { children?: React.ReactNode }) => {
+    const text = String(children);
+    
+    // Generate ID using the EXACT same logic as TableOfContents component
+    const id = text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-');
+    
+    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+    
+    return (
+      <Tag id={id}>
+        {children}
+      </Tag>
+    );
+  };
+  
+  return HeadingComponent;
+};
 
 export default function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -106,17 +124,17 @@ export default function ArticlePage() {
     );
   }
   
-  // FIX: This now correctly sets the component map without using 'as any', 
-  // resolving your final ESLint error.
   const components: Components = {
-    img: MarkdownImage, 
+    img: MarkdownImage,
+    h2: createHeadingComponent(2),
+    h3: createHeadingComponent(3),
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
-        <div className="max-w-4xl mx-auto px-4 py-6">
+        <div className="max-w-7xl mx-auto px-4 py-6">
           <button
             onClick={() => navigate(-1)}
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
@@ -190,9 +208,9 @@ export default function ArticlePage() {
         </div>
       </div>
 
-      {/* Featured Image - already full URL, should render fine */}
+      {/* Featured Image */}
       {article.featured_image_url && (
-        <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <img
             src={article.featured_image_url}
             alt={article.title}
@@ -201,21 +219,33 @@ export default function ArticlePage() {
         </div>
       )}
 
-      {/* Article Content */}
-      <article className="max-w-4xl mx-auto px-4 py-8">
-        <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
-          <ReactMarkdown
-            components={components} 
-            remarkPlugins={[remarkGfm]}
-          >
-            {article.content}
-          </ReactMarkdown>
+      {/* Main Content with TOC */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="flex gap-8">
+          {/* Table of Contents - Desktop Sidebar */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <TableOfContents content={article.content} />
+          </aside>
+
+          {/* Article Content */}
+          <article className="flex-1 min-w-0">
+            <div className="bg-white rounded-lg shadow-md p-8">
+              <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
+                <ReactMarkdown
+                  components={components} 
+                  remarkPlugins={[remarkGfm]}
+                >
+                  {article.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </article>
         </div>
-      </article>
+      </div>
 
       {/* Related Articles */}
       {relatedArticles.length > 0 && (
-        <div className="max-w-4xl mx-auto px-4 py-12 border-t">
+        <div className="max-w-7xl mx-auto px-4 py-12 border-t">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Related Articles
           </h2>

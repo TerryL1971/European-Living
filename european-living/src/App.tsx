@@ -31,6 +31,7 @@ const BusinessDataEntry = lazy(() => import('./pages/admin/BusinessDataEntry'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
 const AboutPage = lazy(() => import('./pages/AboutPage')); // NEW!
+const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
 
 
 // Reading Progress Bar Component
@@ -144,6 +145,15 @@ export default function App() {
             element={
               <div className="pt-16">
                 <BusinessDataEntry />
+              </div>
+            } 
+          />
+
+          <Route 
+            path="/admin/featured-content" 
+            element={
+              <div className="pt-16">
+                <FeaturedContentAdmin />
               </div>
             } 
           />
