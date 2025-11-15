@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Business } from "../services/businessServices";
 import { supabase } from "../services/supabaseClient";
 import MapView from "./MapView";
+import BusinessImage from "./BusinessImage";
 
 export interface BusinessCardWithMapProps {
   business: Business;
@@ -59,35 +60,26 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
   const hasLocation = business.latitude && business.longitude;
 
   return (
-    <div className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow ${featured ? 'border-2 border-[var(--brand-gold)]' : 'border border-gray-200'}`}>
-      {/* Image Section */}
-      {business.imageUrl && (
-        <div className="relative">
-          <img
-            src={business.imageUrl}
-            alt={business.name}
-            className="w-full h-48 object-cover rounded-t-lg"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-          {/* Featured Badge - Top Right Corner */}
-          {featured && (
-            <div className="absolute top-3 right-3 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-              ⭐ FEATURED
-            </div>
-          )}
-        </div>
-      )}
+    <div className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden ${featured ? 'border-2 border-[var(--brand-gold)]' : 'border border-gray-200'}`}>
+      {/* Image Section with Featured Badge */}
+      <div className="relative">
+        <BusinessImage
+          imageUrl={business.imageUrl}
+          category={business.category}
+          businessName={business.name}
+          className="w-full h-48"
+        />
+        {/* Featured Badge - Top Right Corner */}
+        {featured && (
+          <div className="absolute top-3 right-3 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+            ⭐ FEATURED
+          </div>
+        )}
+      </div>
 
       <div className="p-6">
         {/* Badges Row */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          {!business.imageUrl && featured && (
-            <span className="bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-xs font-bold">
-              ⭐ FEATURED
-            </span>
-          )}
           {business.verified && (
             <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
               ✓ VERIFIED
@@ -140,7 +132,6 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
                   <div className="text-xs text-gray-500 mb-3">
                     {reviewStats.count} {reviewStats.count === 1 ? 'rating' : 'ratings'}
                   </div>
-                  {/* Star breakdown bars would go here - need to fetch this data */}
                   <Link 
                     to={`/businesses/${business.id}#reviews`}
                     className="text-[var(--brand-primary)] hover:underline text-sm font-medium"
@@ -196,7 +187,6 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
           {business.phone && (
             <div className="flex items-center gap-2">
               <Phone className="w-4 h-4 text-[var(--brand-primary)]" />
-              
               <a href={`tel:${business.phone}`}
                 className="text-[var(--brand-primary)] hover:underline"
               >
@@ -207,8 +197,7 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
           {business.website && (
             <div className="flex items-center gap-2">
               <Globe className="w-4 h-4 text-[var(--brand-primary)]" />
-              
-              <a  href={business.website}
+              <a href={business.website}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[var(--brand-primary)] hover:underline truncate"
@@ -245,8 +234,7 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
             View Details
           </Link>
           {directionsUrl && (
-            
-            <a  href={directionsUrl}
+            <a href={directionsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[var(--brand-gold)] text-[var(--brand-dark)] p-2 rounded-lg hover:bg-yellow-400 transition"

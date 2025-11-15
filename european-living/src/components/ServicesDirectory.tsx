@@ -1,4 +1,5 @@
 // src/components/ServicesDirectory.tsx
+
 import { useState, useMemo } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
 import BaseSelector from './page/BaseSelector'; 
@@ -7,6 +8,7 @@ import { useBase } from '../contexts/BaseContext';
 import { useBusinesses } from '../hooks/useBusinessQueries';
 import LoadingSpinner from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
+import BusinessImage from './BusinessImage';
 
 const categories = [
   { id: 'all', name: 'All Services' },
@@ -60,82 +62,92 @@ export default function ServicesDirectory() {
   );
 
   const ServiceCard = ({ service }: { service: Business }) => (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 border border-gray-200">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-xl font-bold text-gray-900">{service?.name ?? 'Unnamed Service'}</h3>
-            {service?.verified && <Shield className="w-5 h-5 text-blue-600" />}
-            {service?.featured && <Award className="w-5 h-5 text-yellow-500" />}
-          </div>
-          <div className="flex items-center gap-3 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-              <span className="font-semibold">{service?.rating ?? 0}</span>
-              <span>({service?.reviewCount ?? 0})</span>
+    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-200">
+      {/* Business Image */}
+      <BusinessImage
+        imageUrl={service?.imageUrl}
+        category={service?.category}
+        businessName={service?.name ?? 'Business'}
+        className="w-full h-48"
+      />
+      
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-xl font-bold text-gray-900">{service?.name ?? 'Unnamed Service'}</h3>
+              {service?.verified && <Shield className="w-5 h-5 text-blue-600" />}
+              {service?.featured && <Award className="w-5 h-5 text-yellow-500" />}
             </div>
-            <span className="text-gray-400">•</span>
-            <span>{service?.priceRange ?? 'N/A'}</span>
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <span className="font-semibold">{service?.rating ?? 0}</span>
+                <span>({service?.reviewCount ?? 0})</span>
+              </div>
+              <span className="text-gray-400">•</span>
+              <span>{service?.priceRange ?? 'N/A'}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <p className="text-gray-700 mb-4">{service?.description ?? 'No description available.'}</p>
+        <p className="text-gray-700 mb-4">{service?.description ?? 'No description available.'}</p>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {service?.tags?.map((tag: string) => (
-          <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      {(service?.militaryDiscount || service?.sofaFamiliar) && (
         <div className="flex flex-wrap gap-2 mb-4">
-          {service?.militaryDiscount && (
-            <span className="px-3 py-1 bg-green-50 text-green-700 text-sm rounded-full font-medium">
-              🎖️ {service?.discountPercent ?? 0}% Military Discount
+          {service?.tags?.map((tag: string) => (
+            <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
+              {tag}
             </span>
-          )}
-          {service?.sofaFamiliar && (
-            <span className="px-3 py-1 bg-purple-50 text-purple-700 text-sm rounded-full font-medium">
-              ✓ SOFA Familiar
-            </span>
-          )}
+          ))}
         </div>
-      )}
 
-      <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
-        <div className="flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-gray-400" />
-          <span>{service?.city ?? 'Unknown City'}</span>
-          {service?.basesServed?.length ? (
-            <span className="text-gray-400">• Near {service.basesServed[0]}</span>
-          ) : null}
-        </div>
-        {service?.phone && (
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-gray-400" />
-            <a href={`tel:${service.phone}`} className="text-blue-600 hover:underline">
-              {service.phone}
-            </a>
+        {(service?.militaryDiscount || service?.sofaFamiliar) && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {service?.militaryDiscount && (
+              <span className="px-3 py-1 bg-green-50 text-green-700 text-sm rounded-full font-medium">
+                🎖️ {service?.discountPercent ?? 0}% Military Discount
+              </span>
+            )}
+            {service?.sofaFamiliar && (
+              <span className="px-3 py-1 bg-purple-50 text-purple-700 text-sm rounded-full font-medium">
+                ✓ SOFA Familiar
+              </span>
+            )}
           </div>
         )}
-        {service?.website && (
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-gray-400" />
-            <a href={service.website} target="_blank" rel="noopener noreferrer" 
-               className="text-blue-600 hover:underline">
-              Visit Website
-            </a>
-          </div>
-        )}
-      </div>
 
-      <div className="mt-4 pt-4 border-t">
-        <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
-          🗣️ {service?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
-        </span>
+        <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4 text-gray-400" />
+            <span>{service?.city ?? 'Unknown City'}</span>
+            {service?.basesServed?.length ? (
+              <span className="text-gray-400">• Near {service.basesServed[0]}</span>
+            ) : null}
+          </div>
+          {service?.phone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-gray-400" />
+              <a href={`tel:${service.phone}`} className="text-blue-600 hover:underline">
+                {service.phone}
+              </a>
+            </div>
+          )}
+          {service?.website && (
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-gray-400" />
+              <a href={service.website} target="_blank" rel="noopener noreferrer" 
+                 className="text-blue-600 hover:underline">
+                Visit Website
+              </a>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-4 pt-4 border-t">
+          <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
+            🗣️ {service?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
+          </span>
+        </div>
       </div>
     </div>
   );

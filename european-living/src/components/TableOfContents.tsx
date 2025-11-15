@@ -82,14 +82,19 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     console.log('Found element:', element); // Debug log
     
     if (element) {
-      const offset = 80; // Header height
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
+      // Use scrollIntoView instead of manual calculation
+      element.scrollIntoView({ 
         behavior: "smooth",
+        block: "start"
       });
+      
+      // Add extra offset after scroll
+      setTimeout(() => {
+        window.scrollBy({
+          top: -100, // Offset for header
+          behavior: "smooth"
+        });
+      }, 100);
     } else {
       console.error('Element not found with id:', id);
       // Try to find the heading by text content as fallback
