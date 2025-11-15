@@ -70,7 +70,7 @@ export default function FeaturedContentSection() {
                     <img
                       src={item.image_url}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
                 ) : (
