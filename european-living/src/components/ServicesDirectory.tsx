@@ -1,7 +1,7 @@
 // src/components/ServicesDirectory.tsx
 
 import { useState, useMemo } from 'react';
-import { Search, Star, MapPin, Phone, Globe, Filter, Shield, Award } from 'lucide-react';
+import { Search, Star, MapPin, Phone, Globe, Filter, Shield } from 'lucide-react';
 import BaseSelector from './page/BaseSelector'; 
 import { Business, ServiceCategory, filterServices, sortServices, SortOption } from '../types/services';
 import { useBase } from '../contexts/BaseContext';
