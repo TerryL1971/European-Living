@@ -76,12 +76,11 @@ export default function ServicesDirectory() {
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-xl font-bold text-gray-900">{service?.name ?? 'Unnamed Service'}</h3>
-              {service?.verified && <Shield className="w-5 h-5 text-blue-600" />}
-              {service?.featured && <Award className="w-5 h-5 text-yellow-500" />}
+              <Shield className="w-5 h-5 text-[var(--brand-primary)]" />
             </div>
             <div className="flex items-center gap-3 text-sm text-gray-600">
               <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                <Star className="w-4 h-4 fill-[var(--brand-gold)] text-[var(--brand-gold)]" />
                 <span className="font-semibold">{service?.rating ?? 0}</span>
                 <span>({service?.reviewCount ?? 0})</span>
               </div>
@@ -95,7 +94,7 @@ export default function ServicesDirectory() {
 
         <div className="flex flex-wrap gap-2 mb-4">
           {service?.tags?.map((tag: string) => (
-            <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full">
+            <span key={tag} className="px-3 py-1 bg-[var(--brand-primary)] bg-opacity-10 text-[var(--brand-dark)] text-sm rounded-full">
               {tag}
             </span>
           ))}
@@ -109,7 +108,7 @@ export default function ServicesDirectory() {
               </span>
             )}
             {service?.sofaFamiliar && (
-              <span className="px-3 py-1 bg-purple-50 text-purple-700 text-sm rounded-full font-medium">
+              <span className="px-3 py-1 bg-[var(--brand-primary)] bg-opacity-20 text-[var(--brand-dark)] text-sm rounded-full font-medium">
                 ✓ SOFA Familiar
               </span>
             )}
@@ -118,7 +117,7 @@ export default function ServicesDirectory() {
 
         <div className="space-y-2 text-sm text-gray-600 border-t pt-4">
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-gray-400" />
+            <MapPin className="w-4 h-4 text-[var(--brand-primary)]" />
             <span>{service?.city ?? 'Unknown City'}</span>
             {service?.basesServed?.length ? (
               <span className="text-gray-400">• Near {service.basesServed[0]}</span>
@@ -126,17 +125,17 @@ export default function ServicesDirectory() {
           </div>
           {service?.phone && (
             <div className="flex items-center gap-2">
-              <Phone className="w-4 h-4 text-gray-400" />
-              <a href={`tel:${service.phone}`} className="text-blue-600 hover:underline">
+              <Phone className="w-4 h-4 text-[var(--brand-primary)]" />
+              <a href={`tel:${service.phone}`} className="text-[var(--brand-primary)] hover:underline">
                 {service.phone}
               </a>
             </div>
           )}
           {service?.website && (
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-gray-400" />
+              <Globe className="w-4 h-4 text-[var(--brand-primary)]" />
               <a href={service.website} target="_blank" rel="noopener noreferrer" 
-                 className="text-blue-600 hover:underline">
+                 className="text-[var(--brand-primary)] hover:underline">
                 Visit Website
               </a>
             </div>
@@ -144,7 +143,7 @@ export default function ServicesDirectory() {
         </div>
 
         <div className="mt-4 pt-4 border-t">
-          <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 text-sm rounded-full font-medium">
+          <span className="inline-flex items-center px-3 py-1 bg-[var(--brand-primary)] bg-opacity-10 text-[var(--brand-light)] text-sm rounded-full font-medium">
             🗣️ {service?.englishFluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
           </span>
         </div>
@@ -182,7 +181,7 @@ export default function ServicesDirectory() {
               placeholder="Search businesses, services, locations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-transparent"
             />
           </div>
 
@@ -193,8 +192,8 @@ export default function ServicesDirectory() {
                 onClick={() => setSelectedCategory(cat.id as 'all' | ServiceCategory)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === cat.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-[var(--brand-primary)] text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-[var(--brand-primary)] hover:bg-opacity-10'
                 }`}
               >
                 {cat.name}
@@ -204,7 +203,7 @@ export default function ServicesDirectory() {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium"
+            className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] font-medium"
           >
             <Filter className="w-4 h-4" />
             {showFilters ? 'Hide' : 'Show'} Advanced Filters
@@ -217,7 +216,7 @@ export default function ServicesDirectory() {
                 <select
                   value={selectedCity}
                   onChange={(e) => setSelectedCity(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)]"
                 >
                   {cities.map(city => (
                     <option key={city} value={city}>{city}</option>
@@ -230,7 +229,7 @@ export default function ServicesDirectory() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as SortOption)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)]"
                 >
                   <option value="featured">Featured</option>
                   <option value="rating-desc">Highest Rated</option>
@@ -246,7 +245,7 @@ export default function ServicesDirectory() {
                 <select
                   value={minRating}
                   onChange={(e) => setMinRating(Number(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)]"
                 >
                   <option value={0}>Any Rating</option>
                   <option value={4}>4+ Stars</option>
@@ -261,7 +260,7 @@ export default function ServicesDirectory() {
                     type="checkbox"
                     checked={militaryDiscountOnly}
                     onChange={(e) => setMilitaryDiscountOnly(e.target.checked)}
-                    className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                    className="w-5 h-5 text-[var(--brand-primary)] rounded focus:ring-2 focus:ring-[var(--brand-primary)]"
                   />
                   <span className="ml-3 text-sm font-medium text-gray-700">
                     Military Discount Only
@@ -295,14 +294,14 @@ export default function ServicesDirectory() {
           </>
         )}
 
-        <div className="mt-12 bg-blue-50 border-2 border-blue-200 rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Own a Business?</h3>
-          <p className="text-gray-600 mb-4">
+        <div className="mt-12 bg-[var(--brand-primary)] bg-opacity-10 border-2 border-[var(--brand-primary)] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-bold text-[var(--brand-dark)] mb-2">Own a Business?</h3>
+          <p className="text-[var(--brand-dark)] opacity-80 mb-4">
             Get your English-friendly business listed to reach American military families
           </p>
           <button 
             onClick={() => window.location.href = '/submit-business'}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-lg font-medium hover:bg-[var(--brand-dark)] transition-colors"
           >
             Add Your Business
           </button>

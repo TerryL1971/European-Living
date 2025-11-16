@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Cookie } from 'lucide-react';
 
 const Footer: React.FC = () => {
@@ -29,30 +30,24 @@ const Footer: React.FC = () => {
             <h4 className="text-white font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/" className="hover:text-white transition-colors">
+                <Link to="/" className="hover:text-white transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/destinations" className="hover:text-white transition-colors">
-                  Destinations
-                </a>
+                <Link to="/services-directory" className="hover:text-white transition-colors">
+                  Services Directory
+                </Link>
               </li>
               <li>
-                <a href="/practical-guides" className="hover:text-white transition-colors">
-                  Practical Guides
-                </a>
-              </li>
-              <li>
-                <a href="/day-trips" className="hover:text-white transition-colors">
+                <Link to="/day-trips" className="hover:text-white transition-colors">
                   Day Trips
-                </a>
-                <a 
-                  href="/about" 
-                  className="text-[var(--brand-bg-alt)] hover:text-white transition"
-                >
+                </Link>
+              </li>
+              <li>
+                <Link to="/about" className="hover:text-white transition-colors">
                   About Us
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -62,23 +57,28 @@ const Footer: React.FC = () => {
             <h4 className="text-white font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/cultural-tips" className="hover:text-white transition-colors">
-                  Cultural Tips
+                <Link to="/submit-business" className="hover:text-white transition-colors">
+                  Submit Your Business
+                </Link>
+              </li>
+              <li>
+                <a 
+                  href="https://www.usedcarguys.net" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Used Car Guys
                 </a>
               </li>
               <li>
-                <a href="/travel-tips" className="hover:text-white transition-colors">
-                  Travel Tips
-                </a>
-              </li>
-              <li>
-                <a href="/essential-phrases" className="hover:text-white transition-colors">
-                  Essential Phrases
-                </a>
-              </li>
-              <li>
-                <a href="/business-directory" className="hover:text-white transition-colors">
-                  Business Directory
+                <a 
+                  href="https://framedwithwonder.com" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Framed With Wonder
                 </a>
               </li>
             </ul>
@@ -89,19 +89,14 @@ const Footer: React.FC = () => {
             <h4 className="text-white font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="/privacy-policy" className="hover:text-white transition-colors">
+                <Link to="/privacy-policy" className="hover:text-white transition-colors">
                   Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="/terms-of-service" className="hover:text-white transition-colors">
-                  Terms of Service
-                </a>
+                </Link>
               </li>
               <li>
                 <button
                   onClick={handleOpenCookieSettings}
-                  className="hover:text-white transition-colors flex items-center gap-2"
+                  className="hover:text-white transition-colors flex items-center gap-2 text-left"
                 >
                   <Cookie className="w-4 h-4" />
                   Cookie Settings
@@ -110,6 +105,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
+        
         <div className="border-t border-[var(--brand-primary)] border-opacity-30 pt-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
             <div>
@@ -134,7 +130,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-gray-400">
             © {new Date().getFullYear()} European Living. All rights reserved. Serving the American military community in Germany.
           </p>
