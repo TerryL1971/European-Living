@@ -38,7 +38,11 @@ interface Article {
   updated_at: string | null;
 }
 
-const ArticlesScreen: React.FC = () => {
+interface Props {
+  navigation: any;
+}
+
+const ArticlesScreen: React.FC<Props> = ({ navigation }) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -110,67 +114,90 @@ const ArticlesScreen: React.FC = () => {
   };
 
   // Handle article press
-  const handleArticlePress = async (article: Article) => {
-    // Increment view count
-    await supabase
-      .from('articles')
-      .update({ view_count: (article.view_count || 0) + 1 })
-      .eq('id', article.id);
-
-    // Open article URL
-    const url = `https://travelstuttgart.com/articles/${article.slug}`;
-    const supported = await Linking.canOpenURL(url);
-    
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      Alert.alert('Error', 'Cannot open article URL');
-    }
+  const handleArticlePress = (article: Article) => {
+    // Navigate to article detail screen
+    navigation.navigate('ArticleDetail', { articleId: article.id });
   };
 
-  const renderArticle = ({ item }: { item: Article }) => (
-    <TouchableOpacity 
-      style={styles.card}
-      onPress={() => handleArticlePress(item)}
-      activeOpacity={0.7}
-    >
-      {item.featured_image_url && (
-        <Image source={{ uri: item.featured_image_url }} style={styles.cardImage} />
-      )}
-      <View style={styles.cardContent}>
-        {item.category && (
-          <Text style={styles.category}>{item.category}</Text>
+  // Extract first image URL from article content
+  const extractImageFromContent = (content: string): string | null => {
+    // Try to find image URLs in markdown format: ![alt](url)
+    const markdownImageMatch = content.match(/!\[.*?\]\((.*?)\)/);
+    if (markdownImageMatch && markdownImageMatch[1]) {
+      return markdownImageMatch[1];
+    }
+
+    // Try to find image URLs in HTML format: <img src="url"
+    const htmlImageMatch = content.match(/<img[^>]+src="([^">]+)"/);
+    if (htmlImageMatch && htmlImageMatch[1]) {
+      return htmlImageMatch[1];
+    }
+
+    // Try to find any URL that looks like an image
+    const urlMatch = content.match(/https?:\/\/[^\s<>"]+\.(jpg|jpeg|png|gif|webp)/i);
+    if (urlMatch && urlMatch[0]) {
+      return urlMatch[0];
+    }
+
+    return null;
+  };
+
+  const renderArticle = ({ item }: { item: Article }) => {
+    // Try to get featured image, or extract from content
+    const imageUrl = item.featured_image_url || extractImageFromContent(item.content);
+    
+    return (
+      <TouchableOpacity 
+        style={styles.card}
+        onPress={() => handleArticlePress(item)}
+        activeOpacity={0.7}
+      >
+        {imageUrl && (
+          <Image 
+            source={{ uri: imageUrl }} 
+            style={styles.cardImage}
+            onError={(e) => {
+              console.log('Image load error for:', item.title);
+              console.log('URL:', imageUrl);
+            }}
+            onLoad={() => console.log('Image loaded successfully:', item.title)}
+          />
         )}
-        <Text style={styles.cardTitle}>{item.title}</Text>
-        {item.excerpt && (
-          <Text style={styles.excerpt} numberOfLines={2}>
-            {item.excerpt}
-          </Text>
-        )}
-        
-        {item.tags && item.tags.length > 0 && (
-          <View style={styles.tagsContainer}>
-            {item.tags.slice(0, 3).map((tag, index) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-        
-        <View style={styles.cardFooter}>
-          <Text style={styles.author}>{item.author || 'Travel Stuttgart'}</Text>
-          <View style={styles.metadata}>
-            <Text style={styles.metaText}>{formatDate(item.created_at)}</Text>
-            <Text style={styles.metaDot}>•</Text>
-            <Text style={styles.metaText}>{item.reading_time_minutes || 5} min read</Text>
-            <Text style={styles.metaDot}>•</Text>
-            <Text style={styles.metaText}>{item.view_count || 0} views</Text>
+        <View style={styles.cardContent}>
+          {item.category && (
+            <Text style={styles.category}>{item.category}</Text>
+          )}
+          <Text style={styles.cardTitle}>{item.title}</Text>
+          {item.excerpt && (
+            <Text style={styles.excerpt} numberOfLines={2}>
+              {item.excerpt}
+            </Text>
+          )}
+          
+          {item.tags && item.tags.length > 0 && (
+            <View style={styles.tagsContainer}>
+              {item.tags.slice(0, 3).map((tag, index) => (
+                <View key={index} style={styles.tag}>
+                  <Text style={styles.tagText}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+          
+          <View style={styles.cardFooter}>
+            <Text style={styles.author}>{item.author || 'Travel Stuttgart'}</Text>
+            <View style={styles.metadata}>
+              <Text style={styles.metaText}>{formatDate(item.created_at)}</Text>
+              <Text style={styles.metaDot}>•</Text>
+              <Text style={styles.metaText}>{item.reading_time_minutes || 5} min read</Text>
+              <Text style={styles.metaDot}>•</Text>
+              <Text style={styles.metaText}>{item.view_count || 0} views</Text>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   if (loading) {
     return (
@@ -352,6 +379,14 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     resizeMode: 'cover',
+    backgroundColor: '#f0f0f0',
+  },
+  cardImagePlaceholder: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardContent: {
     padding: 16,

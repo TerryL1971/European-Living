@@ -10,7 +10,8 @@ import {
   TouchableOpacity,
   Image,
   Linking,
-  RefreshControl
+  RefreshControl,
+  ImageBackground
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../services/supabaseClient';
@@ -79,13 +80,34 @@ export default function HomeScreen({ navigation }: any) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8B9D7C']} />
         }
       >
-        {/* Hero Section */}
-        <View style={styles.hero}>
-          <Text style={styles.heroTitle}>Welcome to European Living</Text>
-          <Text style={styles.heroSubtitle}>
-            Your guide to living and exploring Europe as a military family
-          </Text>
-        </View>
+        {/* Hero Section with Logo and Background Image */}
+        <ImageBackground
+          source={{ uri: 'https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/hero-bg.jpg' }}
+          style={styles.hero}
+          resizeMode="cover"
+        >
+          {/* Dark overlay for readability */}
+          <View style={styles.heroOverlay} />
+          
+          <View style={styles.heroContent}>
+            {/* Logo */}
+            <Image 
+              source={{ uri: 'https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/european-living-logo.png' }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+            
+            <Text style={styles.heroTitle}>Discover Europe{'\n'}
+              <Text style={styles.heroTitleGold}>Beyond</Text> the Base
+            </Text>
+            <Text style={styles.heroSubtitle}>
+              Your complete guide to traveling across Europe. Find destinations, transportation, accommodations, and English-speaking services — all in one place.
+            </Text>
+            <Text style={styles.heroSubtitle2}>
+              Built by Americans who've lived in Germany for over 10 years and worked with thousands of military families.
+            </Text>
+          </View>
+        </ImageBackground>
 
         {/* Featured Content */}
         <View style={styles.section}>
@@ -142,28 +164,36 @@ export default function HomeScreen({ navigation }: any) {
               style={styles.actionButton}
               onPress={() => navigation.navigate('Services')}
             >
-              <Text style={styles.actionIcon}>🏢</Text>
+              <View style={styles.actionIconContainer}>
+                <Ionicons name="business" size={28} color="#8B9D7C" />
+              </View>
               <Text style={styles.actionText}>Find Services</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('Day Trips')}
             >
-              <Text style={styles.actionIcon}>🗺️</Text>
+              <View style={styles.actionIconContainer}>
+                <Ionicons name="map" size={28} color="#8B9D7C" />
+              </View>
               <Text style={styles.actionText}>Day Trips</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('Articles')}
             >
-              <Text style={styles.actionIcon}>📰</Text>
+              <View style={styles.actionIconContainer}>
+                <Ionicons name="newspaper" size={28} color="#8B9D7C" />
+              </View>
               <Text style={styles.actionText}>Read Articles</Text>
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.actionButton}
               onPress={() => navigation.navigate('Profile')}
             >
-              <Text style={styles.actionIcon}>👤</Text>
+              <View style={styles.actionIconContainer}>
+                <Ionicons name="person" size={28} color="#8B9D7C" />
+              </View>
               <Text style={styles.actionText}>My Profile</Text>
             </TouchableOpacity>
           </View>
@@ -201,21 +231,61 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   hero: {
-    backgroundColor: '#8B9D7C',
+    minHeight: 400,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  heroContent: {
+    position: 'relative',
+    zIndex: 1,
     padding: 24,
     paddingTop: 40,
-    paddingBottom: 40,
+    paddingBottom: 50,
+    alignItems: 'center',
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 20,
   },
   heroTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 16,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  heroTitleGold: {
+    color: '#D4AF37',
   },
   heroSubtitle: {
     fontSize: 16,
+    color: '#fff',
+    marginBottom: 12,
+    textAlign: 'center',
+    lineHeight: 24,
+    paddingHorizontal: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
+  },
+  heroSubtitle2: {
+    fontSize: 14,
     color: '#F5F3EF',
-    opacity: 0.9,
+    opacity: 0.95,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 10,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 4,
   },
   section: {
     padding: 16,
@@ -306,8 +376,13 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  actionIcon: {
-    fontSize: 32,
+  actionIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F5F3EF',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 8,
   },
   actionText: {

@@ -6,12 +6,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-// Screens (we'll create these next)
+// Screens
 import HomeScreen from '../screens/HomeScreen';
 import ServicesScreen from '../screens/ServicesScreen';
 import DayTripsScreen from '../screens/DayTripsScreen';
 import ArticlesScreen from '../screens/ArticlesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import ArticleDetailScreen from '../screens/ArticleDetailScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -82,6 +83,15 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen 
+          name="ArticleDetail" 
+          component={ArticleDetailScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
