@@ -1,6 +1,6 @@
 // src/screens/ServicesScreen.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../services/supabaseClient';
+import { useBase } from '../contexts/BaseContext'; // ⬅️ NEW IMPORT
 
 interface Business {
   id: string;
@@ -25,7 +26,7 @@ interface Business {
   phone?: string;
   email?: string;
   website?: string;
-  image_url?: string;
+  image_url?: string; // Used for business images
   verified: boolean;
   featured: boolean;
   english_fluency?: string;
@@ -43,21 +44,39 @@ const categories = [
   { id: 'home-services', name: 'Home', icon: 'home' },
 ];
 
+// FIX: Map Base Name (from context) to a consistent, database-safe ID (no umlauts/lowercase)
+const baseIdMap: Record<string, string> = {
+  'Stuttgart': 'stuttgart',
+  'Ramstein': 'ramstein',
+  'Spangdahlem': 'spangdahlem',
+  'Wiesbaden': 'wiesbaden',
+  'Grafenwöhr': 'grafenwoehr', 
+  'Kaiserslautern': 'kaiserslautern',
+};
+
 export default function ServicesScreen() {
+  const { selectedBase: contextBaseName } = useBase();
+
+  // Derive the baseId whenever the contextBaseName changes
+  const selectedBaseId = useMemo(() => {
+    return baseIdMap[contextBaseName] || 'all';
+  }, [contextBaseName]);
+
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [filteredBusinesses, setFilteredBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-
+  
   useEffect(() => {
     loadBusinesses();
   }, []);
 
+  // Filter businesses runs whenever search, category, or the Base ID changes
   useEffect(() => {
     filterBusinesses();
-  }, [searchQuery, selectedCategory, businesses]);
+  }, [searchQuery, selectedCategory, businesses, selectedBaseId]);
 
   const loadBusinesses = async () => {
     try {
@@ -84,6 +103,14 @@ export default function ServicesScreen() {
   const filterBusinesses = () => {
     let filtered = businesses;
 
+    // FIX: Base filter - filter by the consistent selectedBaseId
+    if (selectedBaseId && selectedBaseId !== 'all') {
+      filtered = filtered.filter(b => 
+        // Check if the business bases_served array includes the consistent ID
+        b.bases_served && b.bases_served.includes(selectedBaseId)
+      );
+    }
+
     // Category filter
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(b => b.category === selectedCategory);
@@ -104,7 +131,7 @@ export default function ServicesScreen() {
 
   const onRefresh = () => {
     setRefreshing(true);
-    loadBusinesses();
+    loadBusinesses(); 
   };
 
   const openPhone = (phone: string) => {
@@ -117,9 +144,9 @@ export default function ServicesScreen() {
 
   const renderBusinessCard = ({ item }: { item: Business }) => (
     <View style={styles.card}>
-      {/* Image */}
+      {/* Image: Uses item.image_url which will be an absolute URL */}
       {item.image_url ? (
-        <Image source={{ uri: item.image_url }} style={styles.cardImage} resizeMode="contain" />
+        <Image source={{ uri: item.image_url }} style={styles.cardImage} resizeMode="cover" />
       ) : (
         <View style={[styles.cardImage, styles.placeholderImage]}>
           <Ionicons name="business" size={48} color="#ccc" />
@@ -157,9 +184,11 @@ export default function ServicesScreen() {
         </View>
 
         {/* Description */}
-        <Text style={styles.description} numberOfLines={3}>
-          {item.description}
-        </Text>
+        {item.description && (
+          <Text style={styles.description} numberOfLines={3}>
+            {item.description}
+          </Text>
+        )}
 
         {/* English Fluency */}
         {item.english_fluency && (
@@ -252,6 +281,8 @@ export default function ServicesScreen() {
       <View style={styles.resultsBar}>
         <Text style={styles.resultsText}>
           {filteredBusinesses.length} service{filteredBusinesses.length !== 1 ? 's' : ''} found
+          {/* Display contextBaseName for a clean display */}
+          {selectedBaseId !== 'all' && ` near ${contextBaseName}`} 
         </Text>
       </View>
 
@@ -273,7 +304,12 @@ export default function ServicesScreen() {
             <View style={styles.empty}>
               <Ionicons name="business-outline" size={64} color="#ccc" />
               <Text style={styles.emptyText}>No services found</Text>
-              <Text style={styles.emptySubtext}>Try adjusting your search or filters</Text>
+              <Text style={styles.emptySubtext}>
+                {selectedBaseId !== 'all' 
+                  ? `No services available near ${contextBaseName}. Try adjusting your filters.`
+                  : 'Try adjusting your search or filters'
+                }
+              </Text>
             </View>
           }
         />
@@ -425,22 +461,6 @@ const styles = StyleSheet.create({
     color: '#2C3E28',
     marginBottom: 6,
   },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  rating: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#333',
-    marginLeft: 4,
-  },
-  reviewCount: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 2,
-  },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -459,13 +479,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   englishBadge: {
-    backgroundColor: '#8B9D7C',
+    backgroundColor: '#E8F5E9',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
     alignSelf: 'flex-start',
     marginBottom: 8,
-    opacity: 0.1,
   },
   englishText: {
     fontSize: 10,
@@ -490,16 +509,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
+    paddingHorizontal: 20,
   },
   emptyText: {
     fontSize: 18,
     fontWeight: '600',
     color: '#666',
     marginTop: 16,
+    textAlign: 'center',
   },
   emptySubtext: {
     fontSize: 14,
     color: '#999',
     marginTop: 8,
+    textAlign: 'center',
   },
 });

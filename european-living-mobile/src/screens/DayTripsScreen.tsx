@@ -1,251 +1,223 @@
 // src/screens/DayTripsScreen.tsx
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
-  TextInput,
+  ActivityIndicator,
+  Image,
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-// Mock data - replace with your actual day trips data
-const DAY_TRIPS_DATA = [
-  {
-    id: '1',
-    baseId: 'stuttgart',
-    baseName: 'Stuttgart',
-    trips: [
-      {
-        id: 'trip1',
-        name: 'Heidelberg Castle',
-        description: 'Stunning medieval castle overlooking the Neckar River with beautiful gardens and historic ruins.',
-        driveTime: '1 hour',
-        distance: '120 km',
-        trainTime: '1h 15min',
-        difficulty: 'Easy',
-        cost: '$$',
-        bestFor: ['History', 'Photography', 'Families', 'Romantic'],
-      },
-      {
-        id: 'trip2',
-        name: 'Black Forest',
-        description: 'Dense forest region famous for cuckoo clocks, hiking trails, and traditional German cuisine.',
-        driveTime: '1h 30min',
-        distance: '100 km',
-        difficulty: 'Moderate',
-        cost: '$',
-        bestFor: ['Nature', 'Hiking', 'Photography'],
-      },
-    ],
-  },
-];
-
-interface DayTrip {
-  id: string;
-  name: string;
-  description: string;
-  driveTime: string;
-  distance: string;
-  trainTime?: string;
-  difficulty: string;
-  cost: string;
-  bestFor: string[];
-}
+import { useBase } from '../contexts/BaseContext';
+// ⬇️ Use the centralized API
+import { fetchDayTrips, DayTrip, BaseDayTrips } from '../data/dayTripsApi'; 
 
 export default function DayTripsScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
-  const [selectedBase, setSelectedBase] = useState('all');
+  const { selectedBase } = useBase();
+  
+  const [allDayTrips, setAllDayTrips] = useState<BaseDayTrips[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Flatten trips from all bases
-  const allTrips = useMemo(() => {
-    const trips: Array<{ baseName: string; trip: DayTrip }> = [];
-    DAY_TRIPS_DATA.forEach(base => {
-      base.trips.forEach(trip => {
-        trips.push({ baseName: base.baseName, trip });
-      });
-    });
-    return trips;
+  // Fetch data from Supabase
+  useEffect(() => {
+    async function loadTrips() {
+      setIsLoading(true);
+      setFetchError(null);
+      try {
+        const data = await fetchDayTrips();
+        setAllDayTrips(data);
+      } catch (e) {
+        setFetchError("Failed to load day trips. Check your network or data setup.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadTrips();
   }, []);
 
-  // Filter trips
-  const filteredTrips = useMemo(() => {
-    return allTrips.filter(({ baseName, trip }) => {
-      // Base filter
-      if (selectedBase !== 'all' && !baseName.toLowerCase().includes(selectedBase.toLowerCase())) {
-        return false;
-      }
+  // Filter based on selected base
+  const baseTrips = useMemo(() => {
+    if (selectedBase === 'all') {
+      // Flatten all trips for display when 'All' is selected
+      return allDayTrips.flatMap(base => base.trips);
+    }
+    // Filter for the specific base and flatten the trips array
+    return allDayTrips
+      .filter(b => b.baseId === selectedBase.toLowerCase().replace(/[^a-z0-9]/g, ''))
+      .flatMap(base => base.trips);
+  }, [selectedBase, allDayTrips]);
 
-      // Difficulty filter
-      if (selectedDifficulty !== 'all' && trip.difficulty !== selectedDifficulty) {
-        return false;
-      }
-
-      // Search filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        return (
-          trip.name.toLowerCase().includes(query) ||
-          trip.description.toLowerCase().includes(query) ||
-          trip.bestFor.some(tag => tag.toLowerCase().includes(query))
-        );
-      }
-
-      return true;
+  // Extract all categories for the filter bar
+  const allCategories = useMemo(() => {
+    const categories = new Set<string>();
+    allDayTrips.forEach(base => {
+      base.trips.forEach(trip => {
+        // Use snake_case
+        trip.best_for.forEach(cat => categories.add(cat)); 
+      });
     });
-  }, [allTrips, searchQuery, selectedDifficulty, selectedBase]);
+    return Array.from(categories).sort();
+  }, [allDayTrips]);
+  
+  // Final filtered list
+  const filteredTrips = useMemo(() => {
+    if (selectedCategory === 'all') {
+      return baseTrips;
+    }
+    return baseTrips.filter(trip => 
+        // Use snake_case
+        trip.best_for.includes(selectedCategory)
+    );
+  }, [baseTrips, selectedCategory]);
 
-  const renderTripCard = ({ item }: { item: { baseName: string; trip: DayTrip } }) => {
-    const { baseName, trip } = item;
-    
-    const getDifficultyColor = (difficulty: string) => {
-      switch (difficulty) {
-        case 'Easy': return '#4CAF50';
-        case 'Moderate': return '#FF9800';
-        case 'Challenging': return '#F44336';
-        default: return '#666';
-      }
-    };
-
-    const getCostColor = (cost: string) => {
-      switch (cost) {
-        case '$': return '#4CAF50';
-        case '$$': return '#FF9800';
-        case '$$$': return '#F44336';
-        default: return '#666';
-      }
-    };
-
-    return (
-      <View style={styles.card}>
-        {/* Header with gradient */}
-        <View style={styles.cardHeader}>
-          <Ionicons name="map" size={40} color="#fff" style={styles.cardIcon} />
+  const renderTripCard = ({ item }: { item: DayTrip }) => (
+    <View style={styles.card}>
+      {/* ⬇️ Image rendering using image_url from Supabase ⬇️ */}
+      {item.image_url ? (
+        <Image 
+          source={{ uri: item.image_url }} 
+          style={styles.cardImage} 
+          resizeMode="cover" 
+        />
+      ) : (
+        <View style={styles.cardPlaceholder}>
+          <Ionicons name="map-pin-outline" size={48} color="#ccc" />
         </View>
+      )}
 
-        {/* Content */}
-        <View style={styles.cardContent}>
-          <Text style={styles.tripName}>{trip.name}</Text>
-          
-          {selectedBase === 'all' && (
-            <Text style={styles.baseTag}>📍 From {baseName}</Text>
-          )}
+      <View style={styles.cardContent}>
+        <Text style={styles.tripName} numberOfLines={2}>
+          {item.name}
+        </Text>
+        
+        {/* Base Name (only visible if 'All Bases' is selected) */}
+        {selectedBase === 'all' && (
+            <Text style={styles.baseNameText}>From {item.base_name}</Text>
+        )}
 
-          <Text style={styles.description} numberOfLines={3}>
-            {trip.description}
+        {/* Description */}
+        <Text style={styles.description} numberOfLines={3}>
+          {item.description}
+        </Text>
+
+        {/* Drive Time */}
+        <View style={styles.infoRow}>
+          <Ionicons name="car" size={14} color="#8B9D7C" />
+          {/* Use snake_case */}
+          <Text style={styles.infoText}>{item.drive_time} drive</Text>
+        </View>
+        
+        {/* Train Time */}
+        {item.train_time && (
+          <View style={styles.infoRow}>
+            <Ionicons name="train" size={14} color="#8B9D7C" />
+            {/* Use snake_case */}
+            <Text style={styles.infoText}>{item.train_time} by train</Text>
+          </View>
+        )}
+
+        {/* Badges */}
+        <View style={styles.badgeContainer}>
+          <Text style={[
+            styles.badge,
+            item.difficulty === 'Easy' && styles.easyBadge,
+            item.difficulty === 'Moderate' && styles.moderateBadge,
+            item.difficulty === 'Challenging' && styles.challengingBadge,
+          ]}>
+            {item.difficulty}
           </Text>
-
-          {/* Travel Info */}
-          <View style={styles.travelInfo}>
-            <View style={styles.infoRow}>
-              <Ionicons name="car" size={16} color="#8B9D7C" />
-              <Text style={styles.infoText}>
-                {trip.driveTime} ({trip.distance})
-              </Text>
-            </View>
-            {trip.trainTime && (
-              <View style={styles.infoRow}>
-                <Ionicons name="train" size={16} color="#8B9D7C" />
-                <Text style={styles.infoText}>{trip.trainTime}</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Badges */}
-          <View style={styles.badges}>
-            <View style={[styles.badge, { backgroundColor: getDifficultyColor(trip.difficulty) }]}>
-              <Text style={styles.badgeText}>{trip.difficulty}</Text>
-            </View>
-            <View style={[styles.badge, { backgroundColor: getCostColor(trip.cost) }]}>
-              <Text style={styles.badgeText}>{trip.cost}</Text>
-            </View>
-          </View>
-
-          {/* Tags */}
-          <View style={styles.tags}>
-            {trip.bestFor.slice(0, 3).map((tag, index) => (
-              <View key={index} style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
-              </View>
-            ))}
-            {trip.bestFor.length > 3 && (
-              <Text style={styles.moreText}>+{trip.bestFor.length - 3} more</Text>
-            )}
-          </View>
+          <Text style={styles.costBadge}>
+            {item.cost}
+          </Text>
         </View>
+        
+        {/* Categories */}
+        <View style={styles.categoryTagContainer}>
+            {/* Use snake_case */}
+            {item.best_for.slice(0, 3).map((tag) => (
+                <Text key={tag} style={styles.categoryTag}>{tag}</Text>
+            ))}
+        </View>
+      </View>
+    </View>
+  );
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#8B9D7C" />
+        <Text style={styles.loadingText}>Loading incredible destinations...</Text>
       </View>
     );
-  };
+  }
 
+  if (fetchError) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Ionicons name="alert-circle-outline" size={48} color="red" />
+        <Text style={styles.loadingText}>Data Error</Text>
+        <Text style={styles.errorText}>{fetchError}</Text>
+      </View>
+    );
+  }
+  
   return (
     <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#666" />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search destinations..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholderTextColor="#999"
-          />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color="#666" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </View>
-
-      {/* Filters */}
-      <View style={styles.filtersContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {/* Difficulty Filter */}
-          {['all', 'Easy', 'Moderate', 'Challenging'].map(diff => (
+      {/* Category Filter Bar */}
+      <View style={styles.categoriesContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesList}>
+          {/* All Button */}
+          <TouchableOpacity
+            style={[styles.categoryBtn, selectedCategory === 'all' && styles.categoryBtnActive]}
+            onPress={() => setSelectedCategory('all')}
+          >
+            <Text style={[styles.categoryText, selectedCategory === 'all' && styles.categoryTextActive]}>All</Text>
+          </TouchableOpacity>
+          {/* Dynamic Category Buttons */}
+          {allCategories.map(cat => (
             <TouchableOpacity
-              key={diff}
+              key={cat}
               style={[
-                styles.filterBtn,
-                selectedDifficulty === diff && styles.filterBtnActive,
+                styles.categoryBtn,
+                selectedCategory === cat && styles.categoryBtnActive,
               ]}
-              onPress={() => setSelectedDifficulty(diff)}
+              onPress={() => setSelectedCategory(cat)}
             >
               <Text
                 style={[
-                  styles.filterText,
-                  selectedDifficulty === diff && styles.filterTextActive,
+                  styles.categoryText,
+                  selectedCategory === cat && styles.categoryTextActive,
                 ]}
               >
-                {diff === 'all' ? 'All Levels' : diff}
+                {cat}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
 
-      {/* Results Count */}
-      <View style={styles.resultsBar}>
-        <Text style={styles.resultsText}>
-          {filteredTrips.length} day trip{filteredTrips.length !== 1 ? 's' : ''} found
-        </Text>
-      </View>
+      <Text style={styles.resultsText}>
+        Found {filteredTrips.length} Trip{filteredTrips.length !== 1 ? 's' : ''}
+        {selectedBase !== 'all' && filteredTrips.length > 0 && ` from ${selectedBase}`}
+      </Text>
 
-      {/* Trips List */}
+      {/* Trip List */}
       <FlatList
         data={filteredTrips}
         renderItem={renderTripCard}
-        keyExtractor={(item) => item.trip.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Ionicons name="map-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyText}>No day trips found</Text>
-            <Text style={styles.emptySubtext}>Try adjusting your filters</Text>
+            <Text style={styles.emptyText}>No trips match your filters.</Text>
           </View>
         }
       />
@@ -258,66 +230,60 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F3EF',
   },
-  searchContainer: {
-    padding: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  searchInput: {
+  loadingContainer: {
     flex: 1,
-    marginLeft: 8,
-    fontSize: 16,
-    color: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  filtersContainer: {
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#8B9D7C',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 8,
+    paddingHorizontal: 20,
+  },
+  categoriesContainer: {
+    paddingVertical: 10,
     backgroundColor: '#fff',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
   },
-  filterBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  categoriesList: {
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  },
+  categoryBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     marginRight: 8,
     borderRadius: 20,
-    backgroundColor: '#f5f5f5',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
+    backgroundColor: '#f0f0f0',
   },
-  filterBtnActive: {
+  categoryBtnActive: {
     backgroundColor: '#8B9D7C',
-    borderColor: '#8B9D7C',
   },
-  filterText: {
+  categoryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: '#333',
   },
-  filterTextActive: {
+  categoryTextActive: {
     color: '#fff',
   },
-  resultsBar: {
-    padding: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
   resultsText: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     fontSize: 14,
     color: '#666',
   },
   list: {
-    padding: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 20,
   },
   card: {
     backgroundColor: '#fff',
@@ -330,27 +296,29 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  cardHeader: {
-    height: 120,
-    backgroundColor: '#8B9D7C',
+  cardImage: {
+    width: '100%',
+    height: 180,
+  },
+  cardPlaceholder: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  cardIcon: {
-    opacity: 0.3,
   },
   cardContent: {
     padding: 16,
   },
   tripName: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#2C3E28',
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  baseTag: {
+  baseNameText: {
     fontSize: 12,
-    color: '#8B9D7C',
+    color: '#999',
     marginBottom: 8,
   },
   description: {
@@ -359,53 +327,64 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 12,
   },
-  travelInfo: {
-    marginBottom: 12,
-  },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   infoText: {
-    fontSize: 13,
+    fontSize: 14,
     color: '#666',
-    marginLeft: 6,
+    marginLeft: 8,
   },
-  badges: {
+  badgeContainer: {
     flexDirection: 'row',
-    gap: 8,
-    marginBottom: 12,
+    marginTop: 10,
+    marginBottom: 8,
   },
   badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-  },
-  badgeText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  tags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
-  tag: {
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 10,
+    paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
+    marginRight: 8,
+    fontWeight: '600',
   },
-  tagText: {
-    fontSize: 11,
+  easyBadge: {
+    backgroundColor: '#E8F5E9', // Light Green
+    color: '#388E3C', // Dark Green
+  },
+  moderateBadge: {
+    backgroundColor: '#FFFDE7', // Light Yellow
+    color: '#F9A825', // Dark Yellow/Gold
+  },
+  challengingBadge: {
+    backgroundColor: '#FBE8E8', // Light Red
+    color: '#D32F2F', // Dark Red
+  },
+  costBadge: {
+    fontSize: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#E3F2FD', // Light Blue
+    color: '#1E88E5', // Dark Blue
+    fontWeight: '600',
+  },
+  categoryTagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  categoryTag: {
+    fontSize: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: 4,
+    backgroundColor: '#f0f0f0',
     color: '#666',
-  },
-  moreText: {
-    fontSize: 11,
-    color: '#999',
-    alignSelf: 'center',
+    marginRight: 4,
+    marginBottom: 4,
   },
   empty: {
     alignItems: 'center',
@@ -413,14 +392,8 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
   },
   emptyText: {
-    fontSize: 18,
-    fontWeight: '600',
+    marginTop: 10,
+    fontSize: 16,
     color: '#666',
-    marginTop: 16,
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: '#999',
-    marginTop: 8,
   },
 });

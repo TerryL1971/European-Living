@@ -1,7 +1,9 @@
 // src/pages/DayTripsPage.tsx
-import { useState, useMemo } from 'react';
+
+import { useState, useMemo, useEffect } from 'react';
 import { useBase } from '../contexts/BaseContext';
-import { DAY_TRIPS, DayTrip } from '../data/baseDayTrips';
+// ⬇️ UPDATED IMPORT: Use the new API for fetching
+import { fetchDayTrips, DayTrip, BaseDayTrips } from '../data/dayTripsApi'; 
 import SEO from '../components/SEO';
 import { MapPin, Car, Train, X } from 'lucide-react';
 
@@ -12,26 +14,48 @@ export default function DayTripsPage() {
   const [selectedCost, setSelectedCost] = useState<string>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
+  // ⬇️ NEW STATE: To hold the fetched data
+  const [allDayTrips, setAllDayTrips] = useState<BaseDayTrips[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // ⬇️ EFFECT: Fetch data from Supabase on mount
+  useEffect(() => {
+    async function loadTrips() {
+      setIsLoading(true);
+      setFetchError(null);
+      try {
+        const data = await fetchDayTrips();
+        setAllDayTrips(data);
+      } catch (e) {
+        console.error("Failed to load day trips:", e);
+        setFetchError("Failed to load day trips. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadTrips();
+  }, []);
+
   // Get trips for selected base
   const baseTrips = useMemo(() => {
     if (selectedBase === 'all') {
-      return DAY_TRIPS;
+      return allDayTrips;
     }
-    return DAY_TRIPS.filter(b => b.baseId === selectedBase);
-  }, [selectedBase]);
-
-  // ✅ REMOVED: currentBaseName (unused variable)
+    return allDayTrips.filter(b => b.baseId === selectedBase);
+  }, [selectedBase, allDayTrips]);
 
   // Get all unique categories from all trips
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
-    DAY_TRIPS.forEach(base => {
+    allDayTrips.forEach(base => {
       base.trips.forEach(trip => {
-        trip.bestFor.forEach(cat => categories.add(cat));
+        // ⬇️ FIX: Use snake_case for the property from Supabase
+        trip.best_for.forEach(cat => categories.add(cat)); 
       });
     });
     return Array.from(categories).sort();
-  }, []);
+  }, [allDayTrips]);
 
   // Filter trips
   const filteredTrips = useMemo(() => {
@@ -51,10 +75,11 @@ export default function DayTripsPage() {
         const matchesCost = selectedCost === 'all' || trip.cost === selectedCost;
 
         // Category filter
-        const matchesCategory = selectedCategory === 'all' || trip.bestFor.includes(selectedCategory);
+        // ⬇️ FIX: Use snake_case for the property from Supabase
+        const matchesCategory = selectedCategory === 'all' || trip.best_for.includes(selectedCategory);
 
         if (matchesSearch && matchesDifficulty && matchesCost && matchesCategory) {
-          results.push({ baseName: base.baseName, trip });
+          results.push({ baseName: base.baseName, trip: trip as DayTrip });
         }
       });
     });
@@ -70,6 +95,24 @@ export default function DayTripsPage() {
   };
 
   const hasActiveFilters = searchTerm !== '' || selectedDifficulty !== 'all' || selectedCost !== 'all' || selectedCategory !== 'all';
+
+  // ⬇️ Handle Loading and Error States
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)] pt-16">
+        <p className="text-xl text-[var(--brand-dark)]">Loading day trips...</p>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)] pt-16">
+        <p className="text-xl text-red-600">Error: {fetchError}</p>
+      </div>
+    );
+  }
+  // ⬆️ End Loading/Error States
 
   return (
     <>
@@ -179,7 +222,7 @@ export default function DayTripsPage() {
           <div className="mb-6">
             <p className="text-[var(--muted-foreground)]">
               Found <strong className="text-[var(--brand-dark)]">{filteredTrips.length}</strong> day trip{filteredTrips.length !== 1 ? 's' : ''}
-              {selectedBase !== 'all' && baseTrips[0] && ` from ${baseTrips[0].baseName}`}
+              {selectedBase !== 'all' && baseTrips.length > 0 && ` from ${baseTrips[0].baseName}`}
             </p>
           </div>
 
@@ -190,10 +233,19 @@ export default function DayTripsPage() {
                 key={trip.id}
                 className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden border border-[var(--border)]"
               >
-                {/* Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex items-center justify-center">
-                  <MapPin className="w-16 h-16 text-[var(--brand-light)] opacity-50" />
-                </div>
+                {/* ⬇️ RENDER: Using 'image_url' from the fetched Supabase data ⬇️ */}
+                {trip.image_url ? (
+                  <img 
+                    src={trip.image_url} 
+                    alt={`Image of ${trip.name}`} 
+                    className="w-full h-48 object-cover"
+                  />
+                ) : (
+                  <div className="h-48 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex items-center justify-center">
+                    <MapPin className="w-16 h-16 text-[var(--brand-light)] opacity-50" />
+                  </div>
+                )}
+                {/* ⬆️ END RENDER ⬆️ */}
 
                 {/* Content */}
                 <div className="p-6">
@@ -216,12 +268,14 @@ export default function DayTripsPage() {
                   <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
                       <Car size={16} className="text-[var(--brand-primary)]" />
-                      <span>{trip.driveTime} drive ({trip.distance})</span>
+                      {/* ⬇️ FIX: Use snake_case for the property from Supabase */}
+                      <span>{trip.drive_time} drive ({trip.distance})</span>
                     </div>
-                    {trip.trainTime && (
+                    {trip.train_time && (
                       <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
                         <Train size={16} className="text-[var(--brand-button)]" />
-                        <span>{trip.trainTime} by train</span>
+                        {/* ⬇️ FIX: Use snake_case for the property from Supabase */}
+                        <span>{trip.train_time} by train</span>
                       </div>
                     )}
                   </div>
@@ -242,7 +296,8 @@ export default function DayTripsPage() {
 
                   {/* Best For Tags */}
                   <div className="flex flex-wrap gap-1">
-                    {trip.bestFor.slice(0, 3).map(tag => (
+                    {/* ⬇️ FIX: Use snake_case for the property from Supabase */}
+                    {trip.best_for.slice(0, 3).map(tag => (
                       <span
                         key={tag}
                         className="text-xs px-2 py-1 bg-[var(--muted)] text-[var(--muted-foreground)] rounded"
@@ -250,9 +305,9 @@ export default function DayTripsPage() {
                         {tag}
                       </span>
                     ))}
-                    {trip.bestFor.length > 3 && (
+                    {trip.best_for.length > 3 && (
                       <span className="text-xs px-2 py-1 text-[var(--muted-foreground)]">
-                        +{trip.bestFor.length - 3} more
+                        +{trip.best_for.length - 3} more
                       </span>
                     )}
                   </div>

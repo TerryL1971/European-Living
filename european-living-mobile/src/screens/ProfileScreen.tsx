@@ -16,6 +16,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// ⬇️ NEW IMPORT: Import the custom hook
+import { useBase } from '../contexts/BaseContext'; 
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -25,21 +27,17 @@ const LANGUAGES = [
 ];
 
 export default function ProfileScreen({ navigation }: any) {
+  // 1. Use the global base state and setter
+  const { selectedBase, setSelectedBase, bases } = useBase(); 
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [selectedBase, setSelectedBase] = useState('Stuttgart');
+  // ❌ REMOVED: const [selectedBase, setSelectedBase] = useState('Stuttgart');
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
-  const bases = [
-    'Stuttgart',
-    'Ramstein',
-    'Spangdahlem',
-    'Wiesbaden',
-    'Grafenwöhr',
-    'Kaiserslautern',
-  ];
+  // ❌ REMOVED: const bases = [...] (now comes from useBase)
 
   // Load saved settings on mount
   useEffect(() => {
@@ -48,10 +46,10 @@ export default function ProfileScreen({ navigation }: any) {
 
   const loadSettings = async () => {
     try {
-      const [notifications, darkMode, base, language, profile, background] = await Promise.all([
+      // 2. Removed 'selectedBase' from the list of items to load
+      const [notifications, darkMode, language, profile, background] = await Promise.all([
         AsyncStorage.getItem('notifications'),
         AsyncStorage.getItem('darkMode'),
-        AsyncStorage.getItem('selectedBase'),
         AsyncStorage.getItem('language'),
         AsyncStorage.getItem('profileImage'),
         AsyncStorage.getItem('backgroundImage'),
@@ -59,7 +57,7 @@ export default function ProfileScreen({ navigation }: any) {
 
       if (notifications !== null) setNotificationsEnabled(notifications === 'true');
       if (darkMode !== null) setDarkModeEnabled(darkMode === 'true');
-      if (base) setSelectedBase(base);
+      // ❌ REMOVED: if (base) setSelectedBase(base);
       if (language) setSelectedLanguage(language);
       if (profile) setProfileImage(profile);
       if (background) setBackgroundImage(background);
@@ -84,9 +82,10 @@ export default function ProfileScreen({ navigation }: any) {
   const handleDarkModeToggle = (value: boolean) => {
     setDarkModeEnabled(value);
     saveSettings('darkMode', value.toString());
+    // 3. Updated Dark Mode Alert to remove restart requirement
     Alert.alert(
-      'Dark Mode',
-      value ? 'Dark mode enabled! Restart the app to see changes.' : 'Dark mode disabled.',
+      'Theme Updated',
+      value ? 'Dark mode is now enabled!' : 'Dark mode is now disabled.',
       [{ text: 'OK' }]
     );
   };
@@ -95,8 +94,9 @@ export default function ProfileScreen({ navigation }: any) {
     const buttons = bases.map(base => ({
       text: base,
       onPress: () => {
+        // 4. Use the context setter, which handles persistence and global state update
         setSelectedBase(base);
-        saveSettings('selectedBase', base);
+        // ❌ REMOVED: saveSettings('selectedBase', base); 
       },
     }));
     
@@ -137,6 +137,13 @@ export default function ProfileScreen({ navigation }: any) {
       buttons
     );
   };
+  
+  // ... (rest of the functions: requestPermission, pickProfileImage, etc.) ...
+  
+  // No changes needed for the rest of the functions or JSX as they correctly 
+  // reference the `selectedBase` variable, which is now sourced from context.
+
+// ... (rest of the functions: requestPermission, pickProfileImage, etc. go here)
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
