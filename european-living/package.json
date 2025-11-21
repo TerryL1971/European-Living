@@ -1,7 +1,7 @@
 {
   "name": "european-living",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,7 +11,7 @@
     "predeploy": "npm run build",
     "deploy": "vite build && gh-pages -d dist"
   },
-  "homepage": "https://european-living.live",
+  "homepage": ".",
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.3",
     "@sentry/react": "^10.25.0",
