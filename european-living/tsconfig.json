@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    /* -------------------- Basic Setup -------------------- */
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* -------------------- Module + JSX -------------------- */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
+
+    /* -------------------- Type Definitions -------------------- */
+    "types": ["vite/client", "react", "react-dom", "node"],
+
+    /* -------------------- Path Aliases -------------------- */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+
+  /* -------------------- Include -------------------- */
+  "include": ["src", "vite.config.ts"],
+
+  /* -------------------- Exclude -------------------- */
+  "exclude": ["node_modules", "dist"]
+}

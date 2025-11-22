@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "European Living",
+    "slug": "european-living",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/EL_Logo.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/EL_Logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#8B9D7C"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.europeanliving.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/EL_Logo.png",
+        "backgroundColor": "#8B9D7C"
+      },
+      "package": "com.europeanliving.app",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/EL_Logo.png"
+    },
+    "extra": {
+      "supabaseUrl": "https://pkacbcohrygpyapgtzpq.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrYWNiY29ocnlncHlhcGd0enBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNzc5NzEsImV4cCI6MjA3NTg1Mzk3MX0.BJZulmGejOPa5mv4jLUKqDamBdLyjDEBP2RVTswga8c"
+    }
+  }
+}
