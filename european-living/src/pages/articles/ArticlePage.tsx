@@ -1,4 +1,5 @@
 // src/pages/articles/ArticlePage.tsx
+
 import { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
@@ -30,7 +31,6 @@ const createHeadingComponent = (level: number) => {
   const HeadingComponent = ({ children }: { children?: React.ReactNode }) => {
     const text = String(children);
     
-    // Generate ID using the EXACT same logic as TableOfContents component
     const id = text
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
@@ -46,6 +46,38 @@ const createHeadingComponent = (level: number) => {
   };
   
   return HeadingComponent;
+};
+
+// --- Helper function for category-aware back button ---
+interface BackButtonConfig {
+  text: string;
+  path: string;
+}
+
+const getBackButtonConfig = (category: string | null): BackButtonConfig => {
+  switch(category) {
+    case 'City Guides':
+      return { 
+        text: '← Back to Destinations', 
+        path: '/destinations' 
+      };
+    case 'Travel Tips':
+    case 'Travel Tips & Essentials':
+      return { 
+        text: '← Back to Travel Tips', 
+        path: '/#tips' 
+      };
+    case 'Day Trips':
+      return { 
+        text: '← Back to Day Trips', 
+        path: '/#day-trips' 
+      };
+    default:
+      return { 
+        text: '← Back', 
+        path: '/' 
+      };
+  }
 };
 
 export default function ArticlePage() {
@@ -113,11 +145,11 @@ export default function ArticlePage() {
             {error || 'Article Not Found'}
           </h1>
           <button
-            onClick={() => navigate('/articles')} 
+            onClick={() => navigate('/destinations')} 
             className="flex items-center mx-auto text-blue-600 hover:text-blue-800 font-medium"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Articles
+            Back to Destinations
           </button>
         </div>
       </div>
@@ -130,18 +162,14 @@ export default function ArticlePage() {
     h3: createHeadingComponent(3),
   };
 
+  // Get category-aware back button configuration
+  const backConfig = getBackButtonConfig(article.category ?? null);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 py-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </button>
           
           {/* Category Badge */}
           {article.category && (
@@ -161,7 +189,7 @@ export default function ArticlePage() {
               {article.subtitle}
             </p>
           )}
-          
+
           {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
             {article.author && (
@@ -205,6 +233,13 @@ export default function ArticlePage() {
               ))}
             </div>
           )}
+          {/* TOP BACK BUTTON - Category-aware */}
+        <button
+          onClick={() => navigate(backConfig.path)}
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-6 block font-medium"
+        >
+          {backConfig.text}
+        </button>
         </div>
       </div>
 
@@ -241,6 +276,16 @@ export default function ArticlePage() {
             </div>
           </article>
         </div>
+      </div>
+
+      {/* BOTTOM BACK BUTTON - Category-aware */}
+      <div className="max-w-7xl mx-auto px-4 py-8 border-t">
+        <button
+          onClick={() => navigate(backConfig.path)}
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline block font-medium"
+        >
+          {backConfig.text}
+        </button>
       </div>
 
       {/* Related Articles */}

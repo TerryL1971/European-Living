@@ -9,26 +9,33 @@ interface TocItem {
 }
 
 interface TableOfContentsProps {
-  content: string;
+  content: string | null | undefined;
 }
 
 export default function TableOfContents({ content }: TableOfContentsProps) {
+  // Normalize content to always be a string
+  const safeContent = content ?? "";
+
   const [toc, setToc] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
-    // Extract headers from markdown
     const headingRegex = /^(#{2,3})\s+(.+)$/gm;
     const items: TocItem[] = [];
     const usedIds = new Set<string>();
     let match;
 
+    // Generate unique & slug-safe IDs
     const generateUniqueId = (text: string): string => {
-      const baseId = text.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-");
+      const baseId = text
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-");
+
       let id = baseId;
       let counter = 1;
 
-      // If ID already exists, append a number
       while (usedIds.has(id)) {
         id = `${baseId}-${counter}`;
         counter++;
@@ -38,7 +45,7 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
       return id;
     };
 
-    while ((match = headingRegex.exec(content)) !== null) {
+    while ((match = headingRegex.exec(safeContent)) !== null) {
       const level = match[1].length;
       const text = match[2].trim();
       const id = generateUniqueId(text);
@@ -47,11 +54,9 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     }
 
     setToc(items);
-    console.log('TOC items generated:', items); // Debug log
-  }, [content]);
+  }, [safeContent]);
 
   useEffect(() => {
-    // Track scroll position and highlight active section
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -60,46 +65,26 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
           }
         });
       },
-      {
-        rootMargin: "-80px 0px -80% 0px",
-      }
+      { rootMargin: "-80px 0px -80% 0px" }
     );
 
-    // Observe all heading elements
     const headings = document.querySelectorAll("h2, h3");
     headings.forEach((heading) => {
-      if (heading.id) {
-        observer.observe(heading);
-      }
+      if (heading.id) observer.observe(heading);
     });
 
     return () => observer.disconnect();
   }, [toc]);
 
   const scrollToSection = (id: string) => {
-    console.log('Trying to scroll to:', id); // Debug log
     const element = document.getElementById(id);
-    console.log('Found element:', element); // Debug log
-    
+
     if (element) {
-      // Use scrollIntoView instead of manual calculation
-      element.scrollIntoView({ 
-        behavior: "smooth",
-        block: "start"
-      });
-      
-      // Add extra offset after scroll
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+
       setTimeout(() => {
-        window.scrollBy({
-          top: -100, // Offset for header
-          behavior: "smooth"
-        });
+        window.scrollBy({ top: -100, behavior: "smooth" });
       }, 100);
-    } else {
-      console.error('Element not found with id:', id);
-      // Try to find the heading by text content as fallback
-      const allHeadings = document.querySelectorAll('h2, h3');
-      console.log('All heading IDs:', Array.from(allHeadings).map(h => ({ id: h.id, text: h.textContent })));
     }
   };
 
@@ -110,13 +95,11 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
       <h3 className="text-lg font-bold text-[var(--brand-dark)] mb-3">
         Table of Contents
       </h3>
+
       <nav>
         <ul className="space-y-2">
           {toc.map((item) => (
-            <li
-              key={item.id}
-              className={item.level === 3 ? "ml-4" : ""}
-            >
+            <li key={item.id} className={item.level === 3 ? "ml-4" : ""}>
               <button
                 onClick={() => scrollToSection(item.id)}
                 className={`text-left w-full text-sm hover:text-[var(--brand-primary)] transition-colors ${
