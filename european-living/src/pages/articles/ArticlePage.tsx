@@ -1,5 +1,7 @@
 // src/pages/articles/ArticlePage.tsx
 
+// src/pages/articles/ArticlePage.tsx
+
 import { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
@@ -166,14 +168,14 @@ export default function ArticlePage() {
   const backConfig = getBackButtonConfig(article.category ?? null);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[var(--brand-light)]">
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="bg-[var(--brand-bg-alt)] border-b">
+        <div className="max-w-7xl mx-auto px-4 mt-18 py6">
           
           {/* Category Badge */}
           {article.category && (
-            <span className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full mb-4">
+            <span className="inline-block bg-[var(--brand-primary)] text-[var(--muted)] text-sm px-3 py-1 rounded-full mb-4">
               {article.category}
             </span>
           )}
@@ -225,7 +227,7 @@ export default function ArticlePage() {
               {article.tags.map(tag => (
                 <span
                   key={tag}
-                  className="flex items-center bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded"
+                  className="flex items-center bg-[var(--brand-primary)] text-[var(--muted)] text-xs px-2 py-1 rounded"
                 >
                   <Tag className="w-3 h-3 mr-1" />
                   {tag}
@@ -236,7 +238,7 @@ export default function ArticlePage() {
           {/* TOP BACK BUTTON - Category-aware */}
         <button
           onClick={() => navigate(backConfig.path)}
-          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-6 block font-medium"
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-3 block font-medium"
         >
           {backConfig.text}
         </button>
@@ -265,6 +267,7 @@ export default function ArticlePage() {
           {/* Article Content */}
           <article className="flex-1 min-w-0">
             <div className="bg-white rounded-lg shadow-md p-8">
+              {/* Note: The prose styles in your CSS control the default link color (prose-a) */}
               <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
                 <ReactMarkdown
                   components={components} 
@@ -302,7 +305,8 @@ export default function ArticlePage() {
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-left"
               >
                 {relatedArticle.category && (
-                  <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2">
+                  // COLOR CHANGE: bg-blue-100 -> bg-[var(--muted)] | text-blue-800 -> text-[var(--primary)]
+                  <span className="inline-block bg-[var(--muted)] text-[var(--primary)] text-xs px-2 py-1 rounded mb-2">
                     {relatedArticle.category}
                   </span>
                 )}
