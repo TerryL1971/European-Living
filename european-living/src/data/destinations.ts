@@ -1,7 +1,7 @@
 // src/data/destinations.ts
 
 // Supabase Storage base URL for images
-const SUPABASE_STORAGE_URL = 'https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images';
+const SUPABASE_STORAGE_URL = 'https://pkacbcohrygpyagpgtzpq.supabase.co/storage/v1/object/public/images';
 
 export interface Destination {
   id: string;
@@ -48,6 +48,81 @@ export const destinations: Destination[] = [
     ],
   },
   {
+    id: "london",
+    name: "London",
+    shortName: "London",
+    country: "United Kingdom",
+    description: "Royal palaces, world-class museums, and 2,000 years of history.",
+    image: `${SUPABASE_STORAGE_URL}/london-city.jpg`,
+    contentFile: "london",
+    lat: 51.5074,
+    lng: -0.1278,
+    travelTips: [
+      "Get an Oyster card or use contactless — it's much cheaper than paper tickets.",
+      "Major museums are FREE (British Museum, National Gallery, V&A) — huge money saver!"
+    ],
+  },
+  {
+    id: "cologne",
+    name: "Cologne",
+    shortName: "Cologne",
+    country: "Germany",
+    description: "Kölsch beer culture, Papa Joe's animatronic puppet shows, the magnificent DOM cathedral, and Germany's most magical Christmas markets.",
+    image: `${SUPABASE_STORAGE_URL}/cologne-cathedral-dom.jpg`,
+    contentFile: "cologne",
+    lat: 50.9375,
+    lng: 6.9603,
+    travelTips: [
+      "Kölsch beer is served in tiny 200ml glasses — servers bring fresh ones until you put a coaster on top.",
+      "Visit Papa Joe's Klimperkasten for animatronic puppet shows and authentic Cologne atmosphere."
+    ],
+  },
+  {
+    id: "lucerne",
+    name: "Lucerne",
+    shortName: "Lucerne",
+    country: "Switzerland",
+    description: "Chapel Bridge, Mount Pilatus cogwheel railway, Lion Monument, Swiss fondue, and Lake Lucerne cruises in quintessential Switzerland.",
+    image: `${SUPABASE_STORAGE_URL}/lucerne-chapel-bridge.jpg`,
+    contentFile: "lucerne",
+    lat: 47.0502,
+    lng: 8.3093,
+    travelTips: [
+      "Book Mount Pilatus cogwheel railway tickets in advance — they sell out in summer.",
+      "Switzerland is expensive — buy lunch at Coop or Migros supermarkets to save money."
+    ],
+  },
+  {
+    id: "dresden",
+    name: "Dresden",
+    shortName: "Dresden",
+    country: "Germany",
+    description: "Frauenkirche phoenix story, Zwinger Palace baroque beauty, student-filled Neustadt, excellent Straßenbahn trams, and Germany's oldest Christmas market.",
+    image: `${SUPABASE_STORAGE_URL}/dresden-frauenkirche.jpg`,
+    contentFile: "dresden",
+    lat: 51.0504,
+    lng: 13.7373,
+    travelTips: [
+      "Look for the dark stones in Frauenkirche — they're original stones from 1945, blackened by fire.",
+      "Download the DVB app for easy tram tickets — Dresden's Straßenbahn system is excellent."
+    ],
+  },
+  {
+    id: "hamburg",
+    name: "Hamburg",
+    shortName: "Hamburg",
+    country: "Germany",
+    description: "Miniatur Wunderland model railway magic, UNESCO Speicherstadt warehouses, Sunday Fish Market chaos, Elbphilharmonie views, and Reeperbahn nightlife.",
+    image: `${SUPABASE_STORAGE_URL}/hamburg-harbor-elbphilharmonie.jpg`,
+    contentFile: "hamburg",
+    lat: 53.5511,
+    lng: 9.9937,
+    travelTips: [
+      "Book Miniatur Wunderland tickets online ahead — it sells out and you'll want 2-3 hours there.",
+      "Wake up early Sunday for Fischmarkt (5am in summer, 7am in winter) — it's chaotic Hamburg tradition."
+    ],
+  },
+  {
     id: "munich",
     name: "Munich",
     shortName: "Munich",
@@ -90,21 +165,6 @@ export const destinations: Destination[] = [
     travelTips: [
       "Book Anne Frank House tickets exactly 6 weeks in advance — they sell out in minutes.",
       "Never walk in bike lanes (red pavement) — bikes have absolute right of way!"
-    ],
-  },
-  {
-    id: "london",
-    name: "London",
-    shortName: "London",
-    country: "United Kingdom",
-    description: "Royal palaces, world-class museums, and 2,000 years of history.",
-    image: `${SUPABASE_STORAGE_URL}/london-city.jpg`,
-    contentFile: "london",
-    lat: 51.5074,
-    lng: -0.1278,
-    travelTips: [
-      "Get an Oyster card or use contactless — it's much cheaper than paper tickets.",
-      "Major museums are FREE (British Museum, National Gallery, V&A) — huge money saver!"
     ],
   },
   {

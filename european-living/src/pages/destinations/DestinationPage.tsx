@@ -1,4 +1,5 @@
 // src/pages/destinations/DestinationPage.tsx
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";

@@ -1,3 +1,5 @@
+// src/components/page/DestinationDetails.tsx
+
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { destinations } from "../../data/destinations";
