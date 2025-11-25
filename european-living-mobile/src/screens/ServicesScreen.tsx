@@ -1,4 +1,5 @@
 // src/screens/ServicesScreen.tsx
+// UPDATED: Added TouchableOpacity wrapper on card to navigate to detail
 
 import React, { useState, useEffect, useMemo } from 'react';
 import {
@@ -15,7 +16,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../services/supabaseClient';
-import { useBase } from '../contexts/BaseContext'; // ⬅️ NEW IMPORT
+import { useBase } from '../contexts/BaseContext';
 
 interface Business {
   id: string;
@@ -26,7 +27,7 @@ interface Business {
   phone?: string;
   email?: string;
   website?: string;
-  image_url?: string; // Used for business images
+  image_url?: string;
   verified: boolean;
   featured: boolean;
   english_fluency?: string;
@@ -44,7 +45,6 @@ const categories = [
   { id: 'home-services', name: 'Home', icon: 'home' },
 ];
 
-// FIX: Map Base Name (from context) to a consistent, database-safe ID (no umlauts/lowercase)
 const baseIdMap: Record<string, string> = {
   'Stuttgart': 'stuttgart',
   'Ramstein': 'ramstein',
@@ -54,10 +54,9 @@ const baseIdMap: Record<string, string> = {
   'Kaiserslautern': 'kaiserslautern',
 };
 
-export default function ServicesScreen() {
+export default function ServicesScreen({ navigation }: any) {
   const { selectedBase: contextBaseName } = useBase();
 
-  // Derive the baseId whenever the contextBaseName changes
   const selectedBaseId = useMemo(() => {
     return baseIdMap[contextBaseName] || 'all';
   }, [contextBaseName]);
@@ -73,7 +72,6 @@ export default function ServicesScreen() {
     loadBusinesses();
   }, []);
 
-  // Filter businesses runs whenever search, category, or the Base ID changes
   useEffect(() => {
     filterBusinesses();
   }, [searchQuery, selectedCategory, businesses, selectedBaseId]);
@@ -103,20 +101,16 @@ export default function ServicesScreen() {
   const filterBusinesses = () => {
     let filtered = businesses;
 
-    // FIX: Base filter - filter by the consistent selectedBaseId
     if (selectedBaseId && selectedBaseId !== 'all') {
       filtered = filtered.filter(b => 
-        // Check if the business bases_served array includes the consistent ID
         b.bases_served && b.bases_served.includes(selectedBaseId)
       );
     }
 
-    // Category filter
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(b => b.category === selectedCategory);
     }
 
-    // Search filter
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(b =>
@@ -134,17 +128,28 @@ export default function ServicesScreen() {
     loadBusinesses(); 
   };
 
-  const openPhone = (phone: string) => {
+  const openPhone = (phone: string, e: any) => {
+    e.stopPropagation(); // Prevent card tap
     Linking.openURL(`tel:${phone}`);
   };
 
-  const openWebsite = (url: string) => {
+  const openWebsite = (url: string, e: any) => {
+    e.stopPropagation(); // Prevent card tap
     Linking.openURL(url);
   };
 
+  // ✅ NEW: Navigate to detail screen
+  const navigateToDetail = (business: Business) => {
+    navigation.navigate('ServiceDetail', { businessId: business.id });
+  };
+
   const renderBusinessCard = ({ item }: { item: Business }) => (
-    <View style={styles.card}>
-      {/* Image: Uses item.image_url which will be an absolute URL */}
+    <TouchableOpacity 
+      style={styles.card}
+      onPress={() => navigateToDetail(item)}
+      activeOpacity={0.7}
+    >
+      {/* Image */}
       {item.image_url ? (
         <Image source={{ uri: item.image_url }} style={styles.cardImage} resizeMode="cover" />
       ) : (
@@ -204,7 +209,7 @@ export default function ServicesScreen() {
           {item.phone && (
             <TouchableOpacity
               style={styles.actionBtn}
-              onPress={() => openPhone(item.phone!)}
+              onPress={(e) => openPhone(item.phone!, e)}
             >
               <Ionicons name="call" size={16} color="#8B9D7C" />
             </TouchableOpacity>
@@ -212,14 +217,14 @@ export default function ServicesScreen() {
           {item.website && (
             <TouchableOpacity
               style={styles.actionBtn}
-              onPress={() => openWebsite(item.website!)}
+              onPress={(e) => openWebsite(item.website!, e)}
             >
               <Ionicons name="globe" size={16} color="#8B9D7C" />
             </TouchableOpacity>
           )}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -281,7 +286,6 @@ export default function ServicesScreen() {
       <View style={styles.resultsBar}>
         <Text style={styles.resultsText}>
           {filteredBusinesses.length} service{filteredBusinesses.length !== 1 ? 's' : ''} found
-          {/* Display contextBaseName for a clean display */}
           {selectedBaseId !== 'all' && ` near ${contextBaseName}`} 
         </Text>
       </View>

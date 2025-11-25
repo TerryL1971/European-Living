@@ -1,4 +1,5 @@
 // src/screens/ArticleDetailScreen.tsx
+// FIXED: SafeAreaView warning, added save/favorite functionality
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -11,11 +12,11 @@ import {
   TouchableOpacity,
   Share,
   Alert,
-  SafeAreaView,
   StatusBar,
-  useWindowDimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ FIXED: Use proper SafeAreaView
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../services/supabaseClient';
 import Markdown from 'react-native-markdown-display';
 
@@ -39,6 +40,8 @@ interface Article {
   updated_at: string | null;
 }
 
+const SAVED_ARTICLES_KEY = '@saved_articles';
+
 function ArticleDetailScreen({ route, navigation }: any) {
   // Safety check for route params
   if (!route || !route.params || !route.params.articleId) {
@@ -59,9 +62,11 @@ function ArticleDetailScreen({ route, navigation }: any) {
   const { articleId } = route.params;
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSaved, setIsSaved] = useState(false); // ✅ NEW: Track if article is saved
 
   useEffect(() => {
     fetchArticle();
+    checkIfSaved();
   }, [articleId]);
 
   const fetchArticle = async () => {
@@ -91,6 +96,44 @@ function ArticleDetailScreen({ route, navigation }: any) {
     }
   };
 
+  // ✅ NEW: Check if article is saved
+  const checkIfSaved = async () => {
+    try {
+      const savedArticlesJson = await AsyncStorage.getItem(SAVED_ARTICLES_KEY);
+      if (savedArticlesJson) {
+        const savedArticles: string[] = JSON.parse(savedArticlesJson);
+        setIsSaved(savedArticles.includes(articleId));
+      }
+    } catch (error) {
+      console.error('Error checking saved status:', error);
+    }
+  };
+
+  // ✅ NEW: Toggle save/unsave
+  const toggleSave = async () => {
+    try {
+      const savedArticlesJson = await AsyncStorage.getItem(SAVED_ARTICLES_KEY);
+      let savedArticles: string[] = savedArticlesJson ? JSON.parse(savedArticlesJson) : [];
+
+      if (isSaved) {
+        // Remove from saved
+        savedArticles = savedArticles.filter(id => id !== articleId);
+        setIsSaved(false);
+        Alert.alert('Removed', 'Article removed from saved articles');
+      } else {
+        // Add to saved
+        savedArticles.push(articleId);
+        setIsSaved(true);
+        Alert.alert('Saved', 'Article saved for later reading');
+      }
+
+      await AsyncStorage.setItem(SAVED_ARTICLES_KEY, JSON.stringify(savedArticles));
+    } catch (error) {
+      console.error('Error toggling save:', error);
+      Alert.alert('Error', 'Failed to save article');
+    }
+  };
+
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'No date';
     const date = new Date(dateString);
@@ -106,7 +149,7 @@ function ArticleDetailScreen({ route, navigation }: any) {
     
     try {
       await Share.share({
-        message: `${article.title}\n\nhttps://european-living.live/${article.slug}`,
+        message: `${article.title}\n\nRead more on European Living app: https://european-living.live/${article.slug}`,
         title: article.title,
       });
     } catch (error) {
@@ -136,43 +179,54 @@ function ArticleDetailScreen({ route, navigation }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" />
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity 
-          onPress={() => {
-            console.log('Back button pressed');
-            navigation.goBack();
-          }} 
+          onPress={() => navigation.goBack()} 
           style={styles.headerButton}
           activeOpacity={0.7}
         >
           <Ionicons name="arrow-back" size={24} color="#333" />
         </TouchableOpacity>
+        
         <Text style={styles.headerTitle}>Article</Text>
-        <TouchableOpacity 
-          onPress={handleShare} 
-          style={styles.headerButton}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="share-outline" size={24} color="#333" />
-        </TouchableOpacity>
+        
+        <View style={styles.headerRight}>
+          {/* ✅ NEW: Save/Favorite Button */}
+          <TouchableOpacity 
+            onPress={toggleSave} 
+            style={styles.headerButton}
+            activeOpacity={0.7}
+          >
+            <Ionicons 
+              name={isSaved ? "heart" : "heart-outline"} 
+              size={24} 
+              color={isSaved ? "#FF6B6B" : "#333"} 
+            />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            onPress={handleShare} 
+            style={styles.headerButton}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="share-outline" size={24} color="#333" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Featured Image 
-        {article.featured_image_url ? (
+        {/* Featured Image */}
+        {article.featured_image_url && (
           <Image
             source={{ uri: article.featured_image_url }}
             style={styles.featuredImage}
             resizeMode="cover"
-          /> 
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Ionicons name="image-outline" size={64} color="#ccc" />
-          </View>
-        )} */}
+          />
+        )}
 
         {/* Content Container */}
         <View style={styles.contentContainer}>
@@ -193,7 +247,7 @@ function ArticleDetailScreen({ route, navigation }: any) {
           <View style={styles.metadata}>
             <View style={styles.metadataRow}>
               <Ionicons name="person-outline" size={16} color="#666" />
-              <Text style={styles.metaText}>{article.author || 'Travel Stuttgart'}</Text>
+              <Text style={styles.metaText}>{article.author || 'European Living'}</Text>
             </View>
             <View style={styles.metadataRow}>
               <Ionicons name="calendar-outline" size={16} color="#666" />
@@ -213,7 +267,7 @@ function ArticleDetailScreen({ route, navigation }: any) {
           {article.tags && article.tags.length > 0 && (
             <View style={styles.tagsContainer}>
               {article.tags.map((tag: string, index: number) => (
-                <View key={index} style={styles.tag}>
+                <View key={`tag-${index}`} style={styles.tag}>
                   <Text style={styles.tagText}>{tag}</Text>
                 </View>
               ))}
@@ -234,7 +288,6 @@ function ArticleDetailScreen({ route, navigation }: any) {
               link: { color: '#8B9D7C' },
               strong: { fontWeight: 'bold' },
               em: { fontStyle: 'italic' },
-              image: { marginVertical: 12, borderRadius: 8 },
               bullet_list: { marginBottom: 16 },
               ordered_list: { marginBottom: 16 },
               list_item: { marginBottom: 8 },
@@ -258,10 +311,6 @@ function ArticleDetailScreen({ route, navigation }: any) {
                 borderRadius: 8,
                 marginVertical: 12
               },
-              table: { marginVertical: 12, borderWidth: 1, borderColor: '#e0e0e0' },
-              tr: { borderBottomWidth: 1, borderColor: '#e0e0e0' },
-              td: { padding: 8 },
-              th: { padding: 8, fontWeight: 'bold', backgroundColor: '#f5f5f5' },
             }}
           >
             {article.content}
@@ -337,6 +386,10 @@ const styles = StyleSheet.create({
     padding: 8,
     minWidth: 40,
   },
+  headerRight: {
+    flexDirection: 'row',
+    gap: 4,
+  },
   headerTitle: {
     fontSize: 17,
     fontWeight: '600',
@@ -349,13 +402,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     backgroundColor: '#f0f0f0',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: 250,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   contentContainer: {
     padding: 20,
@@ -417,12 +463,6 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#e0e0e0',
     marginVertical: 20,
-  },
-  content: {
-    fontSize: 16,
-    color: '#333',
-    lineHeight: 28,
-    marginBottom: 24,
   },
   destinationBox: {
     flexDirection: 'row',
