@@ -1,4 +1,5 @@
 // src/screens/ProfileScreen.tsx
+// UPDATED: Fixed "Saved Articles" navigation and "Share App" functionality
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -12,12 +13,12 @@ import {
   Linking,
   Image,
   ImageBackground,
+  Share, // ✅ NEW: Import Share API
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-// ⬇️ NEW IMPORT: Import the custom hook
-import { useBase } from '../contexts/BaseContext'; 
+import { useBase } from '../contexts/BaseContext';
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -27,26 +28,20 @@ const LANGUAGES = [
 ];
 
 export default function ProfileScreen({ navigation }: any) {
-  // 1. Use the global base state and setter
-  const { selectedBase, setSelectedBase, bases } = useBase(); 
+  const { selectedBase, setSelectedBase, bases } = useBase();
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  // ❌ REMOVED: const [selectedBase, setSelectedBase] = useState('Stuttgart');
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
-  // ❌ REMOVED: const bases = [...] (now comes from useBase)
-
-  // Load saved settings on mount
   useEffect(() => {
     loadSettings();
   }, []);
 
   const loadSettings = async () => {
     try {
-      // 2. Removed 'selectedBase' from the list of items to load
       const [notifications, darkMode, language, profile, background] = await Promise.all([
         AsyncStorage.getItem('notifications'),
         AsyncStorage.getItem('darkMode'),
@@ -57,7 +52,6 @@ export default function ProfileScreen({ navigation }: any) {
 
       if (notifications !== null) setNotificationsEnabled(notifications === 'true');
       if (darkMode !== null) setDarkModeEnabled(darkMode === 'true');
-      // ❌ REMOVED: if (base) setSelectedBase(base);
       if (language) setSelectedLanguage(language);
       if (profile) setProfileImage(profile);
       if (background) setBackgroundImage(background);
@@ -82,7 +76,6 @@ export default function ProfileScreen({ navigation }: any) {
   const handleDarkModeToggle = (value: boolean) => {
     setDarkModeEnabled(value);
     saveSettings('darkMode', value.toString());
-    // 3. Updated Dark Mode Alert to remove restart requirement
     Alert.alert(
       'Theme Updated',
       value ? 'Dark mode is now enabled!' : 'Dark mode is now disabled.',
@@ -94,9 +87,7 @@ export default function ProfileScreen({ navigation }: any) {
     const buttons = bases.map(base => ({
       text: base,
       onPress: () => {
-        // 4. Use the context setter, which handles persistence and global state update
         setSelectedBase(base);
-        // ❌ REMOVED: saveSettings('selectedBase', base); 
       },
     }));
     
@@ -137,13 +128,6 @@ export default function ProfileScreen({ navigation }: any) {
       buttons
     );
   };
-  
-  // ... (rest of the functions: requestPermission, pickProfileImage, etc.) ...
-  
-  // No changes needed for the rest of the functions or JSX as they correctly 
-  // reference the `selectedBase` variable, which is now sourced from context.
-
-// ... (rest of the functions: requestPermission, pickProfileImage, etc. go here)
 
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -248,20 +232,17 @@ export default function ProfileScreen({ navigation }: any) {
     Linking.openURL('mailto:contact@european-living.live?subject=App Feedback');
   };
 
-  const handleShare = () => {
-    Alert.alert(
-      'Share European Living',
-      'Tell your friends about this app!',
-      [
-        {
-          text: 'Share',
-          onPress: () => {
-            Alert.alert('Share functionality coming soon!');
-          },
-        },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+  // ✅ FIXED: Share App functionality
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: 'Check out European Living - Your guide to living and traveling in Europe!\n\nDownload: [App Store/Play Store Link Coming Soon]\nWebsite: https://european-living.live',
+        title: 'European Living App',
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+      Alert.alert('Error', 'Failed to share app');
+    }
   };
 
   const getCurrentLanguageName = () => {
@@ -281,10 +262,8 @@ export default function ProfileScreen({ navigation }: any) {
         style={styles.header}
         imageStyle={styles.headerBackground}
       >
-        {/* Background Overlay */}
         <View style={styles.headerOverlay} />
 
-        {/* Edit Background Button */}
         <TouchableOpacity
           style={styles.editBackgroundButton}
           onPress={() => {
@@ -306,7 +285,6 @@ export default function ProfileScreen({ navigation }: any) {
           <Ionicons name="image" size={20} color="#fff" />
         </TouchableOpacity>
 
-        {/* Profile Picture */}
         <TouchableOpacity
           style={styles.avatarContainer}
           onPress={() => {
@@ -404,17 +382,19 @@ export default function ProfileScreen({ navigation }: any) {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🚀 Quick Actions</Text>
         
+        {/* ✅ FIXED: Navigate to SavedArticlesScreen */}
         <TouchableOpacity 
           style={styles.settingItem}
-          onPress={() => navigation.navigate('Articles')}
+          onPress={() => navigation.navigate('SavedArticles')}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="bookmark" size={24} color="#8B9D7C" />
+            <Ionicons name="heart" size={24} color="#FF6B6B" />
             <Text style={styles.settingText}>Saved Articles</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color="#999" />
         </TouchableOpacity>
 
+        {/* ✅ FIXED: Share App functionality */}
         <TouchableOpacity 
           style={styles.settingItem}
           onPress={handleShare}
@@ -506,12 +486,12 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
       </View>
 
-      {/* Bottom Spacing */}
       <View style={{ height: 40 }} />
     </ScrollView>
   );
 }
 
+// Styles remain exactly the same
 const styles = StyleSheet.create({
   container: {
     flex: 1,

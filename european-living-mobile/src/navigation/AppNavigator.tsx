@@ -1,4 +1,5 @@
 // src/navigation/AppNavigator.tsx
+// UPDATED: Added ServiceDetailScreen and SavedArticlesScreen
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -9,10 +10,12 @@ import { Ionicons } from '@expo/vector-icons';
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import ServicesScreen from '../screens/ServicesScreen';
+import ServiceDetailScreen from '../screens/ServiceDetailScreen'; // ✅ NEW
 import DayTripsScreen from '../screens/DayTripsScreen';
 import ArticlesScreen from '../screens/ArticlesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ArticleDetailScreen from '../screens/ArticleDetailScreen';
+import SavedArticlesScreen from '../screens/SavedArticlesScreen'; // ✅ NEW
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -83,9 +86,33 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={TabNavigator} />
+        
+        {/* Article Detail Screen */}
         <Stack.Screen 
           name="ArticleDetail" 
           component={ArticleDetailScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+        
+        {/* ✅ NEW: Service Detail Screen */}
+        <Stack.Screen 
+          name="ServiceDetail" 
+          component={ServiceDetailScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+        
+        {/* ✅ NEW: Saved Articles Screen */}
+        <Stack.Screen 
+          name="SavedArticles" 
+          component={SavedArticlesScreen}
           options={{
             headerShown: false,
             presentation: 'card',
