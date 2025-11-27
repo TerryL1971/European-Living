@@ -32,6 +32,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
 const AboutPage = lazy(() => import('./pages/AboutPage')); // NEW!
 const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
+const DayTripDetailPage = lazy(() => import('./pages/DaytripDetailPage'));
 
 
 // Reading Progress Bar Component
@@ -129,12 +130,22 @@ export default function App() {
             }
           />
 
-          {/* Day Trips Page - NEW! */}
+          {/* Day Trips Routes */}
           <Route 
             path="/day-trips" 
             element={
               <div className="pt-16">
                 <DayTripsPage />
+              </div>
+            } 
+          />
+
+          {/* NEW: Day Trip Detail Route */}
+          <Route 
+            path="/day-trips/:id" 
+            element={
+              <div className="pt-16">
+                <DayTripDetailPage />
               </div>
             } 
           />
