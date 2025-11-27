@@ -13,13 +13,16 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useBase } from '../contexts/BaseContext';
-// ⬇️ Use the centralized API
-import { fetchDayTrips, DayTrip, BaseDayTrips } from '../data/dayTripsApi'; 
+import { fetchDayTrips, DayTripListItem } from '../services/dayTripsService';
 
-export default function DayTripsScreen() {
+interface Props {
+  navigation: any;
+}
+
+export default function DayTripsScreen({ navigation }: Props) {
   const { selectedBase } = useBase();
   
-  const [allDayTrips, setAllDayTrips] = useState<BaseDayTrips[]>([]);
+  const [allDayTrips, setAllDayTrips] = useState<DayTripListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -30,9 +33,11 @@ export default function DayTripsScreen() {
       setIsLoading(true);
       setFetchError(null);
       try {
+        // Fetch all trips (we'll filter by base in useMemo)
         const data = await fetchDayTrips();
         setAllDayTrips(data);
       } catch (e) {
+        console.error('Error loading trips:', e);
         setFetchError("Failed to load day trips. Check your network or data setup.");
       } finally {
         setIsLoading(false);
@@ -44,23 +49,24 @@ export default function DayTripsScreen() {
   // Filter based on selected base
   const baseTrips = useMemo(() => {
     if (selectedBase === 'all') {
-      // Flatten all trips for display when 'All' is selected
-      return allDayTrips.flatMap(base => base.trips);
+      return allDayTrips;
     }
-    // Filter for the specific base and flatten the trips array
-    return allDayTrips
-      .filter(b => b.baseId === selectedBase.toLowerCase().replace(/[^a-z0-9]/g, ''))
-      .flatMap(base => base.trips);
+    // Filter for the specific base
+    return allDayTrips.filter(trip => 
+      trip.base_id === selectedBase.toLowerCase().replace(/[^a-z0-9]/g, '')
+    );
   }, [selectedBase, allDayTrips]);
 
   // Extract all categories for the filter bar
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
-    allDayTrips.forEach(base => {
-      base.trips.forEach(trip => {
-        // Use snake_case
-        trip.best_for.forEach(cat => categories.add(cat)); 
-      });
+    allDayTrips.forEach(trip => {
+      // Use tags if available, otherwise use best_for
+      const tags = trip.tags && trip.tags.length > 0 
+        ? trip.tags.map(t => t.name)
+        : trip.best_for;
+      
+      tags.forEach(cat => categories.add(cat));
     });
     return Array.from(categories).sort();
   }, [allDayTrips]);
@@ -70,83 +76,121 @@ export default function DayTripsScreen() {
     if (selectedCategory === 'all') {
       return baseTrips;
     }
-    return baseTrips.filter(trip => 
-        // Use snake_case
-        trip.best_for.includes(selectedCategory)
-    );
+    return baseTrips.filter(trip => {
+      // Check tags first, then fall back to best_for
+      const tags = trip.tags && trip.tags.length > 0
+        ? trip.tags.map(t => t.name)
+        : trip.best_for;
+      
+      return tags.includes(selectedCategory);
+    });
   }, [baseTrips, selectedCategory]);
 
-  const renderTripCard = ({ item }: { item: DayTrip }) => (
-    <View style={styles.card}>
-      {/* ⬇️ Image rendering using image_url from Supabase ⬇️ */}
-      {item.image_url ? (
-        <Image 
-          source={{ uri: item.image_url }} 
-          style={styles.cardImage} 
-          resizeMode="cover" 
-        />
-      ) : (
-        <View style={styles.cardPlaceholder}>
-          <Ionicons name="map-pin-outline" size={48} color="#ccc" />
-        </View>
-      )}
+  const handleTripPress = (trip: DayTripListItem) => {
+    navigation.navigate('DayTripDetail', {
+      tripId: trip.id,
+      baseId: trip.base_id,
+    });
+  };
 
-      <View style={styles.cardContent}>
-        <Text style={styles.tripName} numberOfLines={2}>
-          {item.name}
-        </Text>
-        
-        {/* Base Name (only visible if 'All Bases' is selected) */}
-        {selectedBase === 'all' && (
-            <Text style={styles.baseNameText}>From {item.base_name}</Text>
-        )}
+  const renderTripCard = ({ item }: { item: DayTripListItem }) => {
+    const displayImage = item.hero_image_url || item.image_url;
+    const displayTags = item.tags && item.tags.length > 0
+      ? item.tags.map(t => t.name)
+      : item.best_for;
 
-        {/* Description */}
-        <Text style={styles.description} numberOfLines={3}>
-          {item.description}
-        </Text>
-
-        {/* Drive Time */}
-        <View style={styles.infoRow}>
-          <Ionicons name="car" size={14} color="#8B9D7C" />
-          {/* Use snake_case */}
-          <Text style={styles.infoText}>{item.drive_time} drive</Text>
-        </View>
-        
-        {/* Train Time */}
-        {item.train_time && (
-          <View style={styles.infoRow}>
-            <Ionicons name="train" size={14} color="#8B9D7C" />
-            {/* Use snake_case */}
-            <Text style={styles.infoText}>{item.train_time} by train</Text>
+    return (
+      <TouchableOpacity 
+        style={styles.card}
+        onPress={() => handleTripPress(item)}
+        activeOpacity={0.7}
+      >
+        {/* Image */}
+        {displayImage ? (
+          <Image 
+            source={{ uri: displayImage }} 
+            style={styles.cardImage} 
+            resizeMode="cover" 
+          />
+        ) : (
+          <View style={styles.cardPlaceholder}>
+            <Ionicons name="map-outline" size={48} color="#ccc" />
           </View>
         )}
 
-        {/* Badges */}
-        <View style={styles.badgeContainer}>
-          <Text style={[
-            styles.badge,
-            item.difficulty === 'Easy' && styles.easyBadge,
-            item.difficulty === 'Moderate' && styles.moderateBadge,
-            item.difficulty === 'Challenging' && styles.challengingBadge,
-          ]}>
-            {item.difficulty}
+        {/* Featured Badge */}
+        {item.featured && (
+          <View style={styles.featuredBadge}>
+            <Ionicons name="star" size={14} color="#000" />
+            <Text style={styles.featuredText}>Featured</Text>
+          </View>
+        )}
+
+        {/* Rating Badge */}
+        {item.rating && (
+          <View style={styles.ratingBadge}>
+            <Ionicons name="star" size={12} color="#FFD700" />
+            <Text style={styles.ratingText}>{item.rating}</Text>
+          </View>
+        )}
+
+        <View style={styles.cardContent}>
+          <Text style={styles.tripName} numberOfLines={2}>
+            {item.name}
           </Text>
-          <Text style={styles.costBadge}>
-            {item.cost}
+          
+          {/* Base Name (only visible if 'All Bases' is selected) */}
+          {selectedBase === 'all' && (
+            <Text style={styles.baseNameText}>From {item.base_name}</Text>
+          )}
+
+          {/* Description */}
+          <Text style={styles.description} numberOfLines={3}>
+            {item.short_description || item.description}
           </Text>
-        </View>
-        
-        {/* Categories */}
-        <View style={styles.categoryTagContainer}>
-            {/* Use snake_case */}
-            {item.best_for.slice(0, 3).map((tag) => (
-                <Text key={tag} style={styles.categoryTag}>{tag}</Text>
+
+          {/* Drive Time */}
+          <View style={styles.infoRow}>
+            <Ionicons name="car" size={14} color="#8B9D7C" />
+            <Text style={styles.infoText}>{item.drive_time} drive</Text>
+          </View>
+          
+          {/* Train Time */}
+          {item.train_time && (
+            <View style={styles.infoRow}>
+              <Ionicons name="train" size={14} color="#8B9D7C" />
+              <Text style={styles.infoText}>{item.train_time} by train</Text>
+            </View>
+          )}
+
+          {/* Badges */}
+          <View style={styles.badgeContainer}>
+            <Text style={[
+              styles.badge,
+              item.difficulty === 'Easy' && styles.easyBadge,
+              item.difficulty === 'Moderate' && styles.moderateBadge,
+              item.difficulty === 'Challenging' && styles.challengingBadge,
+            ]}>
+              {item.difficulty}
+            </Text>
+            <Text style={styles.costBadge}>
+              {item.cost}
+            </Text>
+          </View>
+          
+          {/* Categories */}
+          <View style={styles.categoryTagContainer}>
+            {displayTags.slice(0, 3).map((tag, index) => (
+              <Text key={`${tag}-${index}`} style={styles.categoryTag}>{tag}</Text>
             ))}
+            {displayTags.length > 3 && (
+              <Text style={styles.categoryTag}>+{displayTags.length - 3}</Text>
+            )}
+          </View>
         </View>
-      </View>
-    </View>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -295,6 +339,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    position: 'relative',
   },
   cardImage: {
     width: '100%',
@@ -306,6 +351,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  featuredBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  featuredText: {
+    marginLeft: 4,
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  ratingBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  ratingText: {
+    marginLeft: 4,
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   cardContent: {
     padding: 16,
@@ -351,24 +432,24 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   easyBadge: {
-    backgroundColor: '#E8F5E9', // Light Green
-    color: '#388E3C', // Dark Green
+    backgroundColor: '#E8F5E9',
+    color: '#388E3C',
   },
   moderateBadge: {
-    backgroundColor: '#FFFDE7', // Light Yellow
-    color: '#F9A825', // Dark Yellow/Gold
+    backgroundColor: '#FFFDE7',
+    color: '#F9A825',
   },
   challengingBadge: {
-    backgroundColor: '#FBE8E8', // Light Red
-    color: '#D32F2F', // Dark Red
+    backgroundColor: '#FBE8E8',
+    color: '#D32F2F',
   },
   costBadge: {
     fontSize: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: '#E3F2FD', // Light Blue
-    color: '#1E88E5', // Dark Blue
+    backgroundColor: '#E3F2FD',
+    color: '#1E88E5',
     fontWeight: '600',
   },
   categoryTagContainer: {

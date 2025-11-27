@@ -1,5 +1,5 @@
 // src/navigation/AppNavigator.tsx
-// UPDATED: Added ServiceDetailScreen and SavedArticlesScreen
+// UPDATED: Added DayTripsListScreen and DayTripDetailScreen
 
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -10,12 +10,14 @@ import { Ionicons } from '@expo/vector-icons';
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import ServicesScreen from '../screens/ServicesScreen';
-import ServiceDetailScreen from '../screens/ServiceDetailScreen'; // ✅ NEW
+import ServiceDetailScreen from '../screens/ServiceDetailScreen';
 import DayTripsScreen from '../screens/DayTripsScreen';
+import DayTripsListScreen from '../screens/DayTripsListScreen'; // ✅ NEW
+import DayTripDetailScreen from '../screens/DayTripDetailScreen'; // ✅ NEW
 import ArticlesScreen from '../screens/ArticlesScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ArticleDetailScreen from '../screens/ArticleDetailScreen';
-import SavedArticlesScreen from '../screens/SavedArticlesScreen'; // ✅ NEW
+import SavedArticlesScreen from '../screens/SavedArticlesScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -98,7 +100,7 @@ export default function AppNavigator() {
           }}
         />
         
-        {/* ✅ NEW: Service Detail Screen */}
+        {/* Service Detail Screen */}
         <Stack.Screen 
           name="ServiceDetail" 
           component={ServiceDetailScreen}
@@ -109,12 +111,50 @@ export default function AppNavigator() {
           }}
         />
         
-        {/* ✅ NEW: Saved Articles Screen */}
+        {/* Saved Articles Screen */}
         <Stack.Screen 
           name="SavedArticles" 
           component={SavedArticlesScreen}
           options={{
             headerShown: false,
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+
+        {/* ✅ NEW: Day Trips List Screen */}
+        <Stack.Screen 
+          name="DayTripsList" 
+          component={DayTripsListScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#8B9D7C',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+            title: 'Day Trips',
+            presentation: 'card',
+            animation: 'slide_from_right',
+          }}
+        />
+
+        {/* ✅ NEW: Day Trip Detail Screen */}
+        <Stack.Screen 
+          name="DayTripDetail" 
+          component={DayTripDetailScreen}
+          options={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: '#8B9D7C',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+            title: 'Trip Details',
             presentation: 'card',
             animation: 'slide_from_right',
           }}
