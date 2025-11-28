@@ -1,4 +1,5 @@
 // src/pages/DayTripDetailPage.tsx
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchDayTripById } from '../services/dayTripsService';

@@ -32,7 +32,8 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
 const AboutPage = lazy(() => import('./pages/AboutPage')); // NEW!
 const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
-const DayTripDetailPage = lazy(() => import('./pages/DaytripDetailPage'));
+const DayTripDetailPage = lazy(() => import('./pages/DayTripDetailPage'));
+
 
 
 // Reading Progress Bar Component
