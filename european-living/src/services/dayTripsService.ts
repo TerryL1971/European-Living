@@ -1,4 +1,5 @@
 // src/services/dayTripsService.ts
+
 import { supabase } from './supabaseClient';
 
 export interface DayTrip {
@@ -114,7 +115,7 @@ export async function fetchDayTrips(baseId?: string): Promise<DayTripListItem[]>
     const processedTrips = trips.map((trip) => ({
       ...trip,
       tags: Array.isArray(trip.tags) 
-        ? (trip.tags as TagResponse[]).map((t) => ({ name: t.tag.name })) 
+        ? (trip.tags as unknown as TagResponse[]).map((t) => ({ name: t.tag.name }))
         : [],
     }));
 
@@ -149,7 +150,7 @@ export async function fetchDayTripById(tripId: string): Promise<DayTrip> {
       : [];
 
     if (trip.photos && Array.isArray(trip.photos)) {
-      trip.photos.sort((a, b) => a.display_order - b.display_order);
+      trip.photos.sort((a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order);
     }
 
     return trip;
@@ -183,7 +184,7 @@ export async function fetchDayTripBySlug(slug: string): Promise<DayTrip> {
       : [];
 
     if (trip.photos && Array.isArray(trip.photos)) {
-      trip.photos.sort((a, b) => a.display_order - b.display_order);
+      trip.photos.sort((a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order);
     }
 
     return trip;

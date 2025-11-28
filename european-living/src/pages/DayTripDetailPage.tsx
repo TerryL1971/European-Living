@@ -27,7 +27,7 @@ export default function DayTripDetailPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchDayTripById(id);
+      const data = await fetchDayTripById(id!);
       setDayTrip(data);
     } catch {
       console.error('Error loading day trip');
@@ -61,7 +61,7 @@ export default function DayTripDetailPage() {
           text: dayTrip?.short_description || dayTrip?.description,
           url: window.location.href,
         });
-      } catch (err) {
+      } catch {
         console.log('Share cancelled');
       }
     } else {
