@@ -1,4 +1,4 @@
-// src/App.tsx
+// src/App.tsx - COMPLETE with New Carousels
 
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
@@ -10,8 +10,8 @@ import { trackPageView } from './utils/analytics';
 import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
 import FeaturedContentSection from './components/FeaturedContentSection';
-import DestinationsSection from "./components/DestinationsSection";
-import FeaturesSection from "./components/page/FeaturesSection";
+import DestinationsCarousel from './components/DestinationsCarousel'; // ✨ NEW
+import TravelTipsCarousel from './components/TravelTipsCarousel'; // ✨ NEW
 import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
 import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
 import ContactSection from "./components/page/ContactSection";
@@ -29,12 +29,10 @@ const ServicesDirectory = lazy(() => import('./components/ServicesDirectory'));
 const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissionForm'));
 const BusinessDataEntry = lazy(() => import('./pages/admin/BusinessDataEntry'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const DayTripsPage = lazy(() => import('./pages/DayTripsPage')); // NEW!
-const AboutPage = lazy(() => import('./pages/AboutPage')); // NEW!
+const DayTripsPage = lazy(() => import('./pages/DayTripsPage'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
 const DayTripDetailPage = lazy(() => import('./pages/DayTripDetailPage'));
-
-
 
 // Reading Progress Bar Component
 const ReadingProgress = () => {
@@ -98,7 +96,9 @@ export default function App() {
         setTimeout(() => {
           const element = document.getElementById(sectionId);
           if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
+            const headerHeight = 64; // Fixed header height
+            const offset = element.offsetTop - headerHeight;
+            window.scrollTo({ top: offset, behavior: 'smooth' });
           }
         }, 300);
       }
@@ -115,17 +115,30 @@ export default function App() {
       {/* ✅ Wrap lazy routes in Suspense */}
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Home Page - Not lazy loaded */}
+          {/* Home Page - With NEW Carousels */}
           <Route
             path="/"
             element={
               <div className="pt-16">
+                {/* 1. Hero Section */}
                 <HeroSection />
+                
+                {/* 2. Featured Content (Your existing carousel) */}
                 <FeaturedContentSection />
-                <DestinationsSection />
-                <FeaturesSection />
+                
+                {/* 3. Destinations Carousel ✨ NEW */}
+                <DestinationsCarousel />
+                
+                {/* 4. Travel Tips Carousel ✨ NEW */}
+                <TravelTipsCarousel />
+                
+                {/* 5. German Phrases Section */}
                 <GermanPhrasesSection />
+                
+                {/* 6. Services Categories */}
                 <ServicesCategoriesSection selectedBase={selectedBase} />
+                
+                {/* 7. Contact Section */}
                 <ContactSection />
               </div>
             }
@@ -141,7 +154,7 @@ export default function App() {
             } 
           />
 
-          {/* NEW: Day Trip Detail Route */}
+          {/* Day Trip Detail Route */}
           <Route 
             path="/day-trips/:id" 
             element={
@@ -151,7 +164,7 @@ export default function App() {
             } 
           />
 
-          {/* Admin Routes - Lazy loaded */}
+          {/* Admin Routes */}
           <Route 
             path="/admin/data-entry" 
             element={
@@ -170,7 +183,7 @@ export default function App() {
             } 
           />
 
-          {/* Services Routes - Lazy loaded */}
+          {/* Services Routes */}
           <Route 
             path="/services-directory" 
             element={
@@ -184,12 +197,13 @@ export default function App() {
             path="/services/:category" 
             element={<ServiceCategoryPage />} 
           />
+          
           <Route 
             path="/services/:category/:subcategory" 
             element={<ServiceCategoryPage />} 
           />
 
-          {/* Other Routes - Lazy loaded */}
+          {/* Other Routes */}
           <Route 
             path="/submit-business" 
             element={
@@ -198,11 +212,12 @@ export default function App() {
               </div>
             } 
           />
+          
           <Route path="/articles/:slug" element={<ArticlePage />} />
           <Route path="/destinations/:id" element={<DestinationPage />} />
           <Route path="/businesses/:id" element={<BusinessDetailPage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/about" element={ <div className="pt-16"><AboutPage /></div>} />
+          <Route path="/about" element={<div className="pt-16"><AboutPage /></div>} />
         </Routes>
       </Suspense>
 

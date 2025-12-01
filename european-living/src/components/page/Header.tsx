@@ -1,204 +1,255 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-
-interface MenuItem {
-  label: string;
-  id: string;
-  isRoute?: boolean; // New: indicates if it's a route vs hash link
-}
+// src/components/page/Header.tsx - Apple-Style with Mega Menu
+import { useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 export default function Header() {
-  const resetBaseSelection = () => {
-    localStorage.removeItem("selectedBase");
-    localStorage.removeItem("hasVisitedSite");
-    
-    // Dispatch event to BaseSelectionModal to open itself
-    window.dispatchEvent(new CustomEvent("openBaseSelectionModal"));
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [destinationsOpen, setDestinationsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const headerHeight = 64;
+        const offset = element.offsetTop - headerHeight;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      }
+    }
   };
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<string>("home");
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const toggle = () => setIsMobileMenuOpen((s) => !s);
-
-  const menuItems: MenuItem[] = [
-    { label: "Home", id: "home" },
-    { label: "Destinations", id: "destinations" },
-    { label: "Day Trips", id: "day-trips", isRoute: true }, // NEW!
-    { label: "Travel Tips", id: "tips" },
-    { label: "Travel Phrases", id: "phrases" },
-    { label: "English Services", id: "services" },
-  ];
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      const hashId = location.hash.replace("#", "") || "home";
-      setActiveItem(hashId);
-    } else if (location.pathname === "/day-trips") {
-      setActiveItem("day-trips");
+  const goToHome = () => {
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      setActiveItem("");
+      navigate('/');
     }
-  }, [location]);
-
-  const handleNavClick = (item: MenuItem) => {
-    const sectionId = item.id;
-
-    // Handle route-based navigation (like Day Trips page)
-    if (item.isRoute) {
-      navigate(`/${sectionId}`);
-      setActiveItem(sectionId);
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-    // Handle home
-    if (sectionId === "home") {
-      if (location.pathname === "/") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        navigate("/");
-      }
-      setActiveItem("home");
-      setIsMobileMenuOpen(false);
-      return;
-    }
-
-    // Handle contact
-    if (sectionId === "contact") {
-      const contactEl = document.getElementById("contact");
-      if (contactEl) {
-        contactEl.scrollIntoView({ behavior: "smooth" });
-      } else {
-        navigate("/#contact");
-      }
-    } else {
-      // Handle hash navigation
-      if (location.pathname === "/") {
-        document
-          .getElementById(sectionId)
-          ?.scrollIntoView({ behavior: "smooth" });
-      } else {
-        navigate(`/#${sectionId}`);
-      }
-    }
-
-    setActiveItem(sectionId);
-    setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-100 z-[100] shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#0D0D0A]/95 backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div
-            className="flex items-center space-x-3 cursor-pointer"
-            onClick={() => handleNavClick({ label: "Home", id: "home" })}
+          <button
+            onClick={goToHome}
+            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
           >
-            <img
-              src="/EL_Logo.png"
-              alt="European Living Logo"
-              className="w-10 h-10 object-contain"
+            <img 
+              src="/EL_Logo.png" 
+              alt="European Living" 
+              className="h-10 w-10 object-contain"
             />
-            <span className="text-[var(--brand-dark)] font-semibold text-lg">
-              European Living
-            </span>
-          </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-lg text-white leading-tight">European Living</span>
+              <span className="text-xs text-[#FAFAF8]/70">Your Guide to Europe</span>
+            </div>
+          </button>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item)}
-                className={`font-medium px-3 py-2 rounded-md transition-colors cursor-pointer ${
-                  activeItem === item.id
-                    ? "text-[var(--brand-primary)]"
-                    : "text-[var(--brand-dark)] hover:text-[var(--brand-primary)]"
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
-
-            {/* Contact Button */}
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1">
             <button
-              onClick={() => handleNavClick({ label: "Contact", id: "contact" })}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                activeItem === "contact"
-                  ? "bg-[var(--brand-primary)] text-[var(--brand-bg-alt)]"
-                  : "bg-[var(--brand-dark)] text-[var(--brand-bg)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-bg-alt)]"
-              }`}
+              onClick={goToHome}
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              Home
+            </button>
+
+            {/* Destinations Mega Menu */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setDestinationsOpen(true)}
+              onMouseLeave={() => setDestinationsOpen(false)}
+            >
+              <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                Destinations
+                <ChevronDown className={`w-4 h-4 transition-transform ${destinationsOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {/* Mega Dropdown */}
+              {destinationsOpen && (
+                <div className="absolute top-full left-0 mt-2 w-[500px] bg-[#1E2326] rounded-2xl shadow-xl border border-white/10 p-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="text-xs font-semibold text-[#FAFAF8]/50 uppercase tracking-wider mb-3">
+                        Quick Links
+                      </h3>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => {
+                            scrollToSection('destinations');
+                            setDestinationsOpen(false);
+                          }}
+                          className="block w-full text-left px-3 py-2 text-sm text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors"
+                        >
+                          Browse All Destinations
+                        </button>
+                        <Link
+                          to="/day-trips"
+                          className="block px-3 py-2 text-sm text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors"
+                          onClick={() => setDestinationsOpen(false)}
+                        >
+                          Day Trips from Base
+                        </Link>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xs font-semibold text-[#FAFAF8]/50 uppercase tracking-wider mb-3">
+                        By Category
+                      </h3>
+                      <div className="space-y-2">
+                        <button className="block w-full text-left px-3 py-2 text-sm text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors">
+                          Historic Sites
+                        </button>
+                        <button className="block w-full text-left px-3 py-2 text-sm text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors">
+                          Scenic Nature
+                        </button>
+                        <button className="block w-full text-left px-3 py-2 text-sm text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors">
+                          City Breaks
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <Link
+              to="/day-trips"
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              Day Trips
+            </Link>
+
+            <button
+              onClick={() => scrollToSection('travel-tips')}
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              Travel Tips
+            </button>
+
+            <button
+              onClick={() => scrollToSection('travel-phrases')}
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              Travel Phrases
+            </button>
+
+            <button
+              onClick={() => scrollToSection('services')}
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              English Services
+            </button>
+
+            <Link
+              to="/about"
+              className="px-4 py-2 text-sm font-medium text-[#FAFAF8] hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+            >
+              About
+            </Link>
+          </nav>
+
+          {/* CTA Button */}
+          <div className="hidden lg:flex items-center">
+            <button 
+              onClick={() => scrollToSection('contact')}
+              className="px-6 py-2.5 bg-[#30407C] text-white text-sm font-semibold rounded-full hover:bg-[#1E50BA] transition-colors"
             >
               Contact Us
             </button>
-
-            {/* Reset Base Button */}
-            <button
-              onClick={resetBaseSelection}
-              className="text-sm text-red-500 hover:text-red-700 underline ml-2"
-            >
-              Reset Base
-            </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button onClick={toggle} className="md:hidden cursor-pointer">
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-[#FAFAF8] hover:bg-white/10 rounded-lg transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
-
-        {/* Mobile Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-100">
-            <div className="flex flex-col space-y-3">
-              {menuItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => handleNavClick(item)}
-                  className={`px-4 py-2 text-left font-medium rounded-md transition-colors cursor-pointer ${
-                    activeItem === item.id
-                      ? "text-[var(--brand-primary)]"
-                      : "text-[var(--brand-dark)] hover:text-[var(--brand-primary)]"
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
-
-              <button
-                onClick={() => handleNavClick({ label: "Contact", id: "contact" })}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer ${
-                  activeItem === "contact"
-                    ? "bg-[var(--brand-primary)] text-[var(--brand-bg-alt)]"
-                    : "bg-[var(--brand-dark)] text-[var(--brand-bg)] hover:bg-[var(--brand-primary)] hover:text-[var(--brand-bg-alt)]"
-                }`}
-              >
-                Contact Us
-              </button>
-
-              {/* Reset Base button */}
-              <button
-                onClick={() => {
-                  resetBaseSelection();
-                  setIsMobileMenuOpen(false); 
-                }}
-                className="text-sm text-red-500 hover:text-red-700 underline px-4 text-left"
-              >
-                Reset Base
-              </button>
-            </div>
-          </div>
-        )}
       </div>
-    </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden bg-[#1E2326] border-t border-white/10">
+          <div className="px-4 py-6 space-y-1">
+            <button
+              onClick={() => {
+                goToHome();
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => {
+                scrollToSection('destinations');
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+            >
+              Destinations
+            </button>
+            <Link
+              to="/day-trips"
+              className="block px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Day Trips
+            </Link>
+            <button
+              onClick={() => {
+                scrollToSection('travel-tips');
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+            >
+              Travel Tips
+            </button>
+            <button
+              onClick={() => {
+                scrollToSection('travel-phrases');
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+            >
+              Travel Phrases
+            </button>
+            <button
+              onClick={() => {
+                scrollToSection('services');
+                setMobileMenuOpen(false);
+              }}
+              className="block w-full text-left px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+            >
+              English Services
+            </button>
+            <Link
+              to="/about"
+              className="block px-4 py-3 text-base font-medium text-[#FAFAF8] hover:bg-white/10 rounded-lg"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              About
+            </Link>
+            <button
+              onClick={() => {
+                scrollToSection('contact');
+                setMobileMenuOpen(false);
+              }}
+              className="w-full mt-4 px-6 py-3 bg-[#30407C] text-white text-base font-semibold rounded-full hover:bg-[#1E50BA] transition-colors"
+            >
+              Contact Us
+            </button>
+          </div>
+        </div>
+      )}
+    </header>
   );
 }
