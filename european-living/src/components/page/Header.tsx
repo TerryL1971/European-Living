@@ -8,6 +8,13 @@ export default function Header() {
   const [destinationsOpen, setDestinationsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const resetBaseSelection = () => {
+    localStorage.removeItem("selectedBase");
+    localStorage.removeItem("hasVisitedSite");
+    
+    // Dispatch event to BaseSelectionModal to open itself
+    window.dispatchEvent(new CustomEvent("openBaseSelectionModal"));
+  }
 
   const scrollToSection = (sectionId: string) => {
     if (location.pathname !== '/') {
@@ -166,6 +173,14 @@ export default function Header() {
               Contact Us
             </button>
           </div>
+
+          {/* Reset Base Button */}
+            <button
+              onClick={resetBaseSelection}
+              className="text-sm text-red-500 hover:text-red-700 underline ml-2"
+            >
+              Reset Base
+            </button>
 
           {/* Mobile Menu Button */}
           <button
