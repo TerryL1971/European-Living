@@ -1,4 +1,4 @@
-// src/components/TravelTipsCarousel.tsx - Filtered to exclude City Guides
+// src/components/TravelTipsCarousel.tsx - With new brand colors
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,13 +28,11 @@ export default function TravelTipsCarousel() {
 
   const fetchArticles = async () => {
     try {
-      // Query articles table, excluding City Guides (show only Travel Tips, Practical Guides, Cultural Tips, etc.)
       const { data, error } = await supabase
         .from('articles')
         .select('*')
         .neq('category', 'City Guides')
-        .order('created_at', { ascending: false })
-        .limit(9);
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Travel Tips Supabase error:', error);
@@ -73,11 +71,11 @@ export default function TravelTipsCarousel() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-white">
+      <section id="travel-tips" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#30407C]"></div>
-            <p className="mt-4 text-[#1E2326]">Loading travel tips...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C5282]"></div>
+            <p className="mt-4 text-[#1A202C]">Loading travel tips...</p>
           </div>
         </div>
       </section>
@@ -89,15 +87,15 @@ export default function TravelTipsCarousel() {
       <section id="travel-tips" className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#1E2326] mb-4">
+            <h2 className="text-4xl lg:text-5xl font-bold text-[#1A202C] mb-4">
               Travel Tips & Essentials
             </h2>
-            <p className="text-xl text-[#0D0D0A]/70">
+            <p className="text-xl text-[#718096]">
               Expert guidance for living and traveling in Europe
             </p>
           </div>
-          <div className="text-center p-12 bg-[#F5F2EB] rounded-2xl">
-            <p className="text-[#1E2326] mb-4">No articles available yet. Check back soon!</p>
+          <div className="text-center p-12 bg-[#F5F5F5] rounded-2xl">
+            <p className="text-[#1A202C] mb-4">No articles available yet. Check back soon!</p>
           </div>
         </div>
       </section>
@@ -108,10 +106,10 @@ export default function TravelTipsCarousel() {
     <section id="travel-tips" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold text-[#1E2326] mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-[#1A202C] mb-4">
             Travel Tips & Essentials
           </h2>
-          <p className="text-xl text-[#0D0D0A]/70">
+          <p className="text-xl text-[#718096]">
             Expert guidance for living and traveling in Europe
           </p>
         </div>
@@ -122,7 +120,7 @@ export default function TravelTipsCarousel() {
               <div
                 key={article.id}
                 onClick={() => navigate(`/articles/${article.slug}`)}
-                className="group bg-[#F5F2EB] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border border-[#E2E8F0]"
               >
                 <div className="relative h-56 overflow-hidden bg-gray-200">
                   {(article.image_url || article.featured_image_url) ? (
@@ -136,30 +134,30 @@ export default function TravelTipsCarousel() {
                       }}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#30407C] to-[#1E50BA]">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2C5282] to-[#4A90C5]">
                       <span className="text-white text-lg font-semibold px-4 text-center">{article.title}</span>
                     </div>
                   )}
                   
                   {article.category && (
-                    <div className="absolute top-4 left-4 px-3 py-1 bg-[#30407C] text-white rounded-full text-xs font-semibold">
-                      {article.category}
+                    <div >
+                      
                     </div>
                   )}
                 </div>
 
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-[#1E2326] mb-2 group-hover:text-[#30407C] transition-colors line-clamp-2">
+                <div className="p-6 bg-[#FAFAFA]">
+                  <h3 className="text-xl font-bold text-[#1A202C] mb-2 group-hover:text-[#2C5282] transition-colors line-clamp-2">
                     {article.title}
                   </h3>
                   {(article.description || article.excerpt) && (
-                    <p className="text-sm text-[#0D0D0A]/70 line-clamp-2">
+                    <p className="text-sm text-[#718096] line-clamp-2">
                       {article.description || article.excerpt}
                     </p>
                   )}
 
-                  <div className="mt-4 pt-4 border-t border-white">
-                    <div className="flex items-center justify-between text-[#30407C] font-semibold group-hover:text-[#1E50BA]">
+                  <div className="mt-4 pt-4 border-t border-[#E2E8F0]">
+                    <div className="flex items-center justify-between text-[#2C5282] font-semibold group-hover:text-[#4A90C5]">
                       <span>Read More</span>
                       <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -173,18 +171,18 @@ export default function TravelTipsCarousel() {
             <>
               <button
                 onClick={goToPrevious}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F2EB] transition-all z-10 hover:scale-110"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F5F5] transition-all z-10 hover:scale-110 border border-[#E2E8F0]"
                 aria-label="Previous articles"
               >
-                <ChevronLeft className="w-6 h-6 text-[#1E2326]" />
+                <ChevronLeft className="w-6 h-6 text-[#1A202C]" />
               </button>
 
               <button
                 onClick={goToNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F2EB] transition-all z-10 hover:scale-110"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F5F5] transition-all z-10 hover:scale-110 border border-[#E2E8F0]"
                 aria-label="Next articles"
               >
-                <ChevronRight className="w-6 h-6 text-[#1E2326]" />
+                <ChevronRight className="w-6 h-6 text-[#1A202C]" />
               </button>
             </>
           )}
@@ -197,8 +195,8 @@ export default function TravelTipsCarousel() {
                   onClick={() => setCurrentIndex(idx * 3)}
                   className={`h-2 rounded-full transition-all ${
                     Math.floor(currentIndex / 3) === idx
-                      ? 'w-8 bg-[#30407C]'
-                      : 'w-2 bg-[#30407C]/30'
+                      ? 'w-8 bg-[#2C5282]'
+                      : 'w-2 bg-[#CBD5E0]'
                   }`}
                   aria-label={`Go to page ${idx + 1}`}
                 />
@@ -207,13 +205,13 @@ export default function TravelTipsCarousel() {
           )}
         </div>
 
-        <div className="mt-12 p-6 bg-[#30407C] rounded-2xl text-center">
+        <div className="mt-12 p-6 bg-[#2C5282] rounded-2xl text-center">
           <p className="text-white text-lg mb-4">
             Have a topic you'd like us to cover?
           </p>
           <button
             onClick={() => navigate('/about')}
-            className="px-6 py-3 bg-white text-[#30407C] font-semibold rounded-full hover:bg-[#F5F2EB] transition-colors"
+            className="px-6 py-3 bg-white text-[#2C5282] font-semibold rounded-full hover:bg-[#F5F5F5] transition-colors"
           >
             Suggest a Topic
           </button>

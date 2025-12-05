@@ -1,4 +1,4 @@
-// src/components/DestinationsCarousel.tsx - Filtered to show only City Guides
+// src/components/DestinationsCarousel.tsx - With new brand colors
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,13 +39,11 @@ export default function DestinationsCarousel() {
 
   const fetchDestinations = async () => {
     try {
-      // Query articles table, filtered to City Guides only
       const { data, error } = await supabase
         .from('articles')
         .select('*')
         .eq('category', 'City Guides')
-        .order('created_at', { ascending: false })
-        .limit(9);
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Destinations Supabase error:', error);
@@ -53,7 +51,6 @@ export default function DestinationsCarousel() {
       }
 
       console.log('✅ DESTINATIONS - City Guides from articles:', data);
-      console.log('✅ First item structure:', data?.[0]);
       setDestinations(data || []);
       setLoading(false);
     } catch (error) {
@@ -83,12 +80,10 @@ export default function DestinationsCarousel() {
     visibleDestinations.push(destinations[visibleDestinations.length]);
   }
 
-  // Helper function to get the title from various possible fields
   const getTitle = (item: Article) => {
     return item.title || item.name || item.destination || item.city || 'Unnamed Destination';
   };
 
-  // Helper function to get location
   const getLocation = (item: Article) => {
     if (item.location) return item.location;
     if (item.city && item.country) return `${item.city}, ${item.country}`;
@@ -96,30 +91,27 @@ export default function DestinationsCarousel() {
     return '';
   };
 
-  // Helper function to get distance
   const getDistance = (item: Article) => {
     if (item.distance) return item.distance;
     if (item.distance_km) return `${item.distance_km} km`;
     return '';
   };
 
-  // Helper function to get image
   const getImage = (item: Article) => {
     return item.image_url || item.featured_image_url || item.hero_image_url;
   };
 
-  // Helper function to get category
   const getCategory = (item: Article) => {
     return item.category || item.type;
   };
 
   if (loading) {
     return (
-      <section className="py-16 bg-[#F5F2EB]">
+      <section className="py-16 bg-[#F5F5F5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#30407C]"></div>
-            <p className="mt-4 text-[#1E2326]">Loading destinations...</p>
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C5282]"></div>
+            <p className="mt-4 text-[#1A202C]">Loading destinations...</p>
           </div>
         </div>
       </section>
@@ -128,18 +120,18 @@ export default function DestinationsCarousel() {
 
   if (destinations.length === 0) {
     return (
-      <section id="destinations" className="py-16 bg-[#F5F2EB]">
+      <section id="destinations" className="py-16 bg-[#F5F5F5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl lg:text-5xl font-bold text-[#1E2326] mb-4">
+            <h2 className="text-4xl lg:text-5xl font-bold text-[#1A202C] mb-4">
               Explore Destinations
             </h2>
-            <p className="text-xl text-[#0D0D0A]/70">
+            <p className="text-xl text-[#718096]">
               Discover amazing places within driving distance from your base
             </p>
           </div>
           <div className="text-center p-12 bg-white rounded-2xl">
-            <p className="text-[#1E2326] mb-4">No destinations available yet. Check back soon!</p>
+            <p className="text-[#1A202C] mb-4">No destinations available yet. Check back soon!</p>
           </div>
         </div>
       </section>
@@ -147,13 +139,13 @@ export default function DestinationsCarousel() {
   }
 
   return (
-    <section id="destinations" className="py-16 bg-[#F5F2EB]">
+    <section id="destinations" className="py-16 bg-[#F5F5F5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold text-[#1E2326] mb-4">
+          <h2 className="text-4xl lg:text-5xl font-bold text-[#1A202C] mb-4">
             Explore Destinations
           </h2>
-          <p className="text-xl text-[#0D0D0A]/70">
+          <p className="text-xl text-[#718096]">
             Discover amazing places within driving distance from your base
           </p>
         </div>
@@ -171,7 +163,7 @@ export default function DestinationsCarousel() {
                 <div
                   key={destination.id}
                   onClick={() => navigate(`/articles/${destination.slug}`)}
-                  className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                  className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-1 border border-[#E2E8F0]"
                 >
                   <div className="relative h-64 overflow-hidden bg-gray-200">
                     {imageUrl ? (
@@ -185,34 +177,32 @@ export default function DestinationsCarousel() {
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#30407C] to-[#1E50BA]">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2C5282] to-[#4A90C5]">
                         <span className="text-white text-lg font-semibold px-4 text-center">{title}</span>
                       </div>
                     )}
                     
                     {category && (
-                      <div className="absolute top-4 left-4 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full text-xs font-semibold text-[#1E2326]">
-                        {category}
-                      </div>
+                      <div></div>
                     )}
 
                     {destination.rating && (
-                      <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full">
-                        <Star className="w-4 h-4 fill-[#F5C140] text-[#F5C140]" />
-                        <span className="text-xs font-semibold text-[#1E2326]">{destination.rating}</span>
+                      <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-white/95 backdrop-blur-sm rounded-full border border-[#E2E8F0]">
+                        <Star className="w-4 h-4 fill-[#D69E2E] text-[#D69E2E]" />
+                        <span className="text-xs font-semibold text-[#1A202C]">{destination.rating}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-[#1E2326] mb-2 group-hover:text-[#30407C] transition-colors">
+                    <h3 className="text-xl font-bold text-[#1A202C] mb-2 group-hover:text-[#2C5282] transition-colors">
                       {title}
                     </h3>
                     {location && (
-                      <p className="text-sm text-[#0D0D0A]/70 mb-4">{location}</p>
+                      <p className="text-sm text-[#718096] mb-4">{location}</p>
                     )}
 
-                    <div className="flex items-center gap-4 text-sm text-[#0D0D0A]/70">
+                    <div className="flex items-center gap-4 text-sm text-[#718096]">
                       {distance && (
                         <div className="flex items-center gap-1">
                           <MapPin className="w-4 h-4" />
@@ -227,8 +217,8 @@ export default function DestinationsCarousel() {
                       )}
                     </div>
 
-                    <div className="mt-4 pt-4 border-t border-[#F5F2EB]">
-                      <div className="flex items-center justify-between text-[#30407C] font-semibold group-hover:text-[#1E50BA]">
+                    <div className="mt-4 pt-4 border-t border-[#E2E8F0]">
+                      <div className="flex items-center justify-between text-[#2C5282] font-semibold group-hover:text-[#4A90C5]">
                         <span>View Details</span>
                         <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </div>
@@ -243,18 +233,18 @@ export default function DestinationsCarousel() {
             <>
               <button
                 onClick={goToPrevious}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F2EB] transition-all z-10 hover:scale-110"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F5F5] transition-all z-10 hover:scale-110 border border-[#E2E8F0]"
                 aria-label="Previous destinations"
               >
-                <ChevronLeft className="w-6 h-6 text-[#1E2326]" />
+                <ChevronLeft className="w-6 h-6 text-[#1A202C]" />
               </button>
 
               <button
                 onClick={goToNext}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F2EB] transition-all z-10 hover:scale-110"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-[#F5F5F5] transition-all z-10 hover:scale-110 border border-[#E2E8F0]"
                 aria-label="Next destinations"
               >
-                <ChevronRight className="w-6 h-6 text-[#1E2326]" />
+                <ChevronRight className="w-6 h-6 text-[#1A202C]" />
               </button>
             </>
           )}
@@ -267,8 +257,8 @@ export default function DestinationsCarousel() {
                   onClick={() => setCurrentIndex(idx * 3)}
                   className={`h-2 rounded-full transition-all ${
                     Math.floor(currentIndex / 3) === idx
-                      ? 'w-8 bg-[#30407C]'
-                      : 'w-2 bg-[#30407C]/30'
+                      ? 'w-8 bg-[#2C5282]'
+                      : 'w-2 bg-[#CBD5E0]'
                   }`}
                   aria-label={`Go to page ${idx + 1}`}
                 />
@@ -277,13 +267,13 @@ export default function DestinationsCarousel() {
           )}
         </div>
 
-        <div className="mt-12 p-6 bg-[#30407C] rounded-2xl text-center">
+        <div className="mt-12 p-6 bg-[#2C5282] rounded-2xl text-center">
           <p className="text-white text-lg mb-4">
             Don't see your favorite destination? Let us know!
           </p>
           <button
             onClick={() => navigate('/about')}
-            className="px-6 py-3 bg-white text-[#30407C] font-semibold rounded-full hover:bg-[#F5F2EB] transition-colors"
+            className="px-6 py-3 bg-white text-[#2C5282] font-semibold rounded-full hover:bg-[#F5F5F5] transition-colors"
           >
             Request a Destination
           </button>

@@ -24,37 +24,98 @@ body, #root {
 
 body {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  background: #f7fafc;
-  color: #111827;
+  background: #F8FAFC;
+  color: #1F2937;
   -webkit-font-smoothing: antialiased;
 }
 
 /* === Brand Colors === */
 :root {
-  /* Brand Base Palette (European Urban Daylight) */
-  --brand-primary: #6D889A;
-  --brand-bg: #F1E8DE;
-  --brand-bg-alt: #F7F2EB;
-  --brand-dark: #1E2326;
-  --brand-button: #CFB68A;
-  --brand-gold: #F5C14D;
-  --brand-light: #FAFAF8;
+  /* === PRIMARY BRAND COLORS - Ocean Blue & Gold Theme === */
+  --brand-primary: #0284C7;         /* Bright ocean blue - main brand color */
+  --brand-primary-light: #0EA5E9;   /* Lighter blue for hover states */
+  --brand-primary-dark: #0C4A6E;    /* Deep ocean blue for text/headers */
+  
+  --brand-secondary: #F59E0B;       /* Warm gold - secondary brand color */
+  --brand-secondary-light: #FBBF24; /* Lighter gold for hover states */
+  
+  --brand-gold: #F59E0B;            /* Warm gold accent */
+  --brand-amber: #D97706;           /* Rich amber for emphasis */
+  
+  /* === BACKGROUND COLORS === */
+  --brand-bg: #FEFDFB;              /* Warm off-white - main page background */
+  --brand-bg-alt: #F9F7F4;          /* Soft warm beige - alternate sections */
+  --brand-bg-card: #FFFFFF;         /* Pure white - cards and surfaces */
+  
+  /* === TEXT COLORS === */
+  --brand-text: #1F2937;            /* Charcoal - primary text */
+  --brand-text-muted: #475569;      /* Slate - secondary text */
+  --brand-dark: #1F2937;            /* Dark text/headers */
+  
+  /* === INTERACTIVE ELEMENTS === */
+  --brand-button: #F59E0B;          /* Gold for primary buttons */
+  --brand-light: #FFFFFF;           /* Light surfaces */
+  
+  /* === EXTENDED PALETTE === */
+  --brand-ocean: #0C4A6E;           /* Deep ocean blue */
+  --brand-blue: #0284C7;            /* Bright blue */
+  --brand-sky: #7DD3FC;             /* Light sky accent */
+  --brand-ice: #F0F9FF;             /* Ice blue */
+  --brand-sunset: #FEF3C7;          /* Sunset yellow */
+  --brand-bronze: #92400E;          /* Bronze accent */
+  --brand-charcoal: #1F2937;        /* Charcoal text */
+  --brand-slate: #475569;           /* Slate text */
+  --brand-gray: #94A3B8;            /* Cool gray */
+  --brand-soft: #F9F7F4;            /* Soft warm background */
+  --brand-white: #FFFFFF;           /* Pure white */
 
-  /* UI Palette */
-  --primary: #304D7C;
+  /* === UI PALETTE === */
+  --primary: #0C4A6E;               /* Deep ocean blue */
   --primary-foreground: #FFFFFF;
-  --secondary: #C7B49E;
-  --secondary-foreground: #1E2326;
-  --accent: #DDBB7E;
-  --accent-foreground: #1E2326;
-  --muted: #E8EAE9;
-  --muted-foreground: #55595A;
-  --border: #D7DADA;
-  --input: #D7DADA;
-  --ring: #B8C3C6;
+  --secondary: #D97706;             /* Rich amber */
+  --secondary-foreground: #FFFFFF;
+  --accent: #F59E0B;                /* Warm gold */
+  --accent-foreground: #1F2937;
+  --muted: #F8FAFC;                 /* Soft white */
+  --muted-foreground: #475569;      /* Slate */
+  --border: #94A3B8;                /* Cool gray borders */
+  --brand-border: #94A3B8;          /* Brand borders (alias) */
+  --input: #94A3B8;                 /* Input borders */
+  --ring: #0284C7;                  /* Focus ring - bright blue */
 
-  /* Layout Properties */
+  /* === SEMANTIC COLORS === */
+  --success: #10B981;               /* Green */
+  --success-foreground: #FFFFFF;
+  --warning: #F59E0B;               /* Gold */
+  --warning-foreground: #92400E;
+  --error: #EF4444;                 /* Red */
+  --error-foreground: #FFFFFF;
+  --info: #0284C7;                  /* Blue */
+  --info-foreground: #FFFFFF;
+
+  /* === LAYOUT === */
   --radius: 0.625rem;
+  --background: #F8FAFC;
+  --foreground: #1F2937;
+}
+
+/* === Dark Mode === */
+.dark {
+  --brand-bg: #0F172A;
+  --brand-bg-alt: #1E293B;
+  --brand-bg-card: #1E293B;
+  --brand-soft: #1E293B;
+  --brand-text: #F8FAFC;
+  --brand-text-muted: #94A3B8;
+  --brand-charcoal: #F8FAFC;
+  --brand-slate: #CBD5E1;
+  --background: #0F172A;
+  --foreground: #F8FAFC;
+  --muted: #1E293B;
+  --muted-foreground: #94A3B8;
+  --border: #334155;
+  --primary: #0284C7;
+  --secondary: #F59E0B;
 }
 
 /* === Leaflet Map Styling === */
@@ -68,7 +129,7 @@ body {
 /* === Prose/Article Styling === */
 .prose {
   line-height: 1.8;
-  color: #374151;
+  color: var(--brand-slate);
 }
 
 .prose h1 {
@@ -76,7 +137,11 @@ body {
   font-weight: 700;
   margin-top: 2rem;
   margin-bottom: 1rem;
-  color: #111827;
+  color: var(--brand-ocean);
+  background: linear-gradient(135deg, var(--brand-ocean), var(--brand-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .prose h2 {
@@ -84,7 +149,8 @@ body {
   font-weight: 700;
   margin-top: 1.75rem;
   margin-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  color: var(--brand-ocean);
+  border-bottom: 2px solid var(--brand-gold);
   padding-bottom: 0.3em;
 }
 
@@ -93,6 +159,7 @@ body {
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+  color: var(--brand-blue);
 }
 
 .prose h4 {
@@ -100,21 +167,24 @@ body {
   font-weight: 600;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+  color: var(--brand-blue);
 }
 
 .prose p {
   margin: 1rem 0;
-  color: #4b5563;
+  color: var(--brand-slate);
 }
 
 .prose a {
-  color: #2563eb;
+  color: var(--brand-blue);
   text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .prose a:hover {
-  text-decoration: underline;
-  color: #1e40af;
+  color: var(--brand-ocean);
+  border-bottom-color: var(--brand-gold);
 }
 
 .prose ul {
@@ -131,14 +201,15 @@ body {
 
 .prose li {
   margin: 0.25rem 0;
+  color: var(--brand-slate);
 }
 
 .prose blockquote {
-  border-left: 4px solid #3b82f6;
-  background: #eff6ff;
-  padding: 1rem;
+  border-left: 4px solid var(--brand-gold);
+  background: var(--brand-sunset);
+  padding: 1rem 1rem 1rem 1.5rem;
   border-radius: 0.5rem;
-  color: #374151;
+  color: var(--brand-bronze);
   font-style: italic;
   margin: 1.5rem 0;
 }
@@ -149,15 +220,33 @@ body {
   border-radius: 1rem;
   margin: 1.5rem auto;
   display: block;
-  box-shadow: 0 6px 18px rgba(17, 24, 39, 0.08);
+  box-shadow: 0 4px 12px rgba(12, 74, 110, 0.1),
+              0 2px 4px rgba(245, 158, 11, 0.05);
 }
 
 .prose code {
-  background: #f3f4f6;
-  color: #2563eb;
+  background: var(--brand-ice);
+  color: var(--brand-blue);
   padding: 0.25rem 0.4rem;
   border-radius: 0.375rem;
   font-size: 0.9rem;
+  border: 1px solid var(--brand-sky);
+}
+
+.prose pre {
+  background: var(--brand-ocean);
+  color: var(--brand-ice);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose pre code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
 }
 
 .prose table {
@@ -168,13 +257,32 @@ body {
 
 .prose th, 
 .prose td {
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--brand-gray);
   padding: 0.75rem;
 }
 
 .prose th {
-  background: #f9fafb;
+  background: var(--brand-ice);
+  color: var(--brand-ocean);
   font-weight: 600;
+}
+
+.prose td {
+  background: var(--brand-white);
+}
+
+.prose tr:hover td {
+  background: var(--brand-soft);
+}
+
+/* === Featured Content Styling === */
+.prose .featured-tip,
+.prose .pro-tip {
+  background: linear-gradient(135deg, var(--brand-ice), var(--brand-sunset));
+  border-left: 4px solid var(--brand-gold);
+  padding: 1rem 1rem 1rem 1.5rem;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
 }
 
 /* === Utility Classes === */
@@ -185,6 +293,44 @@ body {
 .scrollbar-hide { 
   -ms-overflow-style: none;
   scrollbar-width: none; 
+}
+
+/* Gradient backgrounds */
+.bg-gradient-ocean {
+  background: linear-gradient(135deg, var(--brand-ocean), var(--brand-blue));
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, var(--brand-gold), var(--brand-amber));
+}
+
+.bg-gradient-sky {
+  background: linear-gradient(135deg, var(--brand-sky), var(--brand-ice));
+}
+
+/* Button Utilities */
+.btn-primary {
+  background: var(--brand-blue);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--brand-ocean);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+}
+
+.btn-gold {
+  background: var(--brand-gold);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-gold:hover {
+  background: var(--brand-amber);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
 /* === Tailwind Theme Extensions === */
@@ -206,6 +352,20 @@ body {
   --color-border: var(--border); 
   --color-input: var(--input); 
   --color-ring: var(--ring); 
+
+  /* Extended color utilities */
+  --color-ocean: var(--brand-ocean);
+  --color-blue: var(--brand-blue);
+  --color-sky: var(--brand-sky);
+  --color-ice: var(--brand-ice);
+  --color-gold: var(--brand-gold);
+  --color-amber: var(--brand-amber);
+  --color-sunset: var(--brand-sunset);
+  --color-bronze: var(--brand-bronze);
+  --color-charcoal: var(--brand-charcoal);
+  --color-slate: var(--brand-slate);
+  --color-gray: var(--brand-gray);
+  --color-soft: var(--brand-soft);
 }
 
 @layer base {
@@ -215,4 +375,29 @@ body {
   body {
     @apply bg-background text-foreground; 
   }
+}
+
+/* === Animation Utilities === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.5s ease-out;
 }

@@ -1,4 +1,4 @@
-// src/data/tips.ts
+// src/data/features.ts
 
 import {
   Bus,

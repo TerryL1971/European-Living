@@ -1,4 +1,4 @@
-// src/App.tsx - COMPLETE with New Carousels
+// src/App.tsx - Fixed scroll handling
 
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
@@ -10,8 +10,8 @@ import { trackPageView } from './utils/analytics';
 import Header from "./components/page/Header";
 import HeroSection from "./components/page/HeroSection";
 import FeaturedContentSection from './components/FeaturedContentSection';
-import DestinationsCarousel from './components/DestinationsCarousel'; // ✨ NEW
-import TravelTipsCarousel from './components/TravelTipsCarousel'; // ✨ NEW
+import DestinationsCarousel from './components/DestinationsCarousel';
+import TravelTipsCarousel from './components/TravelTipsCarousel';
 import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
 import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
 import ContactSection from "./components/page/ContactSection";
@@ -86,6 +86,7 @@ export default function App() {
 
       if (location.state?.scrollTo) {
         sectionId = location.state.scrollTo;
+        // Clear the state after reading it
         window.history.replaceState({}, document.title);
       } 
       else if (location.hash) {
@@ -93,17 +94,22 @@ export default function App() {
       }
 
       if (sectionId) {
+        // Wait for components to render
         setTimeout(() => {
           const element = document.getElementById(sectionId);
+          console.log('🎯 App.tsx scrolling to:', sectionId, 'Element:', element);
           if (element) {
             const headerHeight = 64; // Fixed header height
             const offset = element.offsetTop - headerHeight;
             window.scrollTo({ top: offset, behavior: 'smooth' });
           }
-        }, 300);
+        }, 100); // Reduced timeout for faster response
       }
+    } else {
+      // For non-home pages, scroll to top
+      window.scrollTo(0, 0);
     }
-  }, [location]);
+  }, [location.pathname, location.state, location.hash]);
   
   return (
     <>
@@ -115,30 +121,17 @@ export default function App() {
       {/* ✅ Wrap lazy routes in Suspense */}
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Home Page - With NEW Carousels */}
+          {/* Home Page */}
           <Route
             path="/"
             element={
               <div className="pt-16">
-                {/* 1. Hero Section */}
                 <HeroSection />
-                
-                {/* 2. Featured Content (Your existing carousel) */}
                 <FeaturedContentSection />
-                
-                {/* 3. Destinations Carousel ✨ NEW */}
                 <DestinationsCarousel />
-                
-                {/* 4. Travel Tips Carousel ✨ NEW */}
                 <TravelTipsCarousel />
-                
-                {/* 5. German Phrases Section */}
                 <GermanPhrasesSection />
-                
-                {/* 6. Services Categories */}
                 <ServicesCategoriesSection selectedBase={selectedBase} />
-                
-                {/* 7. Contact Section */}
                 <ContactSection />
               </div>
             }
@@ -154,7 +147,6 @@ export default function App() {
             } 
           />
 
-          {/* Day Trip Detail Route */}
           <Route 
             path="/day-trips/:id" 
             element={

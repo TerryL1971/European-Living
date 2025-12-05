@@ -1,4 +1,4 @@
-// src/components/page/ServicesCategoriesSection.tsx
+// src/components/page/ServicesCategoriesSection.tsx - With CSS variables
 import {
   Stethoscope,
   Scale,
@@ -76,10 +76,8 @@ interface ServicesCategoriesSectionProps {
 }
 
 export default function ServicesCategoriesSection({ selectedBase }: ServicesCategoriesSectionProps) {
-  // ✅ Use React Query - data is cached and shared across all components!
   const { data: allBusinesses = [], isLoading } = useBusinesses();
 
-  // Calculate category counts from cached data
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     allBusinesses.forEach(business => {
@@ -90,16 +88,16 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
 
   if (isLoading) {
     return (
-      <section className="relative bg-white py-20">
+      <section id="english-services" className="relative bg-[var(--brand-bg-card)] py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[var(--brand-dark)]">Loading services...</p>
+          <p className="text-[var(--brand-text)]">Loading services...</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section id="services" className="relative bg-white py-20">
+    <section id="english-services" className="relative bg-[var(--brand-bg-card)] py-20">
       {/* Background Image */}
       <div className="absolute inset-0 bg-[url('https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/services.jpg')] bg-cover bg-center" />
       
@@ -112,10 +110,10 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-bg)] mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Trusted English-Speaking Services Helping Americans Feel at Home in Europe
           </h2>
-          <p className="text-lg text-[var(--brand-light)] font-bold opacity-80 max-w-3xl mx-auto">
+          <p className="text-lg text-white/90 font-medium max-w-3xl mx-auto">
             Find personally verified, English-speaking businesses across Europe that understand U.S. military, civilian, and contractors, and their families — offering trusted local support and peace of mind wherever you're stationed.
           </p>
         </div>
@@ -130,7 +128,7 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
               <Link
                 key={category.id}
                 to={count > 0 ? `/services/${category.id}?base=${selectedBase}` : "#"}
-                className={`bg-[var(--brand-bg)] rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-all ${
+                className={`bg-[var(--brand-bg-card)] rounded-xl p-6 border border-[var(--brand-border)] hover:shadow-xl transition-all hover:-translate-y-1 ${
                   count > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
                 }`}
               >
@@ -139,21 +137,21 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-[var(--brand-dark)]">{category.title}</h3>
-                    <p className="text-sm text-[var(--brand-dark)] opacity-60">
+                    <h3 className="text-xl font-bold text-[var(--brand-text)]">{category.title}</h3>
+                    <p className="text-sm text-[var(--brand-text-muted)]">
                       {count} {count === 1 ? "business" : "businesses"}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-[var(--brand-dark)] opacity-70 mb-4">{category.description}</p>
+                <p className="text-[var(--brand-text-muted)] mb-4">{category.description}</p>
 
                 {count > 0 ? (
-                  <div className="w-full bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-dark)] transition font-medium text-center">
+                  <div className="w-full bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-primary-light)] transition font-medium text-center">
                     View {count} {count === 1 ? "Business" : "Businesses"}
                   </div>
                 ) : (
-                  <div className="w-full bg-gray-300 text-gray-600 py-2 px-4 rounded-lg font-medium text-center">
+                  <div className="w-full bg-[var(--brand-bg-alt)] text-[var(--brand-text-muted)] py-2 px-4 rounded-lg font-medium text-center border border-[var(--brand-border)]">
                     Coming Soon
                   </div>
                 )}
@@ -163,25 +161,25 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
         </div>
 
         {/* CTA - List Your Business */}
-        <div className="bg-[var(--brand-dark)] rounded-xl p-8 mb-8 shadow-xl">
+        <div className="bg-[var(--brand-primary-dark)] rounded-xl p-8 mb-8 shadow-xl">
           <div className="text-center">
             <h3 className="text-2xl font-bold text-white mb-4">
               Do You Own a Business Near a US Military Base?
             </h3>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+            <p className="text-white/80 mb-6 max-w-2xl mx-auto">
               If your business serves American military families and you speak English, we'd love to
               feature you in our directory.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/submit-business"
-                className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-gold)] hover:text-[var(--brand-dark)] transition font-semibold"
+                className="inline-block bg-[var(--brand-secondary)] text-[var(--brand-text)] px-8 py-3 rounded-lg hover:bg-[var(--brand-secondary-light)] transition font-semibold"
               >
                 List Your Business
               </Link>
               <a
                 href="mailto:european.living.live@gmail.com?subject=Business Listing Inquiry"
-                className="inline-block bg-white text-[var(--brand-dark)] px-8 py-3 rounded-lg hover:bg-gray-100 transition font-semibold"
+                className="inline-block bg-white text-[var(--brand-text)] px-8 py-3 rounded-lg hover:bg-[var(--brand-bg-alt)] transition font-semibold"
               >
                 Email Us
               </a>
@@ -190,17 +188,17 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
         </div>
 
         {/* CTA - Services Guide */}
-        <div className="text-center bg-white rounded-xl p-8 shadow-lg">
-          <h3 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
+        <div className="text-center bg-[var(--brand-bg-card)] rounded-xl p-8 shadow-lg border border-[var(--brand-border)]">
+          <h3 className="text-2xl font-bold text-[var(--brand-text)] mb-4">
             Need More Help Finding Services?
           </h3>
-          <p className="text-[var(--brand-dark)] opacity-80 mb-6 max-w-2xl mx-auto">
+          <p className="text-[var(--brand-text-muted)] mb-6 max-w-2xl mx-auto">
             Check out our comprehensive guide with tips for finding English-speaking professionals
             throughout Germany.
           </p>
           <Link
             to="/articles/services"
-            className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold"
+            className="inline-block bg-[var(--brand-primary)] text-white px-8 py-3 rounded-lg hover:bg-[var(--brand-primary-light)] transition font-semibold"
           >
             Read Full Services Guide →
           </Link>
