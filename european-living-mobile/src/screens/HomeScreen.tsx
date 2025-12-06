@@ -1,4 +1,4 @@
-// src/screens/HomeScreen.tsx
+// src/screens/HomeScreen.tsx - Fixed version with styles inside component
 
 import React, { useEffect, useState } from 'react';
 import { 
@@ -16,6 +16,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../services/supabaseClient';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemeColors, spacing, borderRadius, typography, shadows } from '../theme/colors';
 
 interface FeaturedContent {
   id: string;
@@ -33,6 +34,18 @@ export default function HomeScreen({ navigation }: any) {
   const [featuredContent, setFeaturedContent] = useState<FeaturedContent[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  
+  // Get colors based on system theme (light/dark)
+  const colors = useThemeColors();
+  
+  // Debug: Log what we're getting
+  useEffect(() => {
+    console.log('🎨 Current theme colors:', {
+      background: colors.background.default,
+      text: colors.text.primary,
+      primary: colors.brand.primary,
+    });
+  }, [colors]);
 
   useEffect(() => {
     loadFeaturedContent();
@@ -71,13 +84,213 @@ export default function HomeScreen({ navigation }: any) {
     }
   };
 
+  // Create styles object AFTER colors hook has run
+  const styles = React.useMemo(() => ({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.default,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    hero: {
+      minHeight: 400,
+      position: 'relative' as const,
+      overflow: 'hidden' as const,
+    },
+    heroOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    heroContent: {
+      position: 'relative' as const,
+      zIndex: 1,
+      padding: spacing.lg,
+      paddingTop: 40,
+      paddingBottom: 50,
+      alignItems: 'center' as const,
+    },
+    logo: {
+      width: 120,
+      height: 120,
+      marginBottom: spacing.md,
+    },
+    heroTitle: {
+      fontSize: typography.fontSizes['4xl'],
+      fontWeight: typography.fontWeights.extrabold as any,
+      color: colors.text.light,
+      marginBottom: spacing.md,
+      textAlign: 'center' as const,
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 8,
+    },
+    heroTitleGold: {
+      color: colors.brand.gold,
+    },
+    heroSubtitle: {
+      fontSize: typography.fontSizes.base,
+      color: colors.text.light,
+      marginBottom: spacing.sm,
+      textAlign: 'center' as const,
+      lineHeight: typography.fontSizes.base * typography.lineHeights.relaxed,
+      paddingHorizontal: 10,
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 4,
+    },
+    heroSubtitle2: {
+      fontSize: typography.fontSizes.sm,
+      color: colors.text.light,
+      opacity: 0.95,
+      textAlign: 'center' as const,
+      lineHeight: typography.fontSizes.sm * typography.lineHeights.normal,
+      paddingHorizontal: 10,
+      textShadowColor: 'rgba(0, 0, 0, 0.8)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 4,
+    },
+    section: {
+      padding: spacing.md,
+    },
+    sectionTitle: {
+      fontSize: typography.fontSizes['2xl'],
+      fontWeight: typography.fontWeights.bold as any,
+      color: colors.brand.primaryDark,
+      marginBottom: spacing.md,
+    },
+    loader: {
+      marginTop: spacing.lg,
+    },
+    emptyText: {
+      textAlign: 'center' as const,
+      color: colors.text.muted,
+      fontSize: typography.fontSizes.base,
+      marginTop: spacing.lg,
+    },
+    card: {
+      backgroundColor: colors.background.card,
+      borderRadius: borderRadius.xl,
+      marginBottom: spacing.md,
+      overflow: 'hidden' as const,
+      borderWidth: 1,
+      borderColor: colors.ui.borderLight,
+      ...shadows.medium,
+    },
+    cardImage: {
+      width: '100%' as const,
+      height: 180,
+      backgroundColor: colors.background.alt,
+    },
+    cardImagePlaceholder: {
+      width: '100%' as const,
+      height: 180,
+      backgroundColor: colors.background.alt,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+    },
+    cardContent: {
+      padding: spacing.md,
+    },
+    cardTitle: {
+      fontSize: typography.fontSizes.lg,
+      fontWeight: typography.fontWeights.bold as any,
+      color: colors.text.primary,
+      marginBottom: spacing.sm,
+    },
+    cardDescription: {
+      fontSize: typography.fontSizes.sm,
+      color: colors.text.secondary,
+      lineHeight: typography.fontSizes.sm * typography.lineHeights.normal,
+      marginBottom: spacing.sm,
+    },
+    sponsored: {
+      fontSize: typography.fontSizes.xs,
+      color: colors.brand.gold,
+      marginBottom: spacing.sm,
+      fontWeight: typography.fontWeights.medium as any,
+    },
+    cardFooter: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'space-between' as const,
+    },
+    ctaText: {
+      fontSize: typography.fontSizes.sm,
+      fontWeight: typography.fontWeights.semibold as any,
+      color: colors.brand.primary,
+    },
+    quickActions: {
+      flexDirection: 'row' as const,
+      flexWrap: 'wrap' as const,
+      justifyContent: 'space-between' as const,
+    },
+    actionButton: {
+      width: '48%' as const,
+      backgroundColor: colors.background.card,
+      padding: spacing.lg,
+      borderRadius: borderRadius.xl,
+      alignItems: 'center' as const,
+      marginBottom: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.ui.borderLight,
+      ...shadows.small,
+    },
+    actionIconContainer: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.brand.primary,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      marginBottom: spacing.sm,
+    },
+    actionText: {
+      fontSize: typography.fontSizes.sm,
+      fontWeight: typography.fontWeights.semibold as any,
+      color: colors.text.primary,
+      textAlign: 'center' as const,
+    },
+    statsContainer: {
+      flexDirection: 'row' as const,
+      justifyContent: 'space-around' as const,
+      padding: spacing.md,
+      backgroundColor: colors.background.card,
+      marginHorizontal: spacing.md,
+      marginBottom: spacing.lg,
+      borderRadius: borderRadius.xl,
+      borderWidth: 1,
+      borderColor: colors.ui.borderLight,
+      ...shadows.medium,
+    },
+    stat: {
+      alignItems: 'center' as const,
+    },
+    statNumber: {
+      fontSize: typography.fontSizes['3xl'],
+      fontWeight: typography.fontWeights.extrabold as any,
+      color: colors.brand.gold,
+      marginBottom: spacing.xs,
+    },
+    statLabel: {
+      fontSize: typography.fontSizes.xs,
+      color: colors.text.muted,
+      textAlign: 'center' as const,
+    },
+  }), [colors]); // Recreate styles when colors change (light/dark mode switch)
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       <ScrollView 
         style={styles.scrollView}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8B9D7C']} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            colors={[colors.brand.primary]} 
+            tintColor={colors.brand.primary}
+          />
         }
       >
         {/* Hero Section with Logo and Background Image */}
@@ -86,11 +299,9 @@ export default function HomeScreen({ navigation }: any) {
           style={styles.hero}
           resizeMode="cover"
         >
-          {/* Dark overlay for readability */}
           <View style={styles.heroOverlay} />
           
           <View style={styles.heroContent}>
-            {/* Logo */}
             <Image 
               source={{ uri: 'https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/european-living-logo.png' }}
               style={styles.logo}
@@ -114,7 +325,7 @@ export default function HomeScreen({ navigation }: any) {
           <Text style={styles.sectionTitle}>✨ Featured This Week</Text>
           
           {loading ? (
-            <ActivityIndicator size="large" color="#8B9D7C" style={styles.loader} />
+            <ActivityIndicator size="large" color={colors.brand.primary} style={styles.loader} />
           ) : featuredContent.length > 0 ? (
             featuredContent.map((item) => (
               <TouchableOpacity 
@@ -131,7 +342,7 @@ export default function HomeScreen({ navigation }: any) {
                   />
                 ) : (
                   <View style={styles.cardImagePlaceholder}>
-                    <Ionicons name="image-outline" size={48} color="#ccc" />
+                    <Ionicons name="image-outline" size={48} color={colors.ui.border} />
                   </View>
                 )}
                 <View style={styles.cardContent}>
@@ -146,7 +357,7 @@ export default function HomeScreen({ navigation }: any) {
                   )}
                   <View style={styles.cardFooter}>
                     <Text style={styles.ctaText}>{item.cta_text}</Text>
-                    <Ionicons name="arrow-forward" size={20} color="#8B9D7C" />
+                    <Ionicons name="arrow-forward" size={20} color={colors.brand.primary} />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -165,7 +376,7 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate('Services')}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons name="business" size={28} color="#8B9D7C" />
+                <Ionicons name="business" size={28} color={colors.text.light} />
               </View>
               <Text style={styles.actionText}>Find Services</Text>
             </TouchableOpacity>
@@ -174,7 +385,7 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate('Day Trips')}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons name="map" size={28} color="#8B9D7C" />
+                <Ionicons name="map" size={28} color={colors.text.light} />
               </View>
               <Text style={styles.actionText}>Day Trips</Text>
             </TouchableOpacity>
@@ -183,7 +394,7 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate('Articles')}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons name="newspaper" size={28} color="#8B9D7C" />
+                <Ionicons name="newspaper" size={28} color={colors.text.light} />
               </View>
               <Text style={styles.actionText}>Read Articles</Text>
             </TouchableOpacity>
@@ -192,7 +403,7 @@ export default function HomeScreen({ navigation }: any) {
               onPress={() => navigation.navigate('Profile')}
             >
               <View style={styles.actionIconContainer}>
-                <Ionicons name="person" size={28} color="#8B9D7C" />
+                <Ionicons name="person" size={28} color={colors.text.light} />
               </View>
               <Text style={styles.actionText}>My Profile</Text>
             </TouchableOpacity>
@@ -215,208 +426,8 @@ export default function HomeScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* Bottom spacing */}
         <View style={{ height: 20 }} />
       </ScrollView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F3EF',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  hero: {
-    minHeight: 400,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  heroContent: {
-    position: 'relative',
-    zIndex: 1,
-    padding: 24,
-    paddingTop: 40,
-    paddingBottom: 50,
-    alignItems: 'center',
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 20,
-  },
-  heroTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 16,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
-  },
-  heroTitleGold: {
-    color: '#D4AF37',
-  },
-  heroSubtitle: {
-    fontSize: 16,
-    color: '#fff',
-    marginBottom: 12,
-    textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 10,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  heroSubtitle2: {
-    fontSize: 14,
-    color: '#F5F3EF',
-    opacity: 0.95,
-    textAlign: 'center',
-    lineHeight: 20,
-    paddingHorizontal: 10,
-    textShadowColor: 'rgba(0, 0, 0, 0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  section: {
-    padding: 16,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2C3E28',
-    marginBottom: 16,
-  },
-  loader: {
-    marginTop: 20,
-  },
-  emptyText: {
-    textAlign: 'center',
-    color: '#666',
-    fontSize: 16,
-    marginTop: 20,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardImage: {
-    width: '100%',
-    height: 180,
-    backgroundColor: '#e0e0e0',
-  },
-  cardImagePlaceholder: {
-    width: '100%',
-    height: 180,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cardContent: {
-    padding: 16,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2C3E28',
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  sponsored: {
-    fontSize: 12,
-    color: '#8B9D7C',
-    marginBottom: 8,
-  },
-  cardFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  ctaText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#8B9D7C',
-  },
-  quickActions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  actionButton: {
-    width: '48%',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  actionIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#F5F3EF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  actionText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2C3E28',
-    textAlign: 'center',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 16,
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  stat: {
-    alignItems: 'center',
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#D4AF37',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'center',
-  },
-});

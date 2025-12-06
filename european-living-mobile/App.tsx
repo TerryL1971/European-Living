@@ -1,16 +1,15 @@
 // App.tsx
-
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from 'react';
 import AppNavigator from './src/navigation/AppNavigator';
-import { BaseProvider } from './src/contexts/BaseContext'; // ⬅️ NEW IMPORT
+import { BaseProvider } from './src/contexts/BaseContext';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 export default function App() {
   return (
-    // The BaseProvider must wrap everything that needs access to the selectedBase state
-    <BaseProvider>
-      <SafeAreaProvider>
+    <ThemeProvider>
+      <BaseProvider>
         <AppNavigator />
-      </SafeAreaProvider>
-    </BaseProvider>
+      </BaseProvider>
+    </ThemeProvider>
   );
 }

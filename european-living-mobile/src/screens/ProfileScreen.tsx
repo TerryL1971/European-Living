@@ -1,5 +1,5 @@
 // src/screens/ProfileScreen.tsx
-// UPDATED: Fixed "Saved Articles" navigation and "Share App" functionality
+// UPDATED: Connected to ThemeContext for working dark mode toggle
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -13,12 +13,13 @@ import {
   Linking,
   Image,
   ImageBackground,
-  Share, // ✅ NEW: Import Share API
+  Share,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useBase } from '../contexts/BaseContext';
+import { useTheme } from '../contexts/ThemeContext'; // NEW
 
 const LANGUAGES = [
   { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -29,9 +30,9 @@ const LANGUAGES = [
 
 export default function ProfileScreen({ navigation }: any) {
   const { selectedBase, setSelectedBase, bases } = useBase();
+  const { colors, isDarkMode, toggleDarkMode } = useTheme(); // NEW - Get theme
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -42,16 +43,14 @@ export default function ProfileScreen({ navigation }: any) {
 
   const loadSettings = async () => {
     try {
-      const [notifications, darkMode, language, profile, background] = await Promise.all([
+      const [notifications, language, profile, background] = await Promise.all([
         AsyncStorage.getItem('notifications'),
-        AsyncStorage.getItem('darkMode'),
         AsyncStorage.getItem('language'),
         AsyncStorage.getItem('profileImage'),
         AsyncStorage.getItem('backgroundImage'),
       ]);
 
       if (notifications !== null) setNotificationsEnabled(notifications === 'true');
-      if (darkMode !== null) setDarkModeEnabled(darkMode === 'true');
       if (language) setSelectedLanguage(language);
       if (profile) setProfileImage(profile);
       if (background) setBackgroundImage(background);
@@ -74,8 +73,7 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   const handleDarkModeToggle = (value: boolean) => {
-    setDarkModeEnabled(value);
-    saveSettings('darkMode', value.toString());
+    toggleDarkMode(value); // NOW CONNECTED TO THEME
     Alert.alert(
       'Theme Updated',
       value ? 'Dark mode is now enabled!' : 'Dark mode is now disabled.',
@@ -232,7 +230,6 @@ export default function ProfileScreen({ navigation }: any) {
     Linking.openURL('mailto:contact@european-living.live?subject=App Feedback');
   };
 
-  // ✅ FIXED: Share App functionality
   const handleShare = async () => {
     try {
       await Share.share({
@@ -250,8 +247,72 @@ export default function ProfileScreen({ navigation }: any) {
     return lang ? `${lang.flag} ${lang.name}` : 'English';
   };
 
+  // Dynamic styles that use theme colors
+  const dynamicStyles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background.default,
+    },
+    section: {
+      backgroundColor: colors.background.card,
+      marginTop: 16,
+      paddingVertical: 8,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: colors.text.primary,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    settingItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.ui.borderLight,
+    },
+    settingText: {
+      fontSize: 16,
+      color: colors.text.primary,
+      marginLeft: 12,
+    },
+    settingValue: {
+      fontSize: 14,
+      color: colors.text.muted,
+    },
+    infoBox: {
+      flexDirection: 'row',
+      backgroundColor: colors.background.card,
+      margin: 16,
+      padding: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+      gap: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    infoText: {
+      flex: 1,
+      fontSize: 14,
+      color: colors.text.secondary,
+      lineHeight: 20,
+    },
+    socialTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: colors.text.primary,
+      marginBottom: 12,
+    },
+  });
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={dynamicStyles.container}>
       {/* Profile Header with Background */}
       <ImageBackground
         source={
@@ -319,166 +380,164 @@ export default function ProfileScreen({ navigation }: any) {
       </ImageBackground>
 
       {/* Base Location Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>📍 Your Base</Text>
-        <TouchableOpacity style={styles.settingItem} onPress={handleBaseSelection}>
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>📍 Your Base</Text>
+        <TouchableOpacity style={dynamicStyles.settingItem} onPress={handleBaseSelection}>
           <View style={styles.settingLeft}>
-            <Ionicons name="location" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Base Location</Text>
+            <Ionicons name="location" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Base Location</Text>
           </View>
           <View style={styles.settingRight}>
-            <Text style={styles.settingValue}>{selectedBase}</Text>
-            <Ionicons name="chevron-forward" size={20} color="#999" />
+            <Text style={dynamicStyles.settingValue}>{selectedBase}</Text>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Preferences Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>⚙️ Preferences</Text>
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>⚙️ Preferences</Text>
         
-        <View style={styles.settingItem}>
+        <View style={dynamicStyles.settingItem}>
           <View style={styles.settingLeft}>
-            <Ionicons name="notifications" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Notifications</Text>
+            <Ionicons name="notifications" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Notifications</Text>
           </View>
           <Switch
             value={notificationsEnabled}
             onValueChange={handleNotificationsToggle}
-            trackColor={{ false: '#e0e0e0', true: '#8B9D7C' }}
+            trackColor={{ false: colors.ui.border, true: colors.brand.primary }}
             thumbColor="#fff"
           />
         </View>
 
-        <View style={styles.settingItem}>
+        <View style={dynamicStyles.settingItem}>
           <View style={styles.settingLeft}>
-            <Ionicons name="moon" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Dark Mode</Text>
+            <Ionicons name="moon" size={24} color={colors.brand.gold} />
+            <Text style={dynamicStyles.settingText}>Dark Mode</Text>
           </View>
           <Switch
-            value={darkModeEnabled}
+            value={isDarkMode}
             onValueChange={handleDarkModeToggle}
-            trackColor={{ false: '#e0e0e0', true: '#8B9D7C' }}
+            trackColor={{ false: colors.ui.border, true: colors.brand.gold }}
             thumbColor="#fff"
           />
         </View>
 
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={handleLanguageSelection}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="language" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Language</Text>
+            <Ionicons name="language" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Language</Text>
           </View>
           <View style={styles.settingRight}>
-            <Text style={styles.settingValue}>{getCurrentLanguageName()}</Text>
-            <Ionicons name="chevron-forward" size={20} color="#999" />
+            <Text style={dynamicStyles.settingValue}>{getCurrentLanguageName()}</Text>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
           </View>
         </TouchableOpacity>
       </View>
 
       {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🚀 Quick Actions</Text>
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>🚀 Quick Actions</Text>
         
-        {/* ✅ FIXED: Navigate to SavedArticlesScreen */}
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={() => navigation.navigate('SavedArticles')}
         >
           <View style={styles.settingLeft}>
             <Ionicons name="heart" size={24} color="#FF6B6B" />
-            <Text style={styles.settingText}>Saved Articles</Text>
+            <Text style={dynamicStyles.settingText}>Saved Articles</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#999" />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
         </TouchableOpacity>
 
-        {/* ✅ FIXED: Share App functionality */}
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={handleShare}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="share-social" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Share App</Text>
+            <Ionicons name="share-social" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Share App</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#999" />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={handleFeedback}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="chatbubble" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Send Feedback</Text>
+            <Ionicons name="chatbubble" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Send Feedback</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#999" />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.muted} />
         </TouchableOpacity>
       </View>
 
       {/* About Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>ℹ️ About</Text>
+      <View style={dynamicStyles.section}>
+        <Text style={dynamicStyles.sectionTitle}>ℹ️ About</Text>
         
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={() => handleLinkPress('https://european-living.live')}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="globe" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Visit Website</Text>
+            <Ionicons name="globe" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Visit Website</Text>
           </View>
-          <Ionicons name="open-outline" size={20} color="#999" />
+          <Ionicons name="open-outline" size={20} color={colors.text.muted} />
         </TouchableOpacity>
 
         <TouchableOpacity 
-          style={styles.settingItem}
+          style={dynamicStyles.settingItem}
           onPress={() => handleLinkPress('https://european-living.live/privacy-policy')}
         >
           <View style={styles.settingLeft}>
-            <Ionicons name="shield-checkmark" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>Privacy Policy</Text>
+            <Ionicons name="shield-checkmark" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>Privacy Policy</Text>
           </View>
-          <Ionicons name="open-outline" size={20} color="#999" />
+          <Ionicons name="open-outline" size={20} color={colors.text.muted} />
         </TouchableOpacity>
 
-        <View style={styles.settingItem}>
+        <View style={dynamicStyles.settingItem}>
           <View style={styles.settingLeft}>
-            <Ionicons name="information-circle" size={24} color="#8B9D7C" />
-            <Text style={styles.settingText}>App Version</Text>
+            <Ionicons name="information-circle" size={24} color={colors.brand.primary} />
+            <Text style={dynamicStyles.settingText}>App Version</Text>
           </View>
-          <Text style={styles.settingValue}>1.0.0</Text>
+          <Text style={dynamicStyles.settingValue}>1.0.0</Text>
         </View>
       </View>
 
       {/* Info Box */}
-      <View style={styles.infoBox}>
-        <Ionicons name="heart" size={24} color="#D4AF37" />
-        <Text style={styles.infoText}>
+      <View style={dynamicStyles.infoBox}>
+        <Ionicons name="heart" size={24} color={colors.brand.gold} />
+        <Text style={dynamicStyles.infoText}>
           Built by Americans who've lived in Germany for over 10 years, helping thousands of military families explore Europe.
         </Text>
       </View>
 
       {/* Social Links */}
       <View style={styles.socialContainer}>
-        <Text style={styles.socialTitle}>Connect With Us</Text>
+        <Text style={dynamicStyles.socialTitle}>Connect With Us</Text>
         <View style={styles.socialButtons}>
           <TouchableOpacity 
-            style={styles.socialButton}
+            style={[styles.socialButton, { backgroundColor: colors.brand.primary }]}
             onPress={() => handleLinkPress('https://facebook.com/europeanliving')}
           >
             <Ionicons name="logo-facebook" size={24} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.socialButton}
+            style={[styles.socialButton, { backgroundColor: colors.brand.primary }]}
             onPress={() => handleLinkPress('https://instagram.com/europeanliving')}
           >
             <Ionicons name="logo-instagram" size={24} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity 
-            style={styles.socialButton}
+            style={[styles.socialButton, { backgroundColor: colors.brand.primary }]}
             onPress={() => handleLinkPress('https://twitter.com/europeanliving')}
           >
             <Ionicons name="logo-twitter" size={24} color="#fff" />
@@ -491,12 +550,8 @@ export default function ProfileScreen({ navigation }: any) {
   );
 }
 
-// Styles remain exactly the same
+// Static styles (don't change with theme)
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F3EF',
-  },
   header: {
     padding: 24,
     paddingTop: 40,
@@ -504,11 +559,11 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   headerBackground: {
-    backgroundColor: '#8B9D7C',
+    backgroundColor: '#0284C7',
   },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(139, 157, 124, 0.45)',
+    backgroundColor: 'rgba(2, 132, 199, 0.45)',
   },
   editBackgroundButton: {
     position: 'absolute',
@@ -541,7 +596,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#8B9D7C',
+    backgroundColor: '#0284C7',
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -563,76 +618,20 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     zIndex: 2,
   },
-  section: {
-    backgroundColor: '#fff',
-    marginTop: 16,
-    paddingVertical: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2C3E28',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
   settingLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-  },
-  settingText: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 12,
   },
   settingRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
-  settingValue: {
-    fontSize: 14,
-    color: '#999',
-  },
-  infoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-  },
   socialContainer: {
     alignItems: 'center',
     marginTop: 16,
     paddingHorizontal: 16,
-  },
-  socialTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2C3E28',
-    marginBottom: 12,
   },
   socialButtons: {
     flexDirection: 'row',
@@ -642,7 +641,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#8B9D7C',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
