@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>European Living</title>
+    <meta name="description" content="Your guide to living in Europe" />
 
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="apple-touch-icon" href="/favicon.png" sizes="32x32" />
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#9da586" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="EuroLiving" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/EL_Logo.png" />
     <link rel="mask-icon" href="/favicon.svg" color="#9da586" />
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-6RPDS8PFEB"></script>
@@ -16,15 +29,29 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-6RPDS8PFEB');
     </script>
-    <script type="module" crossorigin src="/assets/index-Dxj1fGjv.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+              console.log('✅ SW registered:', registration.scope);
+            })
+            .catch((error) => {
+              console.log('❌ SW registration failed:', error);
+            });
+        });
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/index-DZJv6E8y.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/vendor-react-vjDAwYPo.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-markdown-CsK2p4zB.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-query-DBXCnbMX.js">
-    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-Gn-reG0e.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DNBXhKMe.css">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-DZV3H93S.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-D033Finw.css">
   </head>
   <body>
     <div id="root"></div>
