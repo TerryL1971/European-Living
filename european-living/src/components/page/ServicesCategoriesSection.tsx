@@ -80,10 +80,6 @@ const PENDING_BASE_ID = 'default-app-id';
 export default function ServicesCategoriesSection({ selectedBase }: ServicesCategoriesSectionProps) {
   // Determine if a valid base has been selected
   const isBaseSelected = selectedBase && selectedBase !== PENDING_BASE_ID;
-
-  console.log('🔍 selectedBase value:', selectedBase);
-  console.log('🔍 isBaseSelected:', isBaseSelected);
-  console.log('🔍 PENDING_BASE_ID:', PENDING_BASE_ID);
   
   // The hook is called, but we assume it might use the selectedBase internally for filtering
   // If the hook assumes filtering happens via context/global state, calling it here is fine.

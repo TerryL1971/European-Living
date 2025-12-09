@@ -1,4 +1,4 @@
-// src/components/ServicesDirectory.tsx
+// src/components/ServicesDirectory.tsx - Fixed useBusinesses call
 
 import { useState, useMemo } from 'react';
 import { Search, Star, MapPin, Phone, Globe, Filter, Shield } from 'lucide-react';
@@ -34,10 +34,17 @@ export default function ServicesDirectory() {
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
-  // ✅ Use React Query hook - automatically cached!
-  const { data: services = [], isLoading, error, refetch } = useBusinesses({
-    baseId: selectedBase === 'all' ? undefined : selectedBase,
-  });
+  // ✅ Fixed: useBusinesses takes no arguments
+  const { data: allBusinesses = [], isLoading, error, refetch } = useBusinesses();
+
+  // Filter by base manually
+  const services = useMemo(() => {
+    if (!selectedBase || selectedBase === 'all') return allBusinesses;
+    
+    return allBusinesses.filter(business => 
+      business.basesServed?.includes(selectedBase)
+    );
+  }, [allBusinesses, selectedBase]);
 
   const filteredServices = useMemo(() => {
     const filtered = filterServices(services, {
@@ -63,7 +70,6 @@ export default function ServicesDirectory() {
 
   const ServiceCard = ({ service }: { service: Business }) => (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-200">
-      {/* Business Image */}
       <BusinessImage
         imageUrl={service?.imageUrl}
         category={service?.category}

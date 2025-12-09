@@ -49,11 +49,6 @@ export default function ServiceCategoryPage() {
     );
   }, [allBusinesses, categoryId, selectedBase]);
 
-  // Handle back button - scroll to services section
-  const handleBackClick = () => {
-    navigate('/', { state: { scrollTo: 'english-services' } });
-  };
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
@@ -121,7 +116,7 @@ export default function ServiceCategoryPage() {
       <div className="py-12 px-4"> 
         <div className="max-w-7xl mx-auto">
           <button
-            onClick={handleBackClick}
+            onClick={() => navigate("/", { state: { scrollTo: "services" } })}
             className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium mt-8"
           >
             <ArrowLeft className="w-4 h-4" />
