@@ -1,4 +1,3 @@
-// src/components/page/ServicesCategoriesSection.tsx - With CSS variables
 import {
   Stethoscope,
   Scale,
@@ -75,27 +74,76 @@ interface ServicesCategoriesSectionProps {
   selectedBase: string;
 }
 
+// Define the placeholder value used before a base is selected
+const PENDING_BASE_ID = 'default-app-id';
+
 export default function ServicesCategoriesSection({ selectedBase }: ServicesCategoriesSectionProps) {
+  // Determine if a valid base has been selected
+  const isBaseSelected = selectedBase && selectedBase !== PENDING_BASE_ID;
+
+  console.log('🔍 selectedBase value:', selectedBase);
+  console.log('🔍 isBaseSelected:', isBaseSelected);
+  console.log('🔍 PENDING_BASE_ID:', PENDING_BASE_ID);
+  
+  // The hook is called, but we assume it might use the selectedBase internally for filtering
+  // If the hook assumes filtering happens via context/global state, calling it here is fine.
   const { data: allBusinesses = [], isLoading } = useBusinesses();
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     allBusinesses.forEach(business => {
-      counts[business.category] = (counts[business.category] || 0) + 1;
+      // Ensure the business has a category field and count it
+      if (business.category) {
+        counts[business.category] = (counts[business.category] || 0) + 1;
+      }
     });
     return counts;
   }, [allBusinesses]);
 
+  // --- Conditional Render Logic ---
+  
+  // 1. Loading State
   if (isLoading) {
     return (
-      <section id="english-services" className="relative bg-[var(--brand-bg-card)] py-20">
+      <section className="relative bg-[var(--brand-bg-card)] py-20">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[var(--brand-text)]">Loading services...</p>
+          <p className="text-[var(--brand-text)]">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--brand-gold)] mx-auto mb-4" />
+            Loading trusted services and business counts...
+          </p>
         </div>
       </section>
     );
   }
 
+  // 2. Base Selection Pending State (The fix for the original issue)
+  if (!isBaseSelected) {
+    return (
+      <section id="english-services" className="relative bg-[var(--brand-bg-card)] py-20">
+        {/* Background Image/Overlay - Kept for consistency */}
+        <div className="absolute inset-0 bg-[url('https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/services.jpg')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40" />
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-16 rounded-xl bg-black/40 shadow-2xl">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Services Awaiting Base Selection
+          </h2>
+          <p className="text-lg text-white/90 font-medium max-w-3xl mx-auto mb-8">
+            Please select your primary military base to view locally verified, English-speaking businesses tailored to your area.
+          </p>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("openBaseSelectionModal"))}
+            className="inline-block bg-[var(--brand-secondary)] text-[var(--brand-text)] px-8 py-3 rounded-lg hover:bg-[var(--brand-secondary-light)] transition font-semibold text-lg"
+          >
+            Select Your Base
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  // 3. Main Content Render (Base Selected)
   return (
     <section id="english-services" className="relative bg-[var(--brand-bg-card)] py-20">
       {/* Background Image */}
@@ -128,12 +176,15 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
               <Link
                 key={category.id}
                 to={count > 0 ? `/services/${category.id}?base=${selectedBase}` : "#"}
-                className={`bg-[var(--brand-bg-card)] rounded-xl p-6 border border-[var(--brand-border)] hover:shadow-xl transition-all hover:-translate-y-1 ${
-                  count > 0 ? "cursor-pointer" : "cursor-not-allowed opacity-75"
+                // Use a different style for 'Coming Soon' to show it's disabled
+                className={`bg-[var(--brand-bg-card)] rounded-xl p-6 border border-[var(--brand-border)] transition-all ${
+                  count > 0 
+                    ? "hover:shadow-xl hover:-translate-y-1 cursor-pointer" 
+                    : "opacity-60 cursor-not-allowed pointer-events-none"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-[var(--brand-primary)] p-3 rounded-lg">
+                  <div className={`p-3 rounded-lg ${count > 0 ? 'bg-[var(--brand-primary)]' : 'bg-[var(--brand-gray)]/50'}`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -159,7 +210,7 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
             );
           })}
         </div>
-
+        
         {/* CTA - List Your Business */}
         <div className="bg-[var(--brand-primary-dark)] rounded-xl p-8 mb-8 shadow-xl">
           <div className="text-center">

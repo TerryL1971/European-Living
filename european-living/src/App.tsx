@@ -1,24 +1,19 @@
-// src/App.tsx - Fixed scroll handling
+// src/App.tsx - Complete and Fixed Router
 
 import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
-import { useBase } from "./contexts/BaseContext";
 import { trackPageView } from './utils/analytics';
 
 // ✅ Eagerly load components needed immediately
 import Header from "./components/page/Header";
-import HeroSection from "./components/page/HeroSection";
-import FeaturedContentSection from './components/FeaturedContentSection';
-import DestinationsCarousel from './components/DestinationsCarousel';
-import TravelTipsCarousel from './components/TravelTipsCarousel';
-import GermanPhrasesSection from "./components/page/TravelPhrasesSection";
-import ServicesCategoriesSection from "./components/page/ServicesCategoriesSection";
-import ContactSection from "./components/page/ContactSection";
 import Footer from "./components/page/Footer";
 import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
 import LoadingSpinner from './components/LoadingSpinner';
+
+// ✅ Import the new HomePage component
+import HomePage from "./pages/HomePage"; 
 
 // ✅ Lazy load components that aren't needed immediately
 const ArticlePage = lazy(() => import('./pages/articles/ArticlePage'));
@@ -34,7 +29,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
 const DayTripDetailPage = lazy(() => import('./pages/DayTripDetailPage'));
 
-// Reading Progress Bar Component
+// Reading Progress Bar Component (No Change)
 const ReadingProgress = () => {
   const [scroll, setScroll] = useState(0);
 
@@ -63,7 +58,7 @@ const ReadingProgress = () => {
   );
 };
 
-// Loading fallback for lazy routes
+// Loading fallback for lazy routes (No Change)
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
     <LoadingSpinner size="lg" message="Loading page..." />
@@ -71,7 +66,6 @@ const PageLoader = () => (
 );
 
 export default function App() {
-  const { selectedBase } = useBase();
   const location = useLocation();
 
   // Track page views on route change
@@ -79,37 +73,14 @@ export default function App() {
     trackPageView(location.pathname + location.search, document.title);
   }, [location]);
 
-  // Handle hash navigation and location.state scrolling on homepage
+  // IMPORTANT: This useEffect ONLY handles scrolling to the top for non-home pages.
+  // The home page scroll-to-section logic is now safely inside HomePage.tsx.
   useEffect(() => {
-    if (location.pathname === '/') {
-      let sectionId = null;
-
-      if (location.state?.scrollTo) {
-        sectionId = location.state.scrollTo;
-        // Clear the state after reading it
-        window.history.replaceState({}, document.title);
-      } 
-      else if (location.hash) {
-        sectionId = location.hash.substring(1);
-      }
-
-      if (sectionId) {
-        // Wait for components to render
-        setTimeout(() => {
-          const element = document.getElementById(sectionId);
-          console.log('🎯 App.tsx scrolling to:', sectionId, 'Element:', element);
-          if (element) {
-            const headerHeight = 64; // Fixed header height
-            const offset = element.offsetTop - headerHeight;
-            window.scrollTo({ top: offset, behavior: 'smooth' });
-          }
-        }, 100); // Reduced timeout for faster response
-      }
-    } else {
-      // For non-home pages, scroll to top
-      window.scrollTo(0, 0);
+    // If we navigate away from the home page, scroll to the top of the new page.
+    if (location.pathname !== '/') {
+        window.scrollTo(0, 0);
     }
-  }, [location.pathname, location.state, location.hash]);
+  }, [location.pathname]);
   
   return (
     <>
@@ -121,21 +92,8 @@ export default function App() {
       {/* ✅ Wrap lazy routes in Suspense */}
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Home Page */}
-          <Route
-            path="/"
-            element={
-              <div className="pt-16">
-                <HeroSection />
-                <FeaturedContentSection />
-                <DestinationsCarousel />
-                <TravelTipsCarousel />
-                <GermanPhrasesSection />
-                <ServicesCategoriesSection selectedBase={selectedBase} />
-                <ContactSection />
-              </div>
-            }
-          />
+          {/* Home Page: The scrolling is handled internally by HomePage.tsx */}
+          <Route path="/" element={<HomePage />} />
 
           {/* Day Trips Routes */}
           <Route 

@@ -16,7 +16,8 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { supabase } from '../services/supabaseClient';
 import { Ionicons } from '@expo/vector-icons';
-import { useThemeColors, spacing, borderRadius, typography, shadows } from '../theme/colors';
+import { useThemeColors } from '../contexts/ThemeContext';
+import { spacing, borderRadius, typography, shadows } from '../theme/colors';
 
 interface FeaturedContent {
   id: string;

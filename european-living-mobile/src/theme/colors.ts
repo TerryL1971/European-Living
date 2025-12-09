@@ -1,6 +1,4 @@
-// src/theme/colors.ts - Simplified version for debugging
-
-import { useColorScheme } from 'react-native';
+// src/theme/colors.ts - Simplified version
 
 // Light mode colors
 export const lightColors = {
@@ -63,16 +61,6 @@ export const darkColors = {
     borderLight: '#475569',
   },
 };
-
-// Hook to get current theme colors
-export function useThemeColors() {
-  const colorScheme = useColorScheme();
-  
-  // Debug log
-  console.log('🌓 Color scheme detected:', colorScheme);
-  
-  return colorScheme === 'dark' ? darkColors : lightColors;
-}
 
 // Default export for backward compatibility
 export const colors = lightColors;

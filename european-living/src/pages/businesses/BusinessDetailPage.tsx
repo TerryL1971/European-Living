@@ -25,6 +25,9 @@ export default function BusinessDetailPage() {
           fetchBusinessById(id),
           fetchReviews(id),
         ]);
+        console.log('Business ID:', id);
+        console.log('Business data:', bizData);
+        console.log('Reviews:', reviewData);
         setBusiness(bizData);
         setReviews(reviewData);
       } catch (error) {

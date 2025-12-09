@@ -120,7 +120,7 @@ export default function TravelPhrasesSection() {
   // Error state
   if (error) {
     return (
-      <section id="german-phrases" className="py-16 bg-[var(--brand-bg-alt)]">
+      <section className="py-16 bg-[var(--brand-bg-alt)]">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
             <Card className="p-8 bg-[var(--brand-bg-card)] border border-[var(--brand-border)]">
@@ -142,7 +142,7 @@ export default function TravelPhrasesSection() {
   }
 
   return (
-    <section id="german-phrases" className="py-16 bg-[var(--brand-bg-alt)]">
+    <section className="py-16 bg-[var(--brand-bg-alt)]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4 text-[var(--brand-text)]">

@@ -1,6 +1,4 @@
-// src/screens/ServicesScreen.tsx
-// UPDATED: Added TouchableOpacity wrapper on card to navigate to detail
-
+// src/screens/ServicesScreen.tsx - Full with Dark Mode
 import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
@@ -17,6 +15,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../services/supabaseClient';
 import { useBase } from '../contexts/BaseContext';
+import { useThemeColors } from '../contexts/ThemeContext';
 
 interface Business {
   id: string;
@@ -55,6 +54,7 @@ const baseIdMap: Record<string, string> = {
 };
 
 export default function ServicesScreen({ navigation }: any) {
+  const colors = useThemeColors();
   const { selectedBase: contextBaseName } = useBase();
 
   const selectedBaseId = useMemo(() => {
@@ -129,97 +129,89 @@ export default function ServicesScreen({ navigation }: any) {
   };
 
   const openPhone = (phone: string, e: any) => {
-    e.stopPropagation(); // Prevent card tap
+    e.stopPropagation();
     Linking.openURL(`tel:${phone}`);
   };
 
   const openWebsite = (url: string, e: any) => {
-    e.stopPropagation(); // Prevent card tap
+    e.stopPropagation();
     Linking.openURL(url);
   };
 
-  // ✅ NEW: Navigate to detail screen
   const navigateToDetail = (business: Business) => {
     navigation.navigate('ServiceDetail', { businessId: business.id });
   };
 
   const renderBusinessCard = ({ item }: { item: Business }) => (
     <TouchableOpacity 
-      style={styles.card}
+      style={[styles.card, { backgroundColor: colors.background.card, borderColor: colors.ui.borderLight }]}
       onPress={() => navigateToDetail(item)}
       activeOpacity={0.7}
     >
-      {/* Image */}
       {item.image_url ? (
-        <Image source={{ uri: item.image_url }} style={styles.cardImage} resizeMode="cover" />
+        <Image source={{ uri: item.image_url }} style={[styles.cardImage, { backgroundColor: colors.background.alt }]} resizeMode="cover" />
       ) : (
-        <View style={[styles.cardImage, styles.placeholderImage]}>
-          <Ionicons name="business" size={48} color="#ccc" />
+        <View style={[styles.cardImage, styles.placeholderImage, { backgroundColor: colors.background.alt }]}>
+          <Ionicons name="business" size={48} color={colors.ui.border} />
         </View>
       )}
 
-      {/* Badges */}
       <View style={styles.badges}>
         {item.featured && (
           <View style={styles.featuredBadge}>
-            <Ionicons name="star" size={12} color="#D4AF37" />
-            <Text style={styles.badgeText}>Featured</Text>
+            <Ionicons name="star" size={12} color={colors.brand.gold} />
+            <Text style={[styles.badgeText, { color: colors.brand.gold }]}>Featured</Text>
           </View>
         )}
         {item.verified && (
-          <View style={styles.verifiedBadge}>
+          <View style={[styles.verifiedBadge, { backgroundColor: colors.brand.primary }]}>
             <Ionicons name="checkmark-circle" size={12} color="#fff" />
             <Text style={styles.badgeTextWhite}>Verified</Text>
           </View>
         )}
       </View>
 
-      {/* Content */}
       <View style={styles.cardContent}>
-        <Text style={styles.businessName} numberOfLines={2}>
+        <Text style={[styles.businessName, { color: colors.text.primary }]} numberOfLines={2}>
           {item.name}
         </Text>
 
-        {/* Location */}
         <View style={styles.infoRow}>
-          <Ionicons name="location" size={14} color="#8B9D7C" />
-          <Text style={styles.infoText} numberOfLines={1}>
+          <Ionicons name="location" size={14} color={colors.brand.primary} />
+          <Text style={[styles.infoText, { color: colors.text.muted }]} numberOfLines={1}>
             {item.location}
           </Text>
         </View>
 
-        {/* Description */}
         {item.description && (
-          <Text style={styles.description} numberOfLines={3}>
+          <Text style={[styles.description, { color: colors.text.secondary }]} numberOfLines={3}>
             {item.description}
           </Text>
         )}
 
-        {/* English Fluency */}
         {item.english_fluency && (
-          <View style={styles.englishBadge}>
-            <Text style={styles.englishText}>
+          <View style={[styles.englishBadge, { backgroundColor: colors.background.alt }]}>
+            <Text style={[styles.englishText, { color: colors.text.primary }]}>
               🗣️ {item.english_fluency === 'fluent' ? 'Fluent English' : 'English Spoken'}
             </Text>
           </View>
         )}
 
-        {/* Action Buttons */}
-        <View style={styles.actions}>
+        <View style={[styles.actions, { borderTopColor: colors.ui.borderLight }]}>
           {item.phone && (
             <TouchableOpacity
-              style={styles.actionBtn}
+              style={[styles.actionBtn, { backgroundColor: colors.background.alt }]}
               onPress={(e) => openPhone(item.phone!, e)}
             >
-              <Ionicons name="call" size={16} color="#8B9D7C" />
+              <Ionicons name="call" size={16} color={colors.brand.primary} />
             </TouchableOpacity>
           )}
           {item.website && (
             <TouchableOpacity
-              style={styles.actionBtn}
+              style={[styles.actionBtn, { backgroundColor: colors.background.alt }]}
               onPress={(e) => openWebsite(item.website!, e)}
             >
-              <Ionicons name="globe" size={16} color="#8B9D7C" />
+              <Ionicons name="globe" size={16} color={colors.brand.primary} />
             </TouchableOpacity>
           )}
         </View>
@@ -228,28 +220,26 @@ export default function ServicesScreen({ navigation }: any) {
   );
 
   return (
-    <View style={styles.container}>
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#666" />
+    <View style={[styles.container, { backgroundColor: colors.background.default }]}>
+      <View style={[styles.searchContainer, { backgroundColor: colors.background.card, borderBottomColor: colors.ui.borderLight }]}>
+        <View style={[styles.searchBar, { backgroundColor: colors.background.alt }]}>
+          <Ionicons name="search" size={20} color={colors.text.muted} />
           <TextInput
-            style={styles.searchInput}
+            style={[styles.searchInput, { color: colors.text.primary }]}
             placeholder="Search businesses..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.text.muted}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color="#666" />
+              <Ionicons name="close-circle" size={20} color={colors.text.muted} />
             </TouchableOpacity>
           )}
         </View>
       </View>
 
-      {/* Category Filter */}
-      <View style={styles.categoriesContainer}>
+      <View style={[styles.categoriesContainer, { backgroundColor: colors.background.card, borderBottomColor: colors.ui.borderLight }]}>
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -259,19 +249,21 @@ export default function ServicesScreen({ navigation }: any) {
             <TouchableOpacity
               style={[
                 styles.categoryBtn,
-                selectedCategory === item.id && styles.categoryBtnActive,
+                { backgroundColor: colors.background.alt, borderColor: colors.ui.border },
+                selectedCategory === item.id && { backgroundColor: colors.brand.primary, borderColor: colors.brand.primary },
               ]}
               onPress={() => setSelectedCategory(item.id)}
             >
               <Ionicons
                 name={item.icon as any}
                 size={18}
-                color={selectedCategory === item.id ? '#fff' : '#8B9D7C'}
+                color={selectedCategory === item.id ? '#fff' : colors.brand.primary}
               />
               <Text
                 style={[
                   styles.categoryText,
-                  selectedCategory === item.id && styles.categoryTextActive,
+                  { color: colors.brand.primary },
+                  selectedCategory === item.id && { color: '#fff' },
                 ]}
               >
                 {item.name}
@@ -282,17 +274,15 @@ export default function ServicesScreen({ navigation }: any) {
         />
       </View>
 
-      {/* Results Count */}
-      <View style={styles.resultsBar}>
-        <Text style={styles.resultsText}>
+      <View style={[styles.resultsBar, { backgroundColor: colors.background.card, borderBottomColor: colors.ui.borderLight }]}>
+        <Text style={[styles.resultsText, { color: colors.text.muted }]}>
           {filteredBusinesses.length} service{filteredBusinesses.length !== 1 ? 's' : ''} found
           {selectedBaseId !== 'all' && ` near ${contextBaseName}`} 
         </Text>
       </View>
 
-      {/* Business List */}
       {loading ? (
-        <ActivityIndicator size="large" color="#8B9D7C" style={styles.loader} />
+        <ActivityIndicator size="large" color={colors.brand.primary} style={styles.loader} />
       ) : (
         <FlatList
           data={filteredBusinesses}
@@ -302,13 +292,18 @@ export default function ServicesScreen({ navigation }: any) {
           numColumns={2}
           columnWrapperStyle={styles.row}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8B9D7C']} />
+            <RefreshControl 
+              refreshing={refreshing} 
+              onRefresh={onRefresh} 
+              colors={[colors.brand.primary]}
+              tintColor={colors.brand.primary}
+            />
           }
           ListEmptyComponent={
             <View style={styles.empty}>
-              <Ionicons name="business-outline" size={64} color="#ccc" />
-              <Text style={styles.emptyText}>No services found</Text>
-              <Text style={styles.emptySubtext}>
+              <Ionicons name="business-outline" size={64} color={colors.ui.border} />
+              <Text style={[styles.emptyText, { color: colors.text.muted }]}>No services found</Text>
+              <Text style={[styles.emptySubtext, { color: colors.text.muted }]}>
                 {selectedBaseId !== 'all' 
                   ? `No services available near ${contextBaseName}. Try adjusting your filters.`
                   : 'Try adjusting your search or filters'
@@ -323,209 +318,37 @@ export default function ServicesScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F3EF',
-  },
-  searchContainer: {
-    padding: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  searchInput: {
-    flex: 1,
-    marginLeft: 8,
-    fontSize: 16,
-    color: '#333',
-  },
-  categoriesContainer: {
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingVertical: 8,
-  },
-  categoriesList: {
-    paddingHorizontal: 12,
-  },
-  categoryBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginRight: 8,
-    borderRadius: 20,
-    backgroundColor: '#f5f5f5',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  categoryBtnActive: {
-    backgroundColor: '#8B9D7C',
-    borderColor: '#8B9D7C',
-  },
-  categoryText: {
-    marginLeft: 6,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#8B9D7C',
-  },
-  categoryTextActive: {
-    color: '#fff',
-  },
-  resultsBar: {
-    padding: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  resultsText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  loader: {
-    marginTop: 40,
-  },
-  list: {
-    padding: 8,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
-  card: {
-    width: '48%',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  cardImage: {
-    width: '100%',
-    height: 120,
-    backgroundColor: '#f0f0f0',
-  },
-  placeholderImage: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  badges: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-  },
-  featuredBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.95)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 4,
-  },
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#8B9D7C',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#D4AF37',
-    marginLeft: 4,
-  },
-  badgeTextWhite: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#fff',
-    marginLeft: 4,
-  },
-  cardContent: {
-    padding: 12,
-  },
-  businessName: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#2C3E28',
-    marginBottom: 6,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  infoText: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 4,
-    flex: 1,
-  },
-  description: {
-    fontSize: 12,
-    color: '#666',
-    lineHeight: 16,
-    marginBottom: 8,
-  },
-  englishBadge: {
-    backgroundColor: '#E8F5E9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  englishText: {
-    fontSize: 10,
-    color: '#2C3E28',
-    fontWeight: '600',
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 8,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    paddingTop: 8,
-  },
-  actionBtn: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: '#f5f5f5',
-  },
-  empty: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: 20,
-  },
-  emptyText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#666',
-    marginTop: 16,
-    textAlign: 'center',
-  },
-  emptySubtext: {
-    fontSize: 14,
-    color: '#999',
-    marginTop: 8,
-    textAlign: 'center',
-  },
+  container: { flex: 1 },
+  searchContainer: { padding: 12, borderBottomWidth: 1 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10 },
+  searchInput: { flex: 1, marginLeft: 8, fontSize: 16 },
+  categoriesContainer: { borderBottomWidth: 1, paddingVertical: 8 },
+  categoriesList: { paddingHorizontal: 12 },
+  categoryBtn: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8, marginRight: 8, borderRadius: 20, borderWidth: 1 },
+  categoryText: { marginLeft: 6, fontSize: 14, fontWeight: '600' },
+  resultsBar: { padding: 12, borderBottomWidth: 1 },
+  resultsText: { fontSize: 14 },
+  loader: { marginTop: 40 },
+  list: { padding: 8 },
+  row: { justifyContent: 'space-between' },
+  card: { width: '48%', borderRadius: 12, marginBottom: 12, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3, borderWidth: 1 },
+  cardImage: { width: '100%', height: 120 },
+  placeholderImage: { justifyContent: 'center', alignItems: 'center' },
+  badges: { position: 'absolute', top: 8, right: 8, flexDirection: 'column', alignItems: 'flex-end' },
+  featuredBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.95)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, marginBottom: 4 },
+  verifiedBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
+  badgeText: { fontSize: 10, fontWeight: '600', marginLeft: 4 },
+  badgeTextWhite: { fontSize: 10, fontWeight: '600', color: '#fff', marginLeft: 4 },
+  cardContent: { padding: 12 },
+  businessName: { fontSize: 15, fontWeight: 'bold', marginBottom: 6 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  infoText: { fontSize: 12, marginLeft: 4, flex: 1 },
+  description: { fontSize: 12, lineHeight: 16, marginBottom: 8 },
+  englishBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12, alignSelf: 'flex-start', marginBottom: 8 },
+  englishText: { fontSize: 10, fontWeight: '600' },
+  actions: { flexDirection: 'row', gap: 8, borderTopWidth: 1, paddingTop: 8 },
+  actionBtn: { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 8 },
+  empty: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, paddingHorizontal: 20 },
+  emptyText: { fontSize: 18, fontWeight: '600', marginTop: 16, textAlign: 'center' },
+  emptySubtext: { fontSize: 14, marginTop: 8, textAlign: 'center' },
 });
