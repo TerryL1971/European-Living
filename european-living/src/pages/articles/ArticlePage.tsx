@@ -61,7 +61,7 @@ const getBackButtonConfig = (category: string | null): BackButtonConfig => {
     case 'City Guides':
       return { 
         text: '← Back to Destinations', 
-        path: '/destinations' 
+        path: '/#destinations' 
       };
     case 'Travel Tips':
     case 'Travel Tips & Essentials':

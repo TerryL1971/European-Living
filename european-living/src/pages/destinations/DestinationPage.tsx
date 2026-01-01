@@ -7,7 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
-import { Navigation, Hotel, Mail } from "lucide-react";
+import { Navigation, Hotel, Mail, ArrowLeft } from "lucide-react";
 import { getArticles } from "../../services/articleService";
 import type { Article } from "../../services/articleService";
 import TableOfContents from "../../components/TableOfContents";
@@ -100,11 +100,16 @@ export default function DestinationPage() {
     <div className="min-h-screen bg-[var(--brand-bg)]">
       <div className="max-w-7xl mx-auto px-4 py-8 pt-16">
         <button
-          onClick={() => navigate(-1)}
-          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline mb-6 block font-medium"
+          type="button"
+          onClick={() => navigate("/", { state: { scrollTo: "destinations" } })}
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-3 block font-medium"
         >
+          <ArrowLeft className="w-4 h-4" />
           ← Back to Destinations
         </button>
+
+
+
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
