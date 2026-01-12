@@ -134,7 +134,7 @@ export default function DestinationPage() {
               </div>
 
               {/* Action Buttons Bar */}
-              <div className="bg-[var(--brand-bg)] rounded-lg p-4 mb-6">
+              <div className="bg-gradient-to-br from-sky-50 to-amber-50 border border-sky-200 rounded-lg p-4 mb-6 shadow-sm">
                 <h3 className="text-sm font-semibold text-[var(--brand-dark)] mb-3">
                   Plan Your Visit
                 </h3>
@@ -143,7 +143,7 @@ export default function DestinationPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 bg-[var(--brand-primary)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-dark)] transition font-semibold text-center flex items-center justify-center gap-2"
+                    className="flex-1 bg-[var(--brand-primary)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-primary-dark)] transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                   >
                     <Navigation className="w-5 h-5" />
                     Get Directions
@@ -152,14 +152,14 @@ export default function DestinationPage() {
                     href={hotelsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-4 py-3 rounded-lg hover:bg-yellow-400 transition font-semibold text-center flex items-center justify-center gap-2"
+                    className="flex-1 bg-[var(--brand-gold)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-amber)] transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                   >
                     <Hotel className="w-5 h-5" />
                     Find Hotels
                   </a>
                   <a
                     href="mailto:european.living.live@gmail.com?subject=Help with Trip Planning"
-                    className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2"
+                    className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                   >
                     <Mail className="w-5 h-5" />
                     Contact for Questions
