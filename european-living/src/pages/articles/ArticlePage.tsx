@@ -1,12 +1,10 @@
 // src/pages/articles/ArticlePage.tsx
 
-// src/pages/articles/ArticlePage.tsx
-
 import { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
 import ReactMarkdown, { Components } from 'react-markdown'; 
-import { Clock, Calendar, Tag, ArrowLeft } from 'lucide-react';
+import { Clock, Calendar, Tag, ArrowLeft, Navigation, Hotel, Mail } from 'lucide-react';
 import remarkGfm from 'remark-gfm'; 
 import { HTMLProps } from 'react';
 import TableOfContents from '../../components/TableOfContents';
@@ -167,6 +165,12 @@ export default function ArticlePage() {
   // Get category-aware back button configuration
   const backConfig = getBackButtonConfig(article.category ?? null);
 
+  // Generate URLs for action buttons (for City Guides only)
+  const isCityGuide = article.category === 'City Guides';
+  const destinationName = article.destination_name || article.title;
+  const directionsUrl = `https://www.google.com/maps/search/${encodeURIComponent(destinationName)}`;
+  const hotelsUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destinationName)}`;
+
   return (
     <div className="min-h-screen bg-[var(--brand-light)]">
       {/* Header */}
@@ -245,9 +249,47 @@ export default function ArticlePage() {
         </div>
       </div>
 
+      {/* Action Buttons - Only for City Guides - TOP PLACEMENT */}
+      {isCityGuide && (
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="bg-gradient-to-br from-sky-50 to-amber-50 border border-sky-200 rounded-lg p-4 shadow-sm">
+            <h3 className="text-sm font-semibold text-[var(--brand-dark)] mb-3">
+              Plan Your Visit to {destinationName}
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-[var(--brand-primary)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-primary-dark)] transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <Navigation className="w-5 h-5" />
+                Get Directions
+              </a>
+              <a
+                href={hotelsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 bg-[var(--brand-gold)] text-white px-4 py-3 rounded-lg hover:bg-[var(--brand-amber)] transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <Hotel className="w-5 h-5" />
+                Find Hotels
+              </a>
+              <a
+                href="mailto:european.living.live@gmail.com?subject=Help with Trip Planning"
+                className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <Mail className="w-5 h-5" />
+                Contact for Questions
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Featured Image */}
       {article.featured_image_url && (
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 pb-8">
           <img
             src={article.featured_image_url}
             alt={article.title}
@@ -267,7 +309,6 @@ export default function ArticlePage() {
           {/* Article Content */}
           <article className="flex-1 min-w-0">
             <div className="bg-white rounded-lg shadow-md p-8">
-              {/* Note: The prose styles in your CSS control the default link color (prose-a) */}
               <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
                 <ReactMarkdown
                   components={components} 
@@ -305,7 +346,6 @@ export default function ArticlePage() {
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-left"
               >
                 {relatedArticle.category && (
-                  // COLOR CHANGE: bg-blue-100 -> bg-[var(--muted)] | text-blue-800 -> text-[var(--primary)]
                   <span className="inline-block bg-[var(--muted)] text-[var(--primary)] text-xs px-2 py-1 rounded mb-2">
                     {relatedArticle.category}
                   </span>
