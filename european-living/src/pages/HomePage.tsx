@@ -1,4 +1,4 @@
-// src/pages/HomePage.tsx
+// src/pages/HomePage.tsx - UPDATED with Email Signup
 
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -12,6 +12,7 @@ import TravelTipsCarousel from '../components/TravelTipsCarousel';
 import GermanPhrasesSection from "../components/page/TravelPhrasesSection";
 import ServicesCategoriesSection from "../components/page/ServicesCategoriesSection";
 import ContactSection from "../components/page/ContactSection";
+import { EmailSignupHomepage } from "../components/EmailSignup";
 
 // --- Helper function for clean scrolling ---
 const performScroll = (sectionId: string) => {
@@ -84,6 +85,11 @@ export default function HomePage() {
 
       <div id="featured-content">
         <FeaturedContentSection />
+      </div>
+      
+      {/* ✅ EMAIL SIGNUP */}
+      <div id="email-signup">
+        <EmailSignupHomepage />
       </div>
       
       <div id="travel-tips">

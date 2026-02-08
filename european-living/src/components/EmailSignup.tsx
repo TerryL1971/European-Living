@@ -1,5 +1,4 @@
-// src/components/EmailSignup.tsx
-
+// src/components/EmailSignup.tsx - NO PRESSURE VERSION
 import { useState } from 'react'
 import { Mail, Check, Loader } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -26,18 +25,17 @@ export default function EmailSignup({
     setError('')
 
     try {
-      // Using Formspree (same as your contact form)
-      // TODO: Replace with your actual Formspree endpoint for newsletter
-      const response = await fetch('https://formspree.io/f/mnngzrdn', {
+      // Using your Newsletter Signups form
+      const response = await fetch('https://formspree.io/f/xeeloovy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email,
-          _subject: 'New European Living Newsletter Signup',
+          _subject: 'New European Living - Stay Updated Signup',
           signup_source: variant,
-          message: `Newsletter signup from ${variant} section`
+          message: `New signup from ${variant} section - Stay Updated list`
         })
       })
 
@@ -103,7 +101,7 @@ export default function EmailSignup({
               🎉 You're In!
             </h3>
             <p className="opacity-90">
-              Check your email for your FREE "Weekend Trip Guide" from your base.
+              We'll keep you posted when we add new destinations and guides. Thanks for joining us!
             </p>
           </motion.div>
         ) : (
@@ -122,10 +120,10 @@ export default function EmailSignup({
               </div>
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-2">
-                  {title || '🗺️ Get Weekend Trip Ideas'}
+                  {title || '🗺️ Stay in the Loop'}
                 </h3>
                 <p className="text-lg opacity-90">
-                  {description || 'Join military families getting FREE destination guides, travel tips, and phrase lessons every Thursday.'}
+                  {description || 'Get updates when we add new destinations, travel guides, and tips. No spam - just the good stuff when we have something worth sharing.'}
                 </p>
               </div>
             </div>
@@ -153,7 +151,7 @@ export default function EmailSignup({
                     </>
                   ) : (
                     <>
-                      Join Free
+                      Stay Updated
                       <Mail className="w-5 h-5" />
                     </>
                   )}
@@ -172,7 +170,7 @@ export default function EmailSignup({
                   ✓ Unsubscribe anytime
                 </span>
                 <span className="flex items-center gap-1">
-                  ✓ Military-focused content
+                  ✓ Updates only when we have something new
                 </span>
               </div>
             </form>
@@ -199,8 +197,8 @@ export function EmailSignupArticle() {
     <div className="my-12">
       <EmailSignup 
         variant="article"
-        title="Loved this article?"
-        description="Get more travel tips, destination guides, and essential phrases delivered to your inbox every Thursday."
+        title="Want More Like This?"
+        description="Get updates when we publish new travel guides and destination tips. No weekly emails - just updates when we have something worth sharing."
       />
     </div>
   )
@@ -211,7 +209,7 @@ export function EmailSignupFooter() {
     <EmailSignup 
       variant="footer"
       title="Stay Connected"
-      description="Weekly travel inspiration for military families in Europe."
+      description="Occasional updates on new destinations and travel tips for military families in Europe."
     />
   )
 }
