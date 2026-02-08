@@ -1,4 +1,4 @@
-import{s as o}from"./index-D4s4J2op.js";async function c(e){try{let r=o.from("day_trips").select(`
+import{s as o}from"./index-M_i5zC5o.js";async function c(e){try{let r=o.from("day_trips").select(`
         id,
         base_id,
         base_name,
