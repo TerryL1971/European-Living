@@ -1,4 +1,4 @@
-// src/components/page/Header.tsx - FIXED MOBILE MENU
+// src/components/page/Header.tsx - FIXED SENTRY ERROR
 
 import { useState, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -49,6 +49,14 @@ export default function Header() {
     }
     setMobileMenuOpen(false);
   };
+
+  // Safe backdrop click handler
+  const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    // Prevent event from bubbling
+    e.stopPropagation();
+    // Close menu
+    setMobileMenuOpen(false);
+  }, []);
 
   /* -------------------------
      Render
@@ -163,10 +171,13 @@ export default function Header() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          {/* Backdrop */}
+          {/* Backdrop - FIXED with proper event handler */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={handleBackdropClick}
+            role="button"
+            tabIndex={-1}
+            aria-label="Close menu"
           />
 
           {/* Menu Panel */}
