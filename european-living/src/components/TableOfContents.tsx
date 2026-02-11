@@ -48,7 +48,6 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
         const base = slugify(text);
         id = base;
         let counter = 1;
-
         while (usedIds.has(id)) {
           id = `${base}-${counter++}`;
         }
