@@ -1,4 +1,4 @@
-// src/pages/articles/ArticlePage.tsx
+// src/pages/articles/ArticlePage.tsx - FIXED NAVIGATION
 
 import { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -98,6 +98,9 @@ export default function ArticlePage() {
       setArticle(null); 
       setRelatedArticles([]);
       
+      // ✅ FIX: Scroll to top when slug changes
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
       try {
         const data = await getArticleBySlug(slug);
         
@@ -127,7 +130,7 @@ export default function ArticlePage() {
     }
     
     loadArticle();
-  }, [slug]);
+  }, [slug]); // Re-run when slug changes
 
   if (loading) {
     return (
@@ -342,7 +345,10 @@ export default function ArticlePage() {
             {relatedArticles.map(relatedArticle => (
               <button
                 key={relatedArticle.id}
-                onClick={() => navigate(`/articles/${relatedArticle.slug}`)}
+                onClick={() => {
+                  // ✅ FIX: Navigate and scroll will happen in useEffect
+                  navigate(`/articles/${relatedArticle.slug}`);
+                }}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-left"
               >
                 {relatedArticle.category && (

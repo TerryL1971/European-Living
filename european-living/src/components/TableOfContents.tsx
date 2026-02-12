@@ -1,4 +1,4 @@
-// src/components/TableOfContents.tsx
+// src/components/TableOfContents.tsx - FIXED SCROLL
 
 import { useEffect, useState } from "react";
 
@@ -91,16 +91,20 @@ export default function TableOfContents({ content }: TableOfContentsProps) {
     return () => observer.disconnect();
   }, [toc]);
 
+  // ✅ FIX: Better scroll handling
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
 
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Get header height (accounting for fixed header)
+    const headerOffset = 80; // Adjust this if your header height is different
+    const elementPosition = el.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-    // account for sticky header
-    setTimeout(() => {
-      window.scrollBy({ top: -96, behavior: "smooth" });
-    }, 50);
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
   };
 
   if (toc.length === 0) return null;
