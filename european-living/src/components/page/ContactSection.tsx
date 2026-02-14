@@ -19,11 +19,11 @@ export default function ContactSection() {
         {/* Direct Contact Info */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-10">
           <a
-            href="mailto:european.living.live@gmail.com"
+            href="mailto:info@european-living.live.com"
             className="flex items-center gap-2 bg-[var(--brand-button)] text-[#f7f7ec] px-5 py-3 rounded-xl hover:bg-[#131312] transition"
           >
             <Mail size={20} />
-            european.living.live@gmail.com
+            info@european-living.live.com
           </a>
 
           <a
