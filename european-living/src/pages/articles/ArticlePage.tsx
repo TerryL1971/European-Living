@@ -1,6 +1,6 @@
-// src/pages/articles/ArticlePage.tsx - FIXED NAVIGATION
+// src/pages/articles/ArticlePage.tsx - FINAL FIX
 
-import { JSX, useEffect, useState } from 'react';
+import { JSX, useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getArticleBySlug, getRelatedArticles, Article } from '../../services/articleService';
 import ReactMarkdown, { Components } from 'react-markdown'; 
@@ -88,18 +88,21 @@ export default function ArticlePage() {
   const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // ✅ FIX: Track previous slug to know when it changes
+  const prevSlugRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     async function loadArticle() {
       if (!slug) return;
       
+      // ✅ FIX: Only scroll to top if slug actually changed (new article)
+      const isNewArticle = prevSlugRef.current && prevSlugRef.current !== slug;
+      
       setLoading(true);
       setError(null);
       setArticle(null); 
       setRelatedArticles([]);
-      
-      // ✅ FIX: Scroll to top when slug changes
-      window.scrollTo({ top: 0, behavior: 'smooth' });
       
       try {
         const data = await getArticleBySlug(slug);
@@ -120,17 +123,27 @@ export default function ArticlePage() {
         );
         setRelatedArticles(related);
         
+        // ✅ FIX: Scroll AFTER content is loaded, and only for new articles
+        if (isNewArticle) {
+          // Small delay to ensure content is rendered
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+          }, 100);
+        }
+        
       } catch (err: unknown) { 
         const castError = err as Error;
         console.error('Error loading article:', castError);
         setError('Failed to load article');
       } finally {
         setLoading(false);
+        // Update previous slug
+        prevSlugRef.current = slug;
       }
     }
     
     loadArticle();
-  }, [slug]); // Re-run when slug changes
+  }, [slug]);
 
   if (loading) {
     return (
@@ -279,7 +292,7 @@ export default function ArticlePage() {
                 Find Hotels
               </a>
               <a
-                href="mailto:info@european-living.live?subject=Help with Trip Planning"
+                href="mailto:european.living.live@gmail.com?subject=Help with Trip Planning"
                 className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 <Mail className="w-5 h-5" />
@@ -345,10 +358,7 @@ export default function ArticlePage() {
             {relatedArticles.map(relatedArticle => (
               <button
                 key={relatedArticle.id}
-                onClick={() => {
-                  // ✅ FIX: Navigate and scroll will happen in useEffect
-                  navigate(`/articles/${relatedArticle.slug}`);
-                }}
+                onClick={() => navigate(`/articles/${relatedArticle.slug}`)}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-left"
               >
                 {relatedArticle.category && (
