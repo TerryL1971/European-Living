@@ -225,7 +225,7 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
                 List Your Business
               </Link>
               <a
-                href="mailto:info@european-living.live.com?subject=Business Listing Inquiry"
+                href="mailto:info@european-living.live?subject=Business Listing Inquiry"
                 className="inline-block bg-white text-[var(--brand-text)] px-8 py-3 rounded-lg hover:bg-[var(--brand-bg-alt)] transition font-semibold"
               >
                 Email Us
