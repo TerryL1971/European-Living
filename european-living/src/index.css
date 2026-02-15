@@ -313,6 +313,7 @@ body {
   background: var(--brand-blue);
   color: white;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -325,6 +326,7 @@ body {
   background: var(--brand-gold);
   color: white;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .btn-gold:hover {
@@ -400,4 +402,30 @@ body {
 
 .animate-slideUp {
   animation: slideUp 0.5s ease-out;
+}
+
+/* ========================================
+   CURSOR POINTER FOR ALL INTERACTIVE ELEMENTS
+   ======================================== */
+
+/* Ensure all buttons and links show pointer cursor */
+button,
+a,
+[role="button"],
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+/* Specific interactive elements */
+button:not(:disabled),
+a:not([disabled]),
+[onClick]:not([disabled]) {
+  cursor: pointer !important;
+}
+
+/* Disabled state should show not-allowed */
+button:disabled,
+a[disabled],
+[disabled] {
+  cursor: not-allowed !important;
 }

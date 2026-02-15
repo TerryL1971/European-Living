@@ -6,9 +6,9 @@ import { Link, LinkProps } from "react-router-dom";
 
 type ButtonVariants = "default" | "outline" | "ghost";
 
-// Base styles shared across all buttons
+// Base styles shared across all buttons - ADDED cursor-pointer
 const baseStyles =
-  "inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  "inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-pointer";
 
 const variants: Record<ButtonVariants, string> = {
   default:

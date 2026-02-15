@@ -88,6 +88,13 @@ export default function ArticlePage() {
   
   const prevSlugRef = useRef<string | undefined>(undefined);
 
+  // Debug logging
+  console.log('=== ArticlePage Component Rendered ===');
+  console.log('Current slug:', slug);
+  console.log('Article loaded:', article?.title);
+  console.log('Related articles count:', relatedArticles.length);
+  console.log('Navigate function available:', !!navigate);
+
   useEffect(() => {
     async function loadArticle() {
       if (!slug) return;
@@ -335,11 +342,22 @@ export default function ArticlePage() {
             {relatedArticles.map((relatedArticle) => (
               <div
                 key={relatedArticle.id}
-                onClick={() => {
-                  console.log('Navigating to:', relatedArticle.slug);
-                  navigate(`/articles/${relatedArticle.slug}`);
+                onClick={(e) => {
+                  console.log('=== RELATED ARTICLE CLICKED ===');
+                  console.log('Event:', e);
+                  console.log('Article:', relatedArticle);
+                  console.log('Slug:', relatedArticle.slug);
+                  console.log('About to navigate to:', `/articles/${relatedArticle.slug}`);
+                  
+                  try {
+                    navigate(`/articles/${relatedArticle.slug}`);
+                    console.log('Navigate called successfully');
+                  } catch (error) {
+                    console.error('Navigate failed:', error);
+                  }
                 }}
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
+                style={{ cursor: 'pointer' }}
               >
                 {relatedArticle.category && (
                   <span className="inline-block bg-[var(--muted)] text-[var(--primary)] text-xs px-2 py-1 rounded mb-2">
@@ -368,8 +386,20 @@ export default function ArticlePage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8 border-t text-center">
         <button
-          onClick={() => navigate('/')}
+          onClick={(e) => {
+            console.log('=== EUROPEAN LIVING LINK CLICKED ===');
+            console.log('Event:', e);
+            console.log('About to navigate to homepage');
+            
+            try {
+              navigate('/');
+              console.log('Navigate to homepage called successfully');
+            } catch (error) {
+              console.error('Navigate to homepage failed:', error);
+            }
+          }}
           className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline font-semibold text-lg"
+          style={{ cursor: 'pointer' }}
         >
           European Living
         </button>
