@@ -1,4 +1,4 @@
-// src/pages/articles/ArticlePage.tsx - FINAL FIX
+// src/pages/articles/ArticlePage.tsx
 
 import { JSX, useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -9,7 +9,6 @@ import remarkGfm from 'remark-gfm';
 import { HTMLProps } from 'react';
 import TableOfContents from '../../components/TableOfContents';
 
-// --- Custom Image Renderer Component ---
 type MarkdownImageProps = HTMLProps<HTMLImageElement>;
 
 const MarkdownImage = ({ alt, src, ...props }: MarkdownImageProps) => {
@@ -26,7 +25,6 @@ const MarkdownImage = ({ alt, src, ...props }: MarkdownImageProps) => {
   );
 };
 
-// --- Custom Heading Renderer with IDs (matching TableOfContents logic) ---
 const createHeadingComponent = (level: number) => {
   const HeadingComponent = ({ children }: { children?: React.ReactNode }) => {
     const text = String(children);
@@ -48,7 +46,6 @@ const createHeadingComponent = (level: number) => {
   return HeadingComponent;
 };
 
-// --- Helper function for category-aware back button ---
 interface BackButtonConfig {
   text: string;
   path: string;
@@ -89,14 +86,12 @@ export default function ArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // ✅ FIX: Track previous slug to know when it changes
   const prevSlugRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     async function loadArticle() {
       if (!slug) return;
       
-      // ✅ FIX: Only scroll to top if slug actually changed (new article)
       const isNewArticle = prevSlugRef.current && prevSlugRef.current !== slug;
       
       setLoading(true);
@@ -123,9 +118,7 @@ export default function ArticlePage() {
         );
         setRelatedArticles(related);
         
-        // ✅ FIX: Scroll AFTER content is loaded, and only for new articles
         if (isNewArticle) {
-          // Small delay to ensure content is rendered
           setTimeout(() => {
             window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
           }, 100);
@@ -137,7 +130,6 @@ export default function ArticlePage() {
         setError('Failed to load article');
       } finally {
         setLoading(false);
-        // Update previous slug
         prevSlugRef.current = slug;
       }
     }
@@ -178,10 +170,8 @@ export default function ArticlePage() {
     h3: createHeadingComponent(3),
   };
 
-  // Get category-aware back button configuration
   const backConfig = getBackButtonConfig(article.category ?? null);
 
-  // Generate URLs for action buttons (for City Guides only)
   const isCityGuide = article.category === 'City Guides';
   const destinationName = article.destination_name || article.title;
   const directionsUrl = `https://www.google.com/maps/search/${encodeURIComponent(destinationName)}`;
@@ -189,30 +179,25 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen bg-[var(--brand-light)]">
-      {/* Header */}
       <div className="bg-[var(--brand-bg-alt)] border-b">
         <div className="max-w-7xl mx-auto px-4 mt-18 py6">
           
-          {/* Category Badge */}
           {article.category && (
             <span className="inline-block bg-[var(--brand-primary)] text-[var(--muted)] text-sm px-3 py-1 rounded-full mb-4">
               {article.category}
             </span>
           )}
           
-          {/* Title */}
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             {article.title}
           </h1>
           
-          {/* Subtitle */}
           {article.subtitle && (
             <p className="text-xl text-gray-600 mb-6">
               {article.subtitle}
             </p>
           )}
 
-          {/* Meta Information */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
             {article.author && (
               <span className="font-medium">By {article.author}</span>
@@ -241,7 +226,6 @@ export default function ArticlePage() {
             </span>
           </div>
           
-          {/* Tags */}
           {article.tags && article.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
               {article.tags.map(tag => (
@@ -255,17 +239,16 @@ export default function ArticlePage() {
               ))}
             </div>
           )}
-          {/* TOP BACK BUTTON - Category-aware */}
-        <button
-          onClick={() => navigate(backConfig.path)}
-          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-3 block font-medium"
-        >
-          {backConfig.text}
-        </button>
+          
+          <button
+            onClick={() => navigate(backConfig.path)}
+            className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline py-3 block font-medium"
+          >
+            {backConfig.text}
+          </button>
         </div>
       </div>
 
-      {/* Action Buttons - Only for City Guides - TOP PLACEMENT */}
       {isCityGuide && (
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="bg-gradient-to-br from-sky-50 to-amber-50 border border-sky-200 rounded-lg p-4 shadow-sm">
@@ -292,7 +275,7 @@ export default function ArticlePage() {
                 Find Hotels
               </a>
               <a
-                href="mailto:european.living.live@gmail.com?subject=Help with Trip Planning"
+                href="mailto:info@european-living.live?subject=Help with Trip Planning"
                 className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 <Mail className="w-5 h-5" />
@@ -303,7 +286,6 @@ export default function ArticlePage() {
         </div>
       )}
 
-      {/* Featured Image */}
       {article.featured_image_url && (
         <div className="max-w-7xl mx-auto px-4 pb-8">
           <img
@@ -314,15 +296,12 @@ export default function ArticlePage() {
         </div>
       )}
 
-      {/* Main Content with TOC */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex gap-8">
-          {/* Table of Contents - Desktop Sidebar */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <TableOfContents content={article.content} />
           </aside>
 
-          {/* Article Content */}
           <article className="flex-1 min-w-0">
             <div className="bg-white rounded-lg shadow-md p-8">
               <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-img:shadow-md">
@@ -338,7 +317,6 @@ export default function ArticlePage() {
         </div>
       </div>
 
-      {/* BOTTOM BACK BUTTON - Category-aware */}
       <div className="max-w-7xl mx-auto px-4 py-8 border-t">
         <button
           onClick={() => navigate(backConfig.path)}
@@ -348,18 +326,20 @@ export default function ArticlePage() {
         </button>
       </div>
 
-      {/* Related Articles */}
       {relatedArticles.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 py-12 border-t">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Related Articles
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {relatedArticles.map(relatedArticle => (
-              <button
+            {relatedArticles.map((relatedArticle) => (
+              <div
                 key={relatedArticle.id}
-                onClick={() => navigate(`/articles/${relatedArticle.slug}`)}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 text-left"
+                onClick={() => {
+                  console.log('Navigating to:', relatedArticle.slug);
+                  navigate(`/articles/${relatedArticle.slug}`);
+                }}
+                className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
               >
                 {relatedArticle.category && (
                   <span className="inline-block bg-[var(--muted)] text-[var(--primary)] text-xs px-2 py-1 rounded mb-2">
@@ -380,11 +360,23 @@ export default function ArticlePage() {
                     {relatedArticle.reading_time_minutes} min read
                   </div>
                 )}
-              </button>
+              </div>
             ))}
           </div>
         </div>
       )}
+
+      <div className="max-w-7xl mx-auto px-4 py-8 border-t text-center">
+        <button
+          onClick={() => navigate('/')}
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline font-semibold text-lg"
+        >
+          European Living
+        </button>
+        <p className="text-gray-600 text-sm mt-2">
+          Your Guide to Europe
+        </p>
+      </div>
     </div>
   );
 }
