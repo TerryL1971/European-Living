@@ -6,6 +6,22 @@ It removes the fear of exploring Europe by providing clear phrase translations, 
 
 The platform is built with **React + TypeScript + Vite**, styled with **Tailwind CSS**, and powered by **Supabase** for hosting, data, and storage.
 
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👤 Author
+
+**Terrell Lombardi**
+- Website: [european-living.live](https://european-living.live)
+- Email: info@european-living.live
+
+## 🙏 Acknowledgments
+
+- Built with React, TypeScript, and Vite
+- Hosted on GitHub Pages
+- Database: Supabase
+
 ---
 
 ## ✨ Features
