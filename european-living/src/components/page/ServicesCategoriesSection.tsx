@@ -34,7 +34,7 @@ const serviceCategories = [
   },
   {
     id: "shopping",
-    title: "Shopping",
+    title: "Shopping / Personal Services",
     icon: ShoppingBag,
     description: "Stores, malls, and beauty salons with English-speaking staff",
   },
