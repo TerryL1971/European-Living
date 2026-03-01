@@ -24,7 +24,7 @@ const serviceCategories = [
     id: "healthcare",
     title: "Healthcare",
     icon: Stethoscope,
-    description: "English-speaking doctors, dentists, and specialists near European US Bases",
+    description: "English-speaking doctors, dentists, veterinarians, and specialists near European US Bases",
   },
   {
     id: "restaurants",
@@ -36,7 +36,7 @@ const serviceCategories = [
     id: "shopping",
     title: "Shopping",
     icon: ShoppingBag,
-    description: "Stores and shops with English-speaking staff",
+    description: "Stores, malls, and beauty salons with English-speaking staff",
   },
   {
     id: "home-services",
