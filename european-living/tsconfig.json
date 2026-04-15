@@ -24,15 +24,11 @@
     "types": ["vite/client", "react", "react-dom", "node"],
 
     /* -------------------- Path Aliases -------------------- */
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
 
-  /* -------------------- Include -------------------- */
   "include": ["src", "vite.config.ts"],
-
-  /* -------------------- Exclude -------------------- */
   "exclude": ["node_modules", "dist"]
 }
