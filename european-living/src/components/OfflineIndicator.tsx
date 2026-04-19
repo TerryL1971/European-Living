@@ -1,34 +1,48 @@
 // src/components/OfflineIndicator.tsx
+// Shows an offline banner only after being offline for 3 continuous seconds.
+// Prevents false flashes on slow/throttled military base connections.
 
-import { WifiOff, Wifi } from 'lucide-react';
-import { useOfflineIndicator } from '@/hooks/useMobileOptimizations';
+import { useState, useEffect, useRef } from 'react';
 
 export default function OfflineIndicator() {
-  const { isOffline, showIndicator } = useOfflineIndicator();
+  const [isOffline, setIsOffline] = useState<boolean>(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  if (!showIndicator) return null;
+  useEffect(() => {
+    function handleOffline() {
+      // Only show the banner after 3 seconds of confirmed offline status
+      debounceRef.current = setTimeout(() => {
+        setIsOffline(true);
+      }, 3000);
+    }
+
+    function handleOnline() {
+      // Cancel pending offline timer if we reconnected quickly
+      clearTimeout(debounceRef.current);
+      setIsOffline(false);
+    }
+
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
+
+    return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
+      clearTimeout(debounceRef.current);
+    };
+  }, []);
+
+  if (!isOffline) return null;
 
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-slide-down">
-      <div
-        className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-lg ${
-          isOffline
-            ? 'bg-red-500 text-white'
-            : 'bg-green-500 text-white'
-        }`}
-      >
-        {isOffline ? (
-          <>
-            <WifiOff size={18} />
-            <span className="text-sm font-medium">You're offline</span>
-          </>
-        ) : (
-          <>
-            <Wifi size={18} />
-            <span className="text-sm font-medium">Back online</span>
-          </>
-        )}
-      </div>
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-amber-500 text-white
+                 text-sm text-center py-2 px-4 shadow-lg"
+    >
+      <span className="mr-2">⚠️</span>
+      You appear to be offline. Some content may not be available.
     </div>
   );
 }

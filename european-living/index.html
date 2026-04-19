@@ -4,61 +4,136 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>European Living</title>
-    <meta name="description" content="Your guide to living in Europe" />
+    <!-- ============================================================
+         PRIMARY META TAGS
+         These are the fallback tags before React/SEO.tsx hydrates.
+         SEO.tsx will override these per-page via JavaScript.
+    ============================================================ -->
+    <title>European Living | Resources for Americans in Europe</title>
+    <meta name="description" content="Find English-speaking services, housing, and community resources for US military families and Americans living in Europe. Verified businesses near major US bases in Germany." />
+    <meta name="keywords" content="US military Europe, American expats Germany, English services Germany, military housing Europe, PCS Germany, SOFA status, US bases Germany, Ramstein, Kaiserslautern, Stuttgart, Grafenwöhr" />
+    <meta name="author" content="European Living" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://european-living.live" />
 
-    <!-- PWA Meta Tags -->
+    <!-- ============================================================
+         OPEN GRAPH — Facebook, LinkedIn, WhatsApp previews
+         CRITICAL: Without these, Facebook ads show a blank link card.
+    ============================================================ -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="European Living" />
+    <meta property="og:title" content="European Living | Resources for Americans in Europe" />
+    <meta property="og:description" content="Find English-speaking services, housing, and community resources for US military families and Americans living in Europe. Verified businesses near major US bases in Germany." />
+    <meta property="og:image" content="https://european-living.live/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="European Living — Resources for Americans in Europe" />
+    <meta property="og:url" content="https://european-living.live" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ============================================================
+         TWITTER / X CARD
+    ============================================================ -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="European Living | Resources for Americans in Europe" />
+    <meta name="twitter:description" content="Find English-speaking services, housing, and community resources for US military families living in Europe." />
+    <meta name="twitter:image" content="https://european-living.live/og-image.jpg" />
+
+    <!-- ============================================================
+         PWA META TAGS
+    ============================================================ -->
     <meta name="theme-color" content="#9da586" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="EuroLiving" />
 
-    <!-- Icons -->
+    <!-- ============================================================
+         ICONS
+    ============================================================ -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/EL_Logo.png" />
     <link rel="mask-icon" href="/favicon.svg" color="#9da586" />
 
-    <!-- PWA Manifest -->
+    <!-- ============================================================
+         PWA MANIFEST
+    ============================================================ -->
     <link rel="manifest" href="/manifest.json" />
 
+    <!-- ============================================================
+         GITHUB PAGES SPA ROUTING FIX
+         When GitHub Pages serves the 404.html, it encodes the real
+         path into the query string. This script restores it so that
+         React Router sees the correct URL.
+         DO NOT REMOVE — this is required for all direct-URL navigation.
+    ============================================================ -->
     <script type="text/javascript">
       (function(l) {
-        if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
           }).join('?');
-          window.history.replaceState(null, null,
-              l.pathname.slice(0, -1) + decoded + l.hash
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
           );
         }
-      }(window.location))
+      }(window.location));
     </script>
 
-    <!-- Google tag (gtag.js) -->
+    <!-- ============================================================
+         GOOGLE ANALYTICS 4
+    ============================================================ -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-49Y2Z5J60D"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
-      gtag('config', 'G-49Y2Z5J60D');
+      gtag('config', 'G-49Y2Z5J60D', {
+        page_path: window.location.pathname,
+        anonymize_ip: true
+      });
     </script>
 
-    <!-- Service Worker Registration -->
+    <!-- ============================================================
+         SERVICE WORKER REGISTRATION
+    ============================================================ -->
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
+        window.addEventListener('load', function() {
           navigator.serviceWorker.register('/service-worker.js')
-            .then((registration) => {
-              console.log('✅ SW registered:', registration.scope);
+            .then(function(registration) {
+              console.log('SW registered:', registration.scope);
             })
-            .catch((error) => {
-              console.log('❌ SW registration failed:', error);
+            .catch(function(error) {
+              console.log('SW registration failed:', error);
             });
         });
       }
+    </script>
+
+    <!-- ============================================================
+         SCHEMA.ORG — Organization structured data
+         Helps Google understand what this site is about.
+    ============================================================ -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "European Living",
+      "url": "https://european-living.live",
+      "logo": "https://european-living.live/EL_Logo.png",
+      "description": "Resources, services, and community guides for US military families and American expats living in Europe.",
+      "areaServed": [
+        "Germany", "United Kingdom", "Italy", "Spain", "Europe"
+      ],
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "US military families and American expats in Europe"
+      }
+    }
     </script>
   </head>
   <body>
