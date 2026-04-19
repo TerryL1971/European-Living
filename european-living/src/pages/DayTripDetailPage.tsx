@@ -1,49 +1,72 @@
 // src/pages/DayTripDetailPage.tsx
+// Full UI preserved + timeout guard + error states + BreadcrumbSchema
 
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchDayTripById } from '../services/dayTripsService';
 import type { DayTrip } from '../services/dayTripsService';
-import SEO from '../components/SEO';
+import SEO, { BreadcrumbSchema } from '../components/SEO';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { MapPin, Navigation, Globe, Heart, Share2, Clock, DollarSign, Dumbbell, UtensilsCrossed, Ticket, ChevronDown, ChevronUp, ArrowLeft } from 'lucide-react';
+import {
+  MapPin, Navigation, Globe, Heart, Share2,
+  Clock, DollarSign, Dumbbell, UtensilsCrossed,
+  Ticket, ChevronDown, ChevronUp, ArrowLeft,
+} from 'lucide-react';
 
 export default function DayTripDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [dayTrip, setDayTrip] = useState<DayTrip | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const [dayTrip, setDayTrip]                         = useState<DayTrip | null>(null);
+  const [loading, setLoading]                         = useState(true);
+  const [timedOut, setTimedOut]                       = useState(false);
+  const [error, setError]                             = useState<string | null>(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved]                         = useState(false);
 
   useEffect(() => {
-  if (!id) {
-    setError('No trip ID provided');
-    setLoading(false);
-    return;
-  }
+    if (!id) {
+      navigate('/day-trips', { replace: true });
+      return;
+    }
 
-  async function loadDayTrip() {
     setLoading(true);
     setError(null);
-    try {
-      const data = await fetchDayTripById(id!);
-      setDayTrip(data);
-    } catch {
-      console.error('Error loading day trip');
-      setError('Failed to load day trip details.');
-    } finally {
-      setLoading(false);
-    }
-  }
+    setTimedOut(false);
 
-  loadDayTrip();
-}, [id]);
+    // Show a friendly message after 8s instead of an infinite spinner.
+    // Critical for military base connections which can be slow or throttled.
+    const timeoutId = setTimeout(() => {
+      setTimedOut(true);
+      setLoading(false);
+    }, 8000);
+
+    async function loadDayTrip() {
+      try {
+        const data = await fetchDayTripById(id!);
+        clearTimeout(timeoutId);
+        if (!data) {
+          setError('not-found');
+        } else {
+          setDayTrip(data);
+        }
+      } catch {
+        clearTimeout(timeoutId);
+        console.error('Error loading day trip');
+        setError('load-error');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDayTrip();
+    return () => clearTimeout(timeoutId);
+  }, [id, navigate]);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
 
   const handleGetDirections = () => {
     if (!dayTrip?.latitude || !dayTrip?.longitude) return;
-    
     const url = `https://www.google.com/maps/dir/?api=1&destination=${dayTrip.latitude},${dayTrip.longitude}`;
     window.open(url, '_blank');
   };
@@ -66,11 +89,12 @@ export default function DayTripDetailPage() {
         console.log('Share cancelled');
       }
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
       alert('Link copied to clipboard!');
     }
   };
+
+  // ── Loading ───────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
@@ -80,34 +104,111 @@ export default function DayTripDetailPage() {
     );
   }
 
-  if (error || !dayTrip) {
+  // ── Timeout ───────────────────────────────────────────────────────────────
+
+  if (timedOut) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--brand-bg)] pt-16 px-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--brand-bg)] pt-16 px-6 text-center">
+        <MapPin className="w-16 h-16 text-[var(--muted)] mb-4" />
+        <p className="text-xl font-semibold text-[var(--brand-dark)] mb-2">
+          Taking longer than expected…
+        </p>
+        <p className="text-[var(--muted-foreground)] mb-6">
+          Please check your connection and try again.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-lg hover:bg-opacity-90 transition font-semibold"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={() => navigate('/day-trips')}
+            className="px-6 py-3 border border-[var(--border)] text-[var(--brand-dark)] rounded-lg hover:bg-[var(--muted)] transition font-semibold"
+          >
+            All Day Trips
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Not found ─────────────────────────────────────────────────────────────
+
+  if (error === 'not-found' || (!loading && !dayTrip && error !== 'load-error')) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--brand-bg)] pt-16 px-6 text-center">
         <MapPin className="w-16 h-16 text-[var(--muted)] mb-4" />
         <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-2">Trip Not Found</h2>
-        <p className="text-[var(--muted-foreground)] mb-6">{error || 'Unable to load trip details'}</p>
+        <p className="text-[var(--muted-foreground)] mb-6">
+          This trip may have been removed or the link may be outdated.
+        </p>
         <button
           onClick={() => navigate('/day-trips')}
-          className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-lg hover:bg-opacity-90 transition"
+          className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-lg hover:bg-opacity-90 transition font-semibold"
         >
-          Back to Day Trips
+          Browse All Day Trips
         </button>
       </div>
     );
   }
 
-  const displayImage = dayTrip.hero_image_url || dayTrip.image_url;
+  // ── Load error ────────────────────────────────────────────────────────────
+
+  if (error === 'load-error') {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--brand-bg)] pt-16 px-6 text-center">
+        <MapPin className="w-16 h-16 text-[var(--muted)] mb-4" />
+        <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-2">Something Went Wrong</h2>
+        <p className="text-[var(--muted-foreground)] mb-6">
+          We couldn't load this day trip right now. Please try again.
+        </p>
+        <div className="flex gap-4">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-3 bg-[var(--brand-primary)] text-white rounded-lg hover:bg-opacity-90 transition font-semibold"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={() => navigate('/day-trips')}
+            className="px-6 py-3 border border-[var(--border)] text-[var(--brand-dark)] rounded-lg hover:bg-[var(--muted)] transition font-semibold"
+          >
+            All Day Trips
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // TypeScript guard — dayTrip is guaranteed non-null below this line
+  if (!dayTrip) return null;
+
+  const displayImage       = dayTrip.hero_image_url || dayTrip.image_url;
   const displayDescription = dayTrip.short_description || dayTrip.description;
+
+  // ── Success ───────────────────────────────────────────────────────────────
 
   return (
     <>
       <SEO
         title={`${dayTrip.name} - Day Trip from ${dayTrip.base_name}`}
         description={displayDescription}
-        keywords={`${dayTrip.name}, day trip, ${dayTrip.base_name}, ${dayTrip.best_for.join(', ')}`}
+        keywords={`${dayTrip.name}, day trip, ${dayTrip.base_name}, ${dayTrip.best_for?.join(', ')}`}
+        image={displayImage}
+        type="article"
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home',       url: '/' },
+          { name: 'Day Trips',  url: '/day-trips' },
+          { name: dayTrip.name, url: `/day-trips/${dayTrip.id}` },
+        ]}
       />
 
       <div className="min-h-screen bg-[var(--brand-bg)] pt-16">
+
         {/* Back Button */}
         <div className="max-w-7xl mx-auto px-6 py-4">
           <button
@@ -133,7 +234,6 @@ export default function DayTripDetailPage() {
             </div>
           )}
 
-          {/* Badges on Hero */}
           <div className="absolute top-6 left-6 flex gap-2">
             {dayTrip.featured && (
               <span className="px-4 py-2 bg-[var(--brand-gold)] text-[var(--brand-dark)] font-bold rounded-full text-sm flex items-center gap-2">
@@ -154,9 +254,10 @@ export default function DayTripDetailPage() {
           )}
         </div>
 
-        {/* Content */}
+        {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 py-12">
-          {/* Title and Basic Info */}
+
+          {/* Title & Info */}
           <div className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-[var(--brand-dark)] mb-4">
               {dayTrip.name}
@@ -211,7 +312,6 @@ export default function DayTripDetailPage() {
                 Get Directions
               </button>
             )}
-
             {dayTrip.official_website && (
               <button
                 onClick={handleOpenWebsite}
@@ -221,7 +321,6 @@ export default function DayTripDetailPage() {
                 Visit Website
               </button>
             )}
-
             <button
               onClick={() => setIsSaved(!isSaved)}
               className="flex items-center gap-2 px-6 py-3 bg-[var(--muted)] text-[var(--brand-dark)] rounded-lg hover:bg-opacity-80 transition font-semibold"
@@ -229,7 +328,6 @@ export default function DayTripDetailPage() {
               <Heart size={20} fill={isSaved ? 'currentColor' : 'none'} />
               {isSaved ? 'Saved' : 'Save'}
             </button>
-
             <button
               onClick={handleShare}
               className="flex items-center gap-2 px-6 py-3 bg-[var(--muted)] text-[var(--brand-dark)] rounded-lg hover:bg-opacity-80 transition font-semibold"
@@ -252,7 +350,6 @@ export default function DayTripDetailPage() {
                   </div>
                 </div>
               )}
-
               <div className="flex items-start gap-3">
                 <DollarSign className="w-5 h-5 text-[var(--brand-primary)] mt-1" />
                 <div>
@@ -260,7 +357,6 @@ export default function DayTripDetailPage() {
                   <p className="text-[var(--muted-foreground)]">{dayTrip.cost}</p>
                 </div>
               </div>
-
               <div className="flex items-start gap-3">
                 <Dumbbell className="w-5 h-5 text-[var(--brand-primary)] mt-1" />
                 <div>
@@ -268,7 +364,6 @@ export default function DayTripDetailPage() {
                   <p className="text-[var(--muted-foreground)]">{dayTrip.difficulty}</p>
                 </div>
               </div>
-
               {dayTrip.food_info && (
                 <div className="flex items-start gap-3">
                   <UtensilsCrossed className="w-5 h-5 text-[var(--brand-primary)] mt-1" />
@@ -278,7 +373,6 @@ export default function DayTripDetailPage() {
                   </div>
                 </div>
               )}
-
               {dayTrip.ticket_info && (
                 <div className="flex items-start gap-3">
                   <Ticket className="w-5 h-5 text-[var(--brand-primary)] mt-1" />
@@ -308,7 +402,7 @@ export default function DayTripDetailPage() {
             </div>
           )}
 
-          {/* Learn More Section */}
+          {/* Learn More */}
           {(dayTrip.full_description || dayTrip.what_to_see || dayTrip.local_tips || dayTrip.best_time_to_visit) && (
             <div className="bg-white rounded-lg shadow-md p-6 border border-[var(--border)]">
               <button
@@ -322,13 +416,10 @@ export default function DayTripDetailPage() {
               {showFullDescription && (
                 <div className="space-y-6">
                   {(dayTrip.full_description || dayTrip.description) && (
-                    <div>
-                      <p className="text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
-                        {dayTrip.full_description || dayTrip.description}
-                      </p>
-                    </div>
+                    <p className="text-[var(--muted-foreground)] leading-relaxed whitespace-pre-line">
+                      {dayTrip.full_description || dayTrip.description}
+                    </p>
                   )}
-
                   {dayTrip.what_to_see && (
                     <div>
                       <h3 className="text-xl font-bold text-[var(--brand-dark)] mb-3">What to See</h3>
@@ -337,7 +428,6 @@ export default function DayTripDetailPage() {
                       </p>
                     </div>
                   )}
-
                   {dayTrip.local_tips && (
                     <div>
                       <h3 className="text-xl font-bold text-[var(--brand-dark)] mb-3">Local Tips</h3>
@@ -346,7 +436,6 @@ export default function DayTripDetailPage() {
                       </p>
                     </div>
                   )}
-
                   {dayTrip.best_time_to_visit && (
                     <div>
                       <h3 className="text-xl font-bold text-[var(--brand-dark)] mb-3">Best Time to Visit</h3>
@@ -359,6 +448,7 @@ export default function DayTripDetailPage() {
               )}
             </div>
           )}
+
         </div>
       </div>
     </>

@@ -1,79 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Homepage -->
+
+  <!-- Home -->
   <url>
     <loc>https://european-living.live/</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-  
-  <!-- Services Directory -->
+
+  <!-- Day Trips -->
   <url>
-    <loc>https://european-living.live/services-directory</loc>
-    <lastmod>2025-01-15</lastmod>
+    <loc>https://european-living.live/day-trips</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
-  
-  <!-- Service Categories -->
+
+  <!-- Services Directory -->
   <url>
-    <loc>https://european-living.live/services/restaurants</loc>
+    <loc>https://european-living.live/services-directory</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
-  <url>
-    <loc>https://european-living.live/services/shopping</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/home-services</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/real-estate</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/legal</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/education</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/business</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/automotive</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://european-living.live/services/healthcare</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Submit Business -->
+
+  <!-- Submit a Business -->
   <url>
     <loc>https://european-living.live/submit-business</loc>
     <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://european-living.live/about</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  
+
   <!-- Privacy Policy -->
   <url>
     <loc>https://european-living.live/privacy-policy</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
+
+  <!--
+    NOTE: Dynamic routes (articles, businesses, day trips by ID, destinations)
+    should be added here programmatically. Consider using a build-time script
+    that queries Supabase and generates this file before each deployment.
+    
+    Example entries for dynamic content:
+    
+    <url>
+      <loc>https://european-living.live/articles/living-near-ramstein</loc>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>
+  -->
+
 </urlset>

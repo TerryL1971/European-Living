@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Block admin routes from indexing
+Disallow: /admin/
+Disallow: /admin/data-entry
+Disallow: /admin/featured-content
+
+# Sitemap location
 Sitemap: https://european-living.live/sitemap.xml
