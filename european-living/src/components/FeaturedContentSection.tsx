@@ -1,4 +1,6 @@
-// src/components/page/FeaturedContentSection.tsx
+// src/components/FeaturedContentSection.tsx
+// Updated: 4-item grid layout (2 col tablet, 4 col desktop)
+
 import { useState, useEffect } from 'react';
 import { useBase } from '../contexts/BaseContext';
 import { getFeaturedContent } from '../services/featuredContentService';
@@ -13,7 +15,6 @@ export default function FeaturedContentSection() {
   const loadFeaturedContent = async () => {
     setLoading(true);
     const items = await getFeaturedContent(selectedBase);
-    console.log('Loaded featured items:', items); // Debug log
     setFeaturedItems(items);
     setLoading(false);
   };
@@ -23,14 +24,12 @@ export default function FeaturedContentSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBase]);
 
-  // Don't render section if no featured content
-  if (!loading && featuredItems.length === 0) {
-    return null;
-  }
+  if (!loading && featuredItems.length === 0) return null;
 
   return (
     <section className="py-16 bg-gradient-to-b from-[var(--brand-bg)] to-[var(--brand-bg-alt)]">
       <div className="max-w-7xl mx-auto px-6">
+
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--brand-dark)] mb-4">
@@ -41,91 +40,117 @@ export default function FeaturedContentSection() {
           </p>
         </div>
 
-        {/* Loading State */}
+        {/* Loading skeletons — match 4-column layout */}
         {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-white rounded-xl p-6 shadow-lg animate-pulse">
-                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-40 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
                 <div className="h-4 bg-gray-200 rounded w-2/3"></div>
               </div>
             ))}
           </div>
         ) : (
-          /* Featured Content Cards */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          /*
+           * Grid logic:
+           *   1 item  → centered single card (max-w-sm)
+           *   2 items → 2 columns
+           *   3 items → 3 columns
+           *   4 items → 2 columns on tablet, 4 columns on desktop (27" screen = all in one row)
+           *
+           * We use a dynamic class based on count so odd numbers never orphan a card.
+           */
+          <div
+            className={`grid gap-5 ${
+              featuredItems.length === 1
+                ? 'grid-cols-1 max-w-sm mx-auto'
+                : featuredItems.length === 2
+                ? 'grid-cols-1 sm:grid-cols-2'
+                : featuredItems.length === 3
+                ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+            }`}
+          >
             {featuredItems.map((item) => (
               <a
                 key={item.id}
                 href={item.link_url || '#'}
                 target={item.link_url?.startsWith('http') ? '_blank' : '_self'}
                 rel={item.link_url?.startsWith('http') ? 'noopener noreferrer' : ''}
-                className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[var(--border)] hover:border-[var(--brand-primary)] transform hover:-translate-y-1"
+                className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-[var(--border)] hover:border-[var(--brand-primary)] transform hover:-translate-y-1 flex flex-col"
               >
                 {/* Image */}
                 {item.image_url ? (
-                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)]">
+                  <div className="relative h-40 overflow-hidden bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex-shrink-0">
                     <img
                       src={item.image_url}
                       alt={item.title}
-                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
                 ) : (
-                  <div className="h-48 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex items-center justify-center">
-                    <ExternalLink className="w-16 h-16 text-[var(--brand-light)] opacity-50" />
+                  <div className="h-40 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex items-center justify-center flex-shrink-0">
+                    <ExternalLink className="w-12 h-12 text-[var(--brand-light)] opacity-50" />
                   </div>
                 )}
 
-                {/* Content */}
-                <div className="p-6">
+                {/* Content — flex-grow so CTA always sits at bottom */}
+                <div className="p-5 flex flex-col flex-grow">
+                  {/* Badges row */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {item.type && (
+                      <span className="px-2 py-0.5 bg-[var(--muted)] rounded text-xs capitalize text-[var(--muted-foreground)]">
+                        {item.type}
+                      </span>
+                    )}
+                    {item.is_sponsored && item.sponsor_name && (
+                      <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">
+                        Sponsored · {item.sponsor_name}
+                      </span>
+                    )}
+                  </div>
+
                   {/* Title */}
-                  <h3 className="text-xl font-bold text-[var(--brand-dark)] mb-3 group-hover:text-[var(--brand-primary)] transition-colors line-clamp-2">
+                  <h3 className="text-base font-bold text-[var(--brand-dark)] mb-2 group-hover:text-[var(--brand-primary)] transition-colors line-clamp-2 leading-snug">
                     {item.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-[var(--muted-foreground)] text-sm mb-4 line-clamp-3">
+                  <p className="text-[var(--muted-foreground)] text-sm mb-3 line-clamp-3 flex-grow">
                     {item.description}
                   </p>
 
-                  {/* Meta Information */}
-                  <div className="flex flex-wrap gap-3 text-xs text-[var(--muted-foreground)] mb-4">
-                    {/* Date Range */}
-                    {(item.start_date || item.end_date) && (
-                      <div className="flex items-center gap-1">
-                        <Calendar size={14} className="text-[var(--brand-primary)]" />
-                        <span>
-                          {item.start_date && new Date(item.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                          {item.start_date && item.end_date && ' - '}
-                          {item.end_date && new Date(item.end_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Content Type */}
-                    {item.type && (
-                      <div className="px-2 py-1 bg-[var(--muted)] rounded text-xs capitalize">
-                        {item.type}
-                      </div>
-                    )}
-
-                    {/* Sponsored Badge */}
-                    {item.is_sponsored && item.sponsor_name && (
-                      <div className="text-xs text-[var(--muted-foreground)]">
-                        Sponsored by {item.sponsor_name}
-                      </div>
-                    )}
-                  </div>
+                  {/* Date range */}
+                  {(item.start_date || item.end_date) && (
+                    <div className="flex items-center gap-1 text-xs text-[var(--muted-foreground)] mb-3">
+                      <Calendar size={12} className="text-[var(--brand-primary)]" />
+                      <span>
+                        {item.start_date &&
+                          new Date(item.start_date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        {item.start_date && item.end_date && ' – '}
+                        {item.end_date &&
+                          new Date(item.end_date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                      </span>
+                    </div>
+                  )}
 
                   {/* CTA */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-[var(--border)]">
                     <span className="text-[var(--brand-primary)] font-semibold text-sm group-hover:text-[var(--brand-dark)] transition-colors">
                       {item.cta_text || 'Learn More'}
                     </span>
-                    <ExternalLink size={16} className="text-[var(--brand-primary)] group-hover:translate-x-1 transition-transform" />
+                    <ExternalLink
+                      size={15}
+                      className="text-[var(--brand-primary)] group-hover:translate-x-1 transition-transform"
+                    />
                   </div>
                 </div>
               </a>

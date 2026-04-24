@@ -102,7 +102,7 @@ export async function getFeaturedContent(baseId: string = 'all'): Promise<Featur
     console.log('After date filter:', currentItems.length); // Debug log
 
     // Limit to 3 items
-    return currentItems.slice(0, 3);
+    return currentItems.slice(0, 4);
   } catch (error) {
     console.error('Unexpected error fetching featured content:', error);
     return [];
