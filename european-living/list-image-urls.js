@@ -1,34 +1,44 @@
-import { createClient } from '@supabase/supabase-js';
+// list-image-urls.js
+// Utility script to list all public image URLs from Supabase storage.
+// Run with: node list-image-urls.js
+//
+// Requires .env.local to have:
+//   VITE_SUPABASE_URL=...
+//   VITE_SUPABASE_ANON_KEY=...
 
-// ------------------------------------------------------------------
-// ⭐ CONFIGURATION: UPDATE THESE THREE VALUES ⭐
-// ------------------------------------------------------------------
-const supabaseUrl = 'https://pkacbcohrygpyapgtzpq.supabase.co'; 
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrYWNiY29ocnlncHlhcGd0enBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNzc5NzEsImV4cCI6MjA3NTg1Mzk3MX0.BJZulmGejOPa5mv4jLUKqDamBdLyjDEBP2RVTswga8c'; 
-const bucketName = 'images'; 
-// ------------------------------------------------------------------
+import { createClient } from '@supabase/supabase-js';
+import { config } from 'dotenv';
+
+// Load .env.local
+config({ path: '.env.local' });
+
+const supabaseUrl     = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const bucketName      = 'images';
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in .env.local');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function listAllPublicUrls() {
   console.log(`\n--- Fetching ALL URLs from bucket: '${bucketName}' ---\n`);
-  
+
   const allFileNames = [];
   let currentPage = 0;
-  const limit = 100; // Supabase limit per request
+  const limit = 100;
   let hasMore = true;
-  let nextToken = undefined;
 
   while (hasMore) {
     console.log(`Fetching page ${currentPage + 1}...`);
-    
-    // The .list() function uses limit and offset/token for pagination
+
     const { data: fileList, error: listError } = await supabase.storage
       .from(bucketName)
       .list('', {
         limit: limit,
         offset: currentPage * limit,
-        search: nextToken // Optional: Supabase often uses offset, but token is for next cursor
       });
 
     if (listError) {
@@ -36,14 +46,12 @@ async function listAllPublicUrls() {
       return;
     }
 
-    // Filter and collect file names
-    const currentFiles = fileList
-      .filter(item => item.name !== '.emptyFolderPlaceholder' && item.name !== '');
-    
-    // Add the names to our main array
-    allFileNames.push(...currentFiles.map(file => file.name));
+    const currentFiles = fileList.filter(
+      (item) => item.name !== '.emptyFolderPlaceholder' && item.name !== ''
+    );
 
-    // Check if we reached the end
+    allFileNames.push(...currentFiles.map((file) => file.name));
+
     if (currentFiles.length < limit) {
       hasMore = false;
     } else {
@@ -51,27 +59,20 @@ async function listAllPublicUrls() {
     }
   }
 
-  // ------------------------------------------------
-  // 2. Generate Public URLs from the Complete List
-  // ------------------------------------------------
-  
   if (allFileNames.length === 0) {
     console.log('Bucket is empty or returned no files.');
     return;
   }
-  
-  const publicUrls = allFileNames.map(fileName => {
+
+  const publicUrls = allFileNames.map((fileName) => {
     const { data: urlData } = supabase.storage
       .from(bucketName)
       .getPublicUrl(fileName);
-      
     return urlData?.publicUrl || `Error generating URL for: ${fileName}`;
   });
 
-  // Print the full list for easy copying
   console.log('--- Public URLs Found ---');
-  publicUrls.forEach(url => console.log(url));
-  
+  publicUrls.forEach((url) => console.log(url));
   console.log(`\n--- Total ${publicUrls.length} URLs generated. ---\n`);
 }
 
