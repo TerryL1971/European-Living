@@ -1,6 +1,6 @@
 // Service Worker for European Living PWA
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `european-living-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `european-living-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `european-living-images-${CACHE_VERSION}`;
