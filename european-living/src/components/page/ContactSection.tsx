@@ -60,6 +60,7 @@ export default function ContactSection() {
                 method="POST"
                 className="mt-8 bg-[#f4f5f0] p-8 rounded-2xl shadow-sm border border-[#9da586]/30 text-left"
               >
+                <input type="hidden" name="_subject" value="New message from European Living website" />
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-2 text-[#131312]">
                     Name
