@@ -1,6 +1,6 @@
 // Service Worker for European Living PWA
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `european-living-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `european-living-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `european-living-images-${CACHE_VERSION}`;
@@ -31,7 +31,7 @@ async function limitCacheSize(cacheName, maxItems) {
 
 // Install event
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
+  console.log('[SW] Installing v5...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
@@ -42,9 +42,9 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clear ALL old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
+  console.log('[SW] Activating v5...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -67,13 +67,23 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   // Skip cross-origin requests except for fonts and images
-  if (url.origin !== self.location.origin && 
+  if (url.origin !== self.location.origin &&
       !request.url.includes('fonts.googleapis.com') &&
       !request.url.includes('cdnjs.cloudflare.com')) {
     return;
   }
 
-  // Strategy 1: Cache First for images (offline-friendly)
+  // ── Strategy 0: NEVER cache JS or CSS ──────────────────────────────────
+  // Vite generates hashed filenames (e.g. DayTripsPage-Cd1cffj-.js)
+  // which change on every deploy. Caching them causes "failed to fetch
+  // dynamically imported module" errors after deployments.
+  // Always fetch fresh from the network.
+  if (request.destination === 'script' || request.destination === 'style') {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  // ── Strategy 1: Cache First for images ─────────────────────────────────
   if (request.destination === 'image') {
     event.respondWith(
       caches.match(request)
@@ -97,8 +107,8 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 2: Network First for HTML/API (fresh content)
-  if (request.mode === 'navigate' || 
+  // ── Strategy 2: Network First for HTML/API ──────────────────────────────
+  if (request.mode === 'navigate' ||
       request.headers.get('accept')?.includes('application/json') ||
       url.pathname.includes('/api/')) {
     event.respondWith(
@@ -123,9 +133,9 @@ self.addEventListener('fetch', (event) => {
                 return caches.match('/index.html');
               }
               return new Response(
-                JSON.stringify({ 
-                  error: 'Offline', 
-                  message: 'Content not available offline' 
+                JSON.stringify({
+                  error: 'Offline',
+                  message: 'Content not available offline'
                 }),
                 {
                   status: 503,
@@ -138,12 +148,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Strategy 3: Cache First for static assets (CSS, JS, fonts)
+  // ── Strategy 3: Cache First for other static assets (fonts, manifests) ──
   event.respondWith(
     caches.match(request)
       .then((cachedResponse) => {
         if (cachedResponse) {
-          // Return cached version and update in background
           fetch(request).then((response) => {
             if (response.status === 200) {
               caches.open(STATIC_CACHE).then((cache) => {
@@ -153,7 +162,7 @@ self.addEventListener('fetch', (event) => {
           }).catch(() => {});
           return cachedResponse;
         }
-        
+
         return fetch(request)
           .then((response) => {
             if (response.status === 200) {
@@ -173,9 +182,8 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'CACHE_URLS') {
-    // Precache specific URLs (e.g., day trip pages)
     const urlsToCache = event.data.urls;
     event.waitUntil(
       caches.open(DYNAMIC_CACHE).then((cache) => {
