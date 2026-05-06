@@ -1,6 +1,6 @@
 // Service Worker for European Living PWA
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `european-living-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `european-living-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `european-living-images-${CACHE_VERSION}`;
@@ -50,7 +50,7 @@ self.addEventListener('activate', (event) => {
       .then((cacheNames) => {
         return Promise.all(
           cacheNames
-            .filter((name) => name.startsWith('european-living-') && !name.includes(CACHE_VERSION))
+            .filter((name) => name.startsWith('european-living-'))
             .map((name) => {
               console.log('[SW] Deleting old cache:', name);
               return caches.delete(name);
