@@ -33,7 +33,7 @@ interface SEOProps {
   };
 }
 
-const SITE_URL = 'https://european-living.live';
+const SITE_URL = 'https://www.european-living.live';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 const DEFAULT_SEO = {
