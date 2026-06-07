@@ -1,4 +1,4 @@
-// src/components/page/HeroSection.tsx - UPDATED with Email Capture
+// src/components/page/HeroSection.tsx - UPDATED with Facebook CTA
 
 import React, { JSX } from "react";
 import { useNavigate } from "react-router-dom";
@@ -56,6 +56,7 @@ export default function HeroSection(): JSX.Element {
 
       {/* Content */}
       <div className="relative z-10 px-6 sm:px-10 text-center text-white max-w-5xl">
+
         {/* Main Headline */}
         <h1
           className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mb-6"
@@ -129,6 +130,26 @@ export default function HeroSection(): JSX.Element {
           >
             ✉️ Get Free Travel Tips
           </button>
+
+          {/* Facebook Community Button */}
+          <a
+            href="https://www.facebook.com/EuropeanLivingOfficial"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#0f5bbf] text-white font-bold px-8 py-4 rounded-xl text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105"
+          >
+            {/* Facebook icon SVG */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5"
+              aria-hidden="true"
+            >
+              <path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+            </svg>
+            Join Our Community
+          </a>
         </div>
 
         {/* Secondary CTA */}
@@ -140,6 +161,7 @@ export default function HeroSection(): JSX.Element {
             Read Terry's story →
           </button>
         </p>
+
       </div>
     </section>
   );
