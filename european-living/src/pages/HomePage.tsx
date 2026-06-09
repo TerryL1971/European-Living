@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useBase } from "../contexts/BaseContext"; 
+import FamilyAdventuresSection from '../components/page/FamilyAdventuresSection';
 
 // Import all Home page sections
 import HeroSection from "../components/page/HeroSection";
@@ -90,6 +91,10 @@ export default function HomePage() {
       {/* ✅ EMAIL SIGNUP */}
       <div id="email-signup">
         <EmailSignupHomepage />
+      </div>
+
+      <div id="family-adventures">
+         <FamilyAdventuresSection />           
       </div>
       
       <div id="travel-tips">

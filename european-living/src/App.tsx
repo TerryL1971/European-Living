@@ -26,6 +26,7 @@ const BusinessDataEntry  = lazy(() => import('./pages/admin/BusinessDataEntry'))
 const PrivacyPolicy      = lazy(() => import('./pages/PrivacyPolicy'));
 const DayTripsPage       = lazy(() => import('./pages/DayTripsPage'));
 const AboutPage          = lazy(() => import('./pages/AboutPage'));
+const FamilyAdventuresPage = lazy(() => import('./pages/FamilyAdventuresPage'));
 const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
 const DayTripDetailPage  = lazy(() => import('./pages/DayTripDetailPage'));
 
@@ -186,6 +187,20 @@ export default function App() {
                   description="European Living helps US military families and American expats navigate life in Europe. Find services, community, and travel guides."
                 />
                 <AboutPage />
+              </div>
+            }
+          />
+
+          {/* ── Family Adventures ─────────────────────────────── */}
+          <Route
+            path="/family-adventures"
+            element={
+              <div className="pt-16">
+                <SEO
+                  title="Family Adventures in Europe"
+                  description="Discover family-friendly destinations, activities, and services in Europe for US military families. Explore with your kids near US bases."
+                />
+                <FamilyAdventuresPage />
               </div>
             }
           />
