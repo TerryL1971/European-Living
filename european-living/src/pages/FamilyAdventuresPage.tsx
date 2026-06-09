@@ -61,6 +61,18 @@ const GERMANY_RESOURCES = [
       { name: 'Mainz Roman Museum', type: '🎓 Museum', ages: 'school', description: 'Kids love the Roman exhibits and interactive displays. Free for under 18.', link: null },
     ],
   },
+  {
+    base: 'Spangdahlem Air Base',
+    emoji: '🛩️',
+    items: [
+      { name: 'Phantasialand', type: '🎢 Theme Park', ages: 'school', description: 'World-class theme park near Cologne. 1.5hr from Spangdahlem. Thrilling for older kids.', link: 'https://www.phantasialand.de' },
+      { name: 'Cochem Castle', type: '🏰 Castle', ages: 'all', description: '45min from Spangdahlem on the Moselle River. Stunning medieval castle kids love exploring.', link: null },
+      { name: 'Trier Roman Ruins', type: '🎓 Historic', ages: 'school', description: 'Germany\'s oldest city, 30min away. Roman amphitheater and Porta Nigra fascinate kids.', link: null },
+      { name: 'Nürburgring', type: '🏎️ Activity', ages: 'teen', description: 'Legendary race track 1hr from Spangdahlem. Driving experiences for teens and car fans.', link: 'https://www.nuerburgring.de' },
+      { name: 'Mosel River Bike Trail', type: '🌿 Nature', ages: 'school', description: 'Family cycling along the beautiful Moselle River. Flat, easy, and scenic for all ages.', link: null },
+      { name: 'Bitburg City Park', type: '🌿 Park', ages: 'toddler', description: 'Playgrounds and green spaces right near base. Perfect for young children.', link: null },
+    ],
+  },
 ];
 
 const COUNTRY_HIGHLIGHTS: Record<Country, {
