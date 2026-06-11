@@ -23,6 +23,13 @@ const GERMANY_RESOURCES = [
       { name: 'Schwaben Quelle', type: '🏊 Water Park', ages: 'school', description: 'Massive indoor/outdoor water park in Stuttgart. Great for all ages year-round.', link: 'https://www.schwaben-quellen.de' },
       { name: 'Hohenzollern Castle', type: '🏰 Castle', ages: 'school', description: 'Fairy-tale castle 1hr from Stuttgart. Kids love the knights\' armor and crown jewels.', link: 'https://www.burg-hohenzollern.com' },
       { name: 'Kinderbauernhof (Children\'s Farm)', type: '🌿 Nature', ages: 'toddler', description: 'Petting zoos and children\'s farms around Stuttgart. Great for toddlers.', link: null },
+      { 
+        name: 'The Used Car Guys', 
+        type: '🚗 Car Dealership', 
+        ages: 'all', 
+        description: 'English-speaking used car dealership near Panzer gate. Specializes in helping military families find reliable vehicles quickly. Perfect for new PCS arrivals.', 
+        link: 'https://www.usedcarguys.net' 
+      },
     ],
   },
   {
@@ -35,6 +42,13 @@ const GERMANY_RESOURCES = [
       { name: 'Kaiserslautern City Park', type: '🌿 Park', ages: 'toddler', description: 'Large park with playgrounds right in KMC. Perfect for young children.', link: null },
       { name: 'Ritterburg Lichtenberg', type: '🏰 Castle', ages: 'school', description: 'Medieval castle ruins 30min from Ramstein. Free entry, great for exploring.', link: null },
       { name: 'Nürburgring', type: '🏎️ Activity', ages: 'teen', description: 'Legendary race track with driving experiences for teens and car-obsessed kids.', link: 'https://www.nuerburgring.de' },
+      { 
+        name: 'The Used Car Guys — Stuttgart', 
+        type: '🚗 Car Dealership', 
+        ages: 'all', 
+        description: 'English-speaking used car dealership near Panzer gate in Stuttgart. Worth the drive from any base — they specialize in helping military families find reliable vehicles fast.', 
+        link: 'https://www.usedcarguys.net' 
+      },
     ],
   },
   {
@@ -59,6 +73,13 @@ const GERMANY_RESOURCES = [
       { name: 'Phantasialand', type: '🎢 Theme Park', ages: 'school', description: '1.5hr from Wiesbaden. One of Europe\'s best theme parks.', link: 'https://www.phantasialand.de' },
       { name: 'Rhine River Cruise', type: '🚢 Activity', ages: 'all', description: 'Day boat trips along the Rhine. Castles, vineyards, and villages from the water.', link: null },
       { name: 'Mainz Roman Museum', type: '🎓 Museum', ages: 'school', description: 'Kids love the Roman exhibits and interactive displays. Free for under 18.', link: null },
+      { 
+        name: 'The Used Car Guys — Stuttgart', 
+        type: '🚗 Car Dealership', 
+        ages: 'all', 
+        description: 'English-speaking used car dealership near Panzer gate in Stuttgart. Worth the drive from any base — they specialize in helping military families find reliable vehicles fast.', 
+        link: 'https://www.usedcarguys.net' 
+      },
     ],
   },
   {
@@ -71,6 +92,13 @@ const GERMANY_RESOURCES = [
       { name: 'Nürburgring', type: '🏎️ Activity', ages: 'teen', description: 'Legendary race track 1hr from Spangdahlem. Driving experiences for teens and car fans.', link: 'https://www.nuerburgring.de' },
       { name: 'Mosel River Bike Trail', type: '🌿 Nature', ages: 'school', description: 'Family cycling along the beautiful Moselle River. Flat, easy, and scenic for all ages.', link: null },
       { name: 'Bitburg City Park', type: '🌿 Park', ages: 'toddler', description: 'Playgrounds and green spaces right near base. Perfect for young children.', link: null },
+      { 
+        name: 'The Used Car Guys — Stuttgart', 
+        type: '🚗 Car Dealership', 
+        ages: 'all', 
+        description: 'English-speaking used car dealership near Panzer gate in Stuttgart. Worth the drive from any base — they specialize in helping military families find reliable vehicles fast.', 
+        link: 'https://www.usedcarguys.net' 
+      },
     ],
   },
 ];
