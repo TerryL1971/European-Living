@@ -1,7 +1,7 @@
-// src/components/page/HeroSection.tsx - UPDATED with Facebook CTA
+// src/components/page/HeroSection.tsx - UPDATED with Facebook CTA + PCS Guide banner
 
 import React, { JSX } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { MapPin, Plane, Users } from "lucide-react";
 
 export default function HeroSection(): JSX.Element {
@@ -85,9 +85,7 @@ export default function HeroSection(): JSX.Element {
         {/* Social Proof */}
         <div
           className="flex flex-wrap items-center justify-center gap-6 mb-10 text-sm md:text-base"
-          style={{
-            textShadow: "0 2px 6px rgba(0, 0, 0, 0.8)",
-          }}
+          style={{ textShadow: "0 2px 6px rgba(0, 0, 0, 0.8)" }}
         >
           <div className="flex items-center gap-2">
             <MapPin className="w-5 h-5 text-[var(--brand-gold)]" />
@@ -106,9 +104,7 @@ export default function HeroSection(): JSX.Element {
         {/* Trust Statement */}
         <p
           className="max-w-2xl mx-auto text-base md:text-lg leading-relaxed mb-10 opacity-90"
-          style={{
-            textShadow: "0 2px 6px rgba(0, 0, 0, 0.8)",
-          }}
+          style={{ textShadow: "0 2px 6px rgba(0, 0, 0, 0.8)" }}
         >
           Built by Americans who've lived in Germany for 9+ years and helped
           hundreds of military families. We understand the fear of leaving
@@ -138,7 +134,6 @@ export default function HeroSection(): JSX.Element {
             rel="noopener noreferrer"
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#1877F2] hover:bg-[#0f5bbf] text-white font-bold px-8 py-4 rounded-xl text-lg transition-all shadow-xl hover:shadow-2xl hover:scale-105"
           >
-            {/* Facebook icon SVG */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -150,6 +145,41 @@ export default function HeroSection(): JSX.Element {
             </svg>
             Join Our Community
           </a>
+        </div>
+
+        {/* ── PCS Guide Banner ──────────────────────────────────────────────
+            Positioned below the main CTAs as a distinct partnership callout.
+            Intentionally understated — it shouldn't compete with the primary
+            CTAs above but should be unmissable for someone about to PCS.
+        ──────────────────────────────────────────────────────────────────── */}
+        <div className="mt-8">
+          <Link
+            to="/pcs-guide"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl transition-all hover:scale-105"
+            style={{
+              background: "rgba(27, 58, 92, 0.75)",
+              border: "1px solid rgba(157, 165, 134, 0.5)",
+              backdropFilter: "blur(8px)",
+              textDecoration: "none",
+            }}
+          >
+            <span className="text-xl">✈️</span>
+            <div className="text-left">
+              <div className="text-white font-bold text-sm leading-tight">
+                PCSing to Germany?
+              </div>
+              <div className="text-[#c8d4b4] text-xs leading-tight">
+                Our step-by-step guide — available at USO lounges nationwide
+              </div>
+            </div>
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+              style={{ backgroundColor: "#9da586", color: "#fff" }}
+            >
+              USO
+            </span>
+            <span className="text-[#9da586] font-bold text-sm">→</span>
+          </Link>
         </div>
 
         {/* Secondary CTA */}

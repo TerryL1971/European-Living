@@ -1,7 +1,7 @@
 // src/App.tsx - Fixed Router with 404 handling, SEO per route,
 // and TestErrorButton removed from production.
 
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
 import { trackPageView } from './utils/analytics';
@@ -16,19 +16,20 @@ import LoadingSpinner from './components/LoadingSpinner';
 import HomePage from "./pages/HomePage";
 
 // ── Lazy loaded ─────────────────────────────────────────────────────────────
-const ArticlePage        = lazy(() => import('./pages/articles/ArticlePage'));
-const DestinationPage    = lazy(() => import('./pages/destinations/DestinationPage'));
-const BusinessDetailPage = lazy(() => import('./pages/businesses/BusinessDetailPage'));
-const ServiceCategoryPage= lazy(() => import('./pages/businesses/ServiceCategoryPage'));
-const ServicesDirectory  = lazy(() => import('./components/ServicesDirectory'));
+const ArticlePage            = lazy(() => import('./pages/articles/ArticlePage'));
+const DestinationPage        = lazy(() => import('./pages/destinations/DestinationPage'));
+const BusinessDetailPage     = lazy(() => import('./pages/businesses/BusinessDetailPage'));
+const ServiceCategoryPage    = lazy(() => import('./pages/businesses/ServiceCategoryPage'));
+const ServicesDirectory      = lazy(() => import('./components/ServicesDirectory'));
 const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissionForm'));
-const BusinessDataEntry  = lazy(() => import('./pages/admin/BusinessDataEntry'));
-const PrivacyPolicy      = lazy(() => import('./pages/PrivacyPolicy'));
-const DayTripsPage       = lazy(() => import('./pages/DayTripsPage'));
-const AboutPage          = lazy(() => import('./pages/AboutPage'));
-const FamilyAdventuresPage = lazy(() => import('./pages/FamilyAdventuresPage'));
-const FeaturedContentAdmin = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
-const DayTripDetailPage  = lazy(() => import('./pages/DayTripDetailPage'));
+const BusinessDataEntry      = lazy(() => import('./pages/admin/BusinessDataEntry'));
+const PrivacyPolicy          = lazy(() => import('./pages/PrivacyPolicy'));
+const DayTripsPage           = lazy(() => import('./pages/DayTripsPage'));
+const AboutPage              = lazy(() => import('./pages/AboutPage'));
+const FamilyAdventuresPage   = lazy(() => import('./pages/FamilyAdventuresPage'));
+const FeaturedContentAdmin   = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
+const DayTripDetailPage      = lazy(() => import('./pages/DayTripDetailPage'));
+const PCSGuidePage           = lazy(() => import('./pages/PCSGuidePage'));
 
 // ── Reading progress bar ────────────────────────────────────────────────────
 const ReadingProgress = () => {
@@ -66,6 +67,7 @@ const NotFoundPage = () => (
     <SEO
       title="Page Not Found"
       description="Sorry, this page doesn't exist. Find resources for Americans living in Europe on European Living."
+      noIndex={true}
     />
     <h1 className="text-4xl font-bold mb-4">Page Not Found</h1>
     <p className="text-gray-600 mb-8 max-w-md">
@@ -130,7 +132,6 @@ export default function App() {
             path="/day-trips/:id"
             element={
               <div className="pt-16">
-                {/* DayTripDetailPage renders its own <SEO> with trip-specific data */}
                 <DayTripDetailPage />
               </div>
             }
@@ -205,6 +206,16 @@ export default function App() {
             }
           />
 
+          {/* ── PCS Guide ─────────────────────────────────────── */}
+          <Route
+            path="/pcs-guide"
+            element={
+              <div className="pt-16">
+                <PCSGuidePage />
+              </div>
+            }
+          />
+
           {/* ── Privacy Policy ────────────────────────────────── */}
           <Route
             path="/privacy-policy"
@@ -221,7 +232,7 @@ export default function App() {
             path="/admin/data-entry"
             element={
               <div className="pt-16">
-                <SEO title="Admin — Data Entry" />
+                <SEO title="Admin — Data Entry" noIndex={true} />
                 <BusinessDataEntry />
               </div>
             }
@@ -230,7 +241,7 @@ export default function App() {
             path="/admin/featured-content"
             element={
               <div className="pt-16">
-                <SEO title="Admin — Featured Content" />
+                <SEO title="Admin — Featured Content" noIndex={true} />
                 <FeaturedContentAdmin />
               </div>
             }

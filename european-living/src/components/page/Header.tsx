@@ -10,10 +10,6 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /* -------------------------
-     Helpers
-  -------------------------- */
-
   const resetBaseSelection = () => {
     localStorage.removeItem('selectedBase');
     localStorage.removeItem('hasVisitedSite');
@@ -35,7 +31,6 @@ export default function Header() {
       } else {
         navigate('/', { state: { scrollTo: sectionId } });
       }
-
       setMobileMenuOpen(false);
     },
     [location.pathname, navigate]
@@ -50,23 +45,17 @@ export default function Header() {
     setMobileMenuOpen(false);
   };
 
-  // Safe backdrop click handler
   const handleBackdropClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    // Prevent event from bubbling
     e.stopPropagation();
-    // Close menu
     setMobileMenuOpen(false);
   }, []);
-
-  /* -------------------------
-     Render
-  -------------------------- */
 
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 bg-[var(--brand-bg-card)]/95 backdrop-blur-md border-b border-[var(--brand-border)] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
+
             {/* Logo */}
             <button
               onClick={goToHome}
@@ -110,6 +99,15 @@ export default function Header() {
                 Day Trips
               </Link>
 
+              {/* PCS Guide — highlighted as a distinct feature link */}
+              <Link
+                to="/pcs-guide"
+                className="px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-1.5 text-[#1B3A5C] hover:bg-[#1B3A5C]/10 transition-colors"
+              >
+                <span className="text-[#9da586] text-xs">✈</span>
+                PCS Guide
+              </Link>
+
               <button
                 onClick={() => scrollToSection('travel-tips')}
                 className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--brand-bg-alt)]"
@@ -147,7 +145,6 @@ export default function Header() {
               >
                 Contact Us
               </button>
-
               <button
                 onClick={resetBaseSelection}
                 className="text-sm text-red-500 hover:text-red-700 underline"
@@ -171,7 +168,7 @@ export default function Header() {
       {/* Mobile Menu */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          {/* Backdrop - FIXED with proper event handler */}
+          {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={handleBackdropClick}
@@ -203,6 +200,25 @@ export default function Header() {
                 className="block px-4 py-3 text-base font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg transition"
               >
                 Day Trips
+              </Link>
+
+              {/* PCS Guide — mobile, with USO context note */}
+              <Link
+                to="/pcs-guide"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 rounded-lg transition bg-[#1B3A5C]/5 border border-[#1B3A5C]/15"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-base font-semibold text-[#1B3A5C]">
+                    ✈ PCS Guide to Germany
+                  </span>
+                  <span className="text-xs bg-[#9da586] text-white px-2 py-0.5 rounded-full font-semibold">
+                    USO
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-0.5 pl-0">
+                  Moving to Germany? Start here.
+                </p>
               </Link>
 
               <button
@@ -241,7 +257,6 @@ export default function Header() {
                 >
                   Contact Us
                 </button>
-
                 <button
                   onClick={resetBaseSelection}
                   className="w-full text-center px-4 py-3 text-sm text-red-500 hover:text-red-700 underline mt-2"
