@@ -6,6 +6,10 @@
 import { useState } from 'react';
 import SEO, { BreadcrumbSchema } from '../components/SEO';
 
+// ── Feature flags ──────────────────────────────────────────────────────────
+// Set to true once the USO partnership is officially confirmed.
+const SHOW_USO_BANNER = false;
+
 // ── Types ──────────────────────────────────────────────────────────────────
 
 interface Resource {
@@ -164,48 +168,98 @@ const PHASES: Phase[] = [
   {
     id: 'first30',
     timing: 'Days 1–30 after arrival',
-    title: 'First 30 Days',
-    subtitle: 'The administrative sprint. Front-load everything you can.',
+    title: 'First 30 Days — Getting Mobile & Set Up',
+    subtitle: 'Transportation first, then banking, then everything else. In that order.',
     color: '#2A5F8F',
     steps: [
-      'Get your USAREUR license. Bring your US license, orders, and ID to your installation\'s vehicle registration office. No written test required within your first 6 months.',
-      'Register your vehicle. US-plated vehicles require USAREUR registration and insurance. If importing a US vehicle, allow additional time for customs.',
-      'Apply for your SOFA tax exemption card (VAT Form). This exempts you from German VAT on most purchases.',
-      'Open a German bank account if living off-post. Deutsche Bank, Commerzbank, and N26 all work. You will need it for your landlord.',
-      'Sign your lease carefully. German leases are strong tenant contracts but the initial Übergabeprotokoll (move-in inspection) is critical — document everything.',
-      'Anmeldung: register your address at the local Einwohnermeldeamt (residents\' registration office) if living off-post. Required by German law within 2 weeks.',
-      'Enroll dependents in DoDEA or selected German/international school.',
-      'Register with TRICARE Europe. Your coverage continues but you must register to use local providers.',
-      'Find an English-speaking doctor, dentist, and pharmacy. European Living\'s services directory is the fastest way to do this.',
+      // ── Transportation (most urgent) ──────────────────────────
+      'Get a rental car immediately if you did not ship a vehicle. On-post car rental (Enterprise, Hertz) accepts your US license for the first 6 months. Off-post German rental agencies also accept it. Book ahead — availability near bases is limited during PCS season (June–August).',
+      'Get your USAREUR driver\'s license within your first 6 months — this is the clock that starts the day you report, not the day you arrive in Germany. Bring your US license, orders, and a USAREUR Form 190-1 to your installation\'s vehicle registration office. A written test on German traffic law is required.',
+      'Decide: buy on-post or buy off-post? On-post car lots (like the Grafenwöhr or Kaiserslautern auto sales) sell US-spec vehicles — easier to finance with USAA or Navy Federal, no German paperwork. Off-post German vehicles are cheaper and better suited for German roads and autobahn driving but require more documentation and a German bank account.',
+      'If buying a German vehicle off-post: understand the market before you walk onto any lot. The "lemon lot" — private sales on post — is full of vehicles being offloaded by families PCSing out. Prices look attractive but there is no warranty, no recourse, and no inspection requirement. Many of these vehicles have deferred maintenance that the seller knows about and you won\'t discover until after you\'ve driven off. A €6,000 lemon lot car that needs €3,000 in repairs immediately is not a deal. Reputable dealers near US bases who specialize in military families — such as Used Car Guys GmbH (usedcarguys.net) — offer both US-spec and EU-spec vehicles with a 1-year warranty and a guaranteed buyback program, which matters enormously when you PCS out in 3 years. They also allow you to reserve a vehicle before you arrive and handle most of the paperwork in advance, so you are not scrambling for transportation in your first week. Whatever you buy, make sure your insurance is in place before you drive it off the lot.',
+      'If buying on-post: bring your orders, military ID, a pre-approval letter from USAA or Navy Federal, and your IDP. Financing is available through the auto sales office. US-spec vehicles require USAREUR plates and on-post insurance (available through USAA or Armed Forces Insurance).',
+      'Get USAREUR vehicle insurance before you drive anything off the lot — this is not optional and is not negotiable. Your US insurance policy does not cover you in Germany. Options include USAA, GEICO Military, Armed Forces Insurance, and American Auto Nation Insurance (americanautonation.com), which specializes in coverage for military families buying vehicles in Germany and can often have you covered same-day. Minimum required liability coverage in Germany is €7.5 million — higher than anything you carried in the US, but standard here.',
+      // ── Phone & connectivity ──────────────────────────────────
+      'Get a German SIM card or activate an international phone plan on Day 1. Without a local number you cannot call landlords, doctors, or German businesses. Aldi Talk, Congstar, and Telekom all sell prepaid SIMs at any supermarket or electronics store — no German ID required for prepaid. Bring your unlocked phone.',
+      'Set up internet at your off-post home. Deutsche Telekom, Vodafone, and o2 are the main providers. Contracts are 24 months — start the process early because installation takes 2–4 weeks. In the meantime, a mobile hotspot (available at the PX) bridges the gap.',
+      // ── Banking ───────────────────────────────────────────────
+      'Open a German bank account if living off-post. Your landlord will require SEPA bank transfers — US wire transfers are not accepted for rent. Deutsche Bank and Commerzbank have English-speaking staff near most bases. N26 is a digital option that opens entirely online and works immediately.',
+      'Apply for your SOFA tax exemption card (VAT Form 7600) at your installation\'s Vehicle Registration / SOFA office. This card exempts you from Germany\'s 19% VAT on most purchases. Bring it every time you shop — you will save hundreds of euros per year.',
+      // ── Housing ───────────────────────────────────────────────
+      'If living off-post, complete the Anmeldung (address registration) at your local Einwohnermeldeamt within 14 days of moving in. Bring your passport, lease agreement, and a Wohnungsgeberbestätigung (landlord confirmation form — your landlord must provide this). This is required by German law and unlocks access to German services.',
+      'Walk through your rental property with your landlord and complete the Übergabeprotokoll (move-in inspection form) on day one. Document every scratch, scuff, and imperfection with photos. German landlords can charge for pre-existing damage at move-out if it is not documented at move-in. This is the most common financial mistake military families make in Germany.',
+      // ── Medical & family ─────────────────────────────────────
+      'Register with TRICARE Europe within your first week. Your coverage carries over but you must register locally to use German providers, make appointments, and get referrals. Keep your US TRICARE card — you will need it for stateside care during leave.',
+      'Find an English-speaking doctor and dentist near your installation before you need one. European Living\'s services directory has verified English-speaking providers near every major US base in Germany. Do not wait until someone is sick.',
+      'Enroll your children in school immediately. DoDEA schools are on-post, free, and follow a US curriculum — enrollment is through your installation\'s DoDEA school office. If attending a German or international school off-post, contact the school directly as soon as your address is confirmed.',
+      // ── Grocery & daily life ──────────────────────────────────
+      'Learn the local grocery stores. REWE, Edeka, and Kaufland are the main German supermarkets — most have basic English-speaking staff near bases. ALDI and Lidl are excellent for produce and everyday items. The commissary on-post carries US products but can be expensive for non-staples. Germans shop daily or every few days — refrigerators are smaller than US ones.',
+      'Understand German shopping hours. Most stores close by 8–10pm and are closed on Sundays. Gas stations stay open Sundays for basics. Plan your weekly shopping accordingly — running out of something Sunday afternoon is a rite of passage for every American family in Germany.',
     ],
     resources: [
+      {
+        label: 'USAA Auto Insurance — USAREUR Coverage',
+        url: 'https://www.usaa.com/inet/wc/auto-insurance-overseas',
+        type: 'official',
+        description: 'USAA offers USAREUR-compliant coverage. Get a quote before you buy a vehicle.',
+      },
       {
         label: 'European Living Services Directory',
         url: '/services-directory',
         type: 'guide',
-        description: 'English-speaking doctors, mechanics, lawyers, and more — verified near your base.',
+        description: 'English-speaking mechanics, doctors, dentists, and more — verified near your base.',
       },
       {
-        label: 'TRICARE Europe',
+        label: 'TRICARE Europe — Enrollment',
         url: 'https://www.tricare-overseas.com',
         type: 'official',
-        description: 'Enroll in TRICARE Europe and find authorized providers near your installation.',
+        description: 'Register with TRICARE Europe and find authorized local providers.',
       },
       {
-        label: 'USAREUR Vehicle Registration',
+        label: 'USAREUR Vehicle Registration Guide',
         url: 'https://www.usareur.army.mil/Portals/36/VehicleReg.pdf',
         type: 'download',
-        description: 'Required documents and process for registering a vehicle in USAREUR.',
+        description: 'Official PDF: required documents for registering and insuring a vehicle in USAREUR.',
       },
       {
-        label: 'European Living: German Lease Guide',
+        label: 'N26 — Online German Bank Account',
+        url: 'https://n26.com/en-eu',
+        type: 'official',
+        description: 'Opens fully online with a passport. Good English support. Accepted by German landlords.',
+      },
+      {
+        label: 'Used Car Guys GmbH — Military Specialist Dealer',
+        url: 'https://www.usedcarguys.net',
+        type: 'official',
+        description: 'US and EU-spec vehicles with 1-year warranty and guaranteed buyback. Reserve before you arrive.',
+      },
+      {
+        label: 'American Auto Nation Insurance',
+        url: 'https://www.americanautonation.com',
+        type: 'official',
+        description: 'USAREUR-compliant vehicle insurance for military families in Germany. Same-day coverage available.',
+      },
+      {
+        label: 'European Living: Buying a Car in Germany Guide',
+        url: '/articles/buying-car-germany-military',
+        type: 'guide',
+        description: 'On-post vs. off-post, what to look for, and how to avoid the common mistakes.',
+      },
+      {
+        label: 'European Living: German Lease & Move-In Guide',
         url: '/articles/renting-off-post-germany',
         type: 'guide',
-        description: 'What to look for in a German lease, move-in inspection tips, and tenant rights.',
+        description: 'Übergabeprotokoll explained, what to document, and your rights as a SOFA tenant.',
+      },
+      {
+        label: 'DoDEA Europe — School Enrollment',
+        url: 'https://www.dodea.edu/europe',
+        type: 'official',
+        description: 'Find your installation\'s DoDEA school and start the enrollment process.',
       },
     ],
-    warning: 'The Anmeldung (address registration) deadline is 2 weeks after moving into your off-post address. Missing this is a fineable offense under German law. SOFA status does not exempt you from this requirement.',
-    tip: 'The USAREUR VAT form (tax exemption card) saves 19% on most purchases in Germany. Get it in your first week. Bring it every time you shop at a German store or fill up at a German gas station.',
+    warning: 'The Anmeldung deadline is 14 days after moving into your off-post address. Missing it is a fineable offense under German law — SOFA status does not exempt you. Your landlord must provide a Wohnungsgeberbestätigung form for you to complete the registration. Ask for it before you sign the lease.',
+    tip: 'The single biggest quality-of-life unlock in your first week is getting mobile. Whether that\'s a rental, a loaner from your sponsor, or buying on-post — do not wait. Without a car in Germany you are dependent on installation shuttles and the train network, which are fine but limiting. Everything else — banking, doctors, school — is easier once you can drive yourself.',
   },
   {
     id: 'settled',
@@ -614,34 +668,36 @@ export default function PCSGuidePage() {
 
       <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", color: '#111827' }}>
 
-        {/* ── USO Partnership Banner ─────────────────────────── */}
-        <div style={{
-          backgroundColor: '#1B3A5C',
-          color: '#fff',
-          padding: '10px 24px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '12px',
-          fontSize: '13px',
-          fontWeight: 500,
-          flexWrap: 'wrap',
-          textAlign: 'center',
-        }}>
-          <span style={{ opacity: 0.75 }}>Available at USO Lounges across the United States</span>
-          <span style={{
-            backgroundColor: '#9da586',
+        {/* ── USO Partnership Banner — hidden until partnership is confirmed ── */}
+        {SHOW_USO_BANNER && (
+          <div style={{
+            backgroundColor: '#1B3A5C',
             color: '#fff',
-            padding: '3px 10px',
-            borderRadius: '20px',
-            fontSize: '11px',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
+            padding: '10px 24px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            fontSize: '13px',
+            fontWeight: 500,
+            flexWrap: 'wrap',
+            textAlign: 'center',
           }}>
-            USO Partnership
-          </span>
-        </div>
+            <span style={{ opacity: 0.75 }}>Available at USO Lounges across the United States</span>
+            <span style={{
+              backgroundColor: '#9da586',
+              color: '#fff',
+              padding: '3px 10px',
+              borderRadius: '20px',
+              fontSize: '11px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+            }}>
+              USO Partnership
+            </span>
+          </div>
+        )}
 
         {/* ── Hero ──────────────────────────────────────────── */}
         <div style={{
