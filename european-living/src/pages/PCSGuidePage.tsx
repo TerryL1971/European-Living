@@ -17,6 +17,7 @@ interface Resource {
   url: string;
   type: 'official' | 'download' | 'guide';
   description: string;
+  comingSoon?: boolean;
 }
 
 interface Phase {
@@ -51,14 +52,14 @@ const PHASES: Phase[] = [
     ],
     resources: [
       {
-        label: 'MyPCS — Official Army PCS Tool',
-        url: 'https://mypcs.com',
+        label: 'Military OneSource — PCS Planning',
+        url: 'https://www.militaryonesource.mil/moving-housing/moving/planning-your-move/',
         type: 'official',
-        description: 'The Army\'s official PCS planning portal. Start here.',
+        description: 'Official DoD resource for PCS planning. Start here.',
       },
       {
         label: 'USAREUR-AF BAH / COLA Calculator',
-        url: 'https://www.usareur.army.mil',
+        url: 'https://www.eur.army.mil',
         type: 'official',
         description: 'Look up current housing allowance rates for your gaining installation.',
       },
@@ -70,9 +71,9 @@ const PHASES: Phase[] = [
       },
       {
         label: 'European Living: PCS Germany Checklist',
-        url: '/articles/pcs-germany-checklist',
+        url: '/pcs-germany-checklist.pdf',
         type: 'download',
-        description: 'Printable phase-by-phase checklist. Download and bring to the USO lounge.',
+        description: 'Printable phase-by-phase checklist (PDF). Save to your phone or print before you leave.',
       },
     ],
     tip: 'Your sponsor is supposed to contact you within 30 days of your orders being published. If they don\'t, reach out to your gaining unit\'s rear detachment or S1 office directly.',
@@ -108,15 +109,16 @@ const PHASES: Phase[] = [
       },
       {
         label: 'USAREUR-AF Pet Import Requirements',
-        url: 'https://www.usareur.army.mil/Portals/36/Pets.pdf',
-        type: 'download',
-        description: 'Official PDF — breed restrictions, documentation, quarantine rules.',
+        url: 'https://www.eur.army.mil/Organizations/Veterinary-Services/',
+        type: 'official',
+        description: 'Breed restrictions, documentation, and quarantine rules for bringing pets to Germany.',
       },
       {
         label: 'European Living: Germany Banking Guide',
         url: '/articles/banking-in-germany',
         type: 'guide',
         description: 'Which US banks work in Germany and how to set up a German account.',
+        comingSoon: true,
       },
     ],
     warning: 'Certain dog breeds (Kampfhunde) are prohibited or restricted in Germany and on US installations in Germany. Check breed restrictions before making travel arrangements. This is not reversible at the border.',
@@ -140,7 +142,7 @@ const PHASES: Phase[] = [
     resources: [
       {
         label: 'USO Airport Lounges — Find a Lounge',
-        url: 'https://www.uso.org/find-a-location',
+        url: 'https://www.uso.org/locations',
         type: 'official',
         description: 'Find the nearest USO lounge in any airport. Available to all active duty, Guard, Reserve, and dependents.',
       },
@@ -155,12 +157,14 @@ const PHASES: Phase[] = [
         url: '/articles/first-72-hours-germany',
         type: 'guide',
         description: 'What to do the moment you land — in the right order.',
+        comingSoon: true,
       },
       {
         label: 'SOFA Status Explained',
         url: '/articles/sofa-status-germany',
         type: 'guide',
         description: 'What SOFA status means, what it covers, and what it doesn\'t.',
+        comingSoon: true,
       },
     ],
     tip: 'You do not need to drive immediately. Most installations have shuttles. Get rest on night one — the in-processing paperwork starts on day two and there is a lot of it.',
@@ -217,9 +221,9 @@ const PHASES: Phase[] = [
       },
       {
         label: 'USAREUR Vehicle Registration Guide',
-        url: 'https://www.usareur.army.mil/Portals/36/VehicleReg.pdf',
-        type: 'download',
-        description: 'Official PDF: required documents for registering and insuring a vehicle in USAREUR.',
+        url: 'https://www.eur.army.mil/Organizations/Vehicle-Registration/',
+        type: 'official',
+        description: 'Required documents and process for registering and insuring a vehicle in USAREUR.',
       },
       {
         label: 'N26 — Online German Bank Account',
@@ -244,12 +248,14 @@ const PHASES: Phase[] = [
         url: '/articles/buying-car-germany-military',
         type: 'guide',
         description: 'On-post vs. off-post, what to look for, and how to avoid the common mistakes.',
+        comingSoon: true,
       },
       {
         label: 'European Living: German Lease & Move-In Guide',
         url: '/articles/renting-off-post-germany',
         type: 'guide',
         description: 'Übergabeprotokoll explained, what to document, and your rights as a SOFA tenant.',
+        comingSoon: true,
       },
       {
         label: 'DoDEA Europe — School Enrollment',
@@ -548,45 +554,65 @@ function PhaseCard({ phase, isOpen, onToggle }: {
               Resources & Downloads
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {phase.resources.map((r, i) => (
-                <a
-                  key={i}
-                  href={r.url}
-                  target={r.url.startsWith('http') ? '_blank' : undefined}
-                  rel={r.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                    padding: '12px 14px',
-                    backgroundColor: '#f9fafb',
-                    borderRadius: '8px',
-                    border: '1px solid #e5e7eb',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    transition: 'border-color 0.15s',
-                  }}
-                >
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontSize: '13px',
-                      fontWeight: 600,
-                      color: '#1B3A5C',
-                      marginBottom: '3px',
-                    }}>
-                      {r.label}
+              {phase.resources.map((r, i) => {
+                const isExternal = r.url.startsWith('http');
+                const Tag = r.comingSoon ? 'div' : 'a';
+                const linkProps = r.comingSoon ? {} : {
+                  href: r.url,
+                  target: isExternal ? '_blank' : undefined,
+                  rel: isExternal ? 'noopener noreferrer' : undefined,
+                };
+                return (
+                  <Tag
+                    key={i}
+                    {...linkProps}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '12px',
+                      padding: '12px 14px',
+                      backgroundColor: r.comingSoon ? '#f3f4f6' : '#f9fafb',
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      opacity: r.comingSoon ? 0.65 : 1,
+                      cursor: r.comingSoon ? 'default' : 'pointer',
+                    }}
+                  >
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        color: r.comingSoon ? '#6b7280' : '#1B3A5C',
+                        marginBottom: '3px',
+                      }}>
+                        {r.label}
+                        {r.comingSoon && (
+                          <span style={{
+                            marginLeft: '8px',
+                            fontSize: '10px',
+                            fontWeight: 600,
+                            color: '#9ca3af',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}>
+                            Coming soon
+                          </span>
+                        )}
+                      </div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#6b7280',
+                        lineHeight: 1.4,
+                      }}>
+                        {r.description}
+                      </div>
                     </div>
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#6b7280',
-                      lineHeight: 1.4,
-                    }}>
-                      {r.description}
-                    </div>
-                  </div>
-                  <ResourceBadge type={r.type} />
-                </a>
-              ))}
+                    {!r.comingSoon && <ResourceBadge type={r.type} />}
+                  </Tag>
+                );
+              })}
             </div>
           </div>
         </div>
