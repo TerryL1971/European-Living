@@ -308,7 +308,7 @@ const PHASES: Phase[] = [
       },
       {
         label: 'ACS Germany — Army Community Service',
-        url: 'https://www.imcom.army.mil/ACS',
+        url: 'https://www.armyresilience.army.mil/ACS/index.html',
         type: 'official',
         description: 'On-post programs for families — financial counseling, employment assistance, deployment support.',
       },
