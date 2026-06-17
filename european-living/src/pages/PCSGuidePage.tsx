@@ -71,9 +71,9 @@ const PHASES: Phase[] = [
       },
       {
         label: 'European Living: PCS Germany Checklist',
-        url: '/pcs-germany-checklist.pdf',
+        url: '/articles/pcs-germany-checklist?print=true',
         type: 'download',
-        description: 'Printable phase-by-phase checklist (PDF). Save to your phone or print before you leave.',
+        description: 'Full phase-by-phase checklist. Opens print dialog — save as PDF or print.',
       },
     ],
     tip: 'Your sponsor is supposed to contact you within 30 days of your orders being published. If they don\'t, reach out to your gaining unit\'s rear detachment or S1 office directly.',
@@ -108,10 +108,16 @@ const PHASES: Phase[] = [
         description: 'Apply in person at any AAA location. Bring two passport photos.',
       },
       {
-        label: 'USAREUR-AF Pet Import Requirements',
-        url: 'https://www.eur.army.mil/Organizations/Veterinary-Services/',
+        label: 'USDA APHIS — Pet Travel US to Germany',
+        url: 'https://www.aphis.usda.gov/pet-travel/us-to-another-country-export/pet-travel-us-germany',
         type: 'official',
-        description: 'Breed restrictions, documentation, and quarantine rules for bringing pets to Germany.',
+        description: 'Official USDA guidance on microchip, vaccination, and health certificate requirements.',
+      },
+      {
+        label: 'Army.mil — How to PCS to Germany with Pets',
+        url: 'https://www.army.mil/article/256103/how_to_pcs_to_germany_with_pets',
+        type: 'official',
+        description: 'Breed restrictions, DD Form 2209, and installation vet clinic guidance.',
       },
       {
         label: 'European Living: Germany Banking Guide',
