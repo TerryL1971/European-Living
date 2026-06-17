@@ -108,16 +108,16 @@ const PHASES: Phase[] = [
         description: 'Apply in person at any AAA location. Bring two passport photos.',
       },
       {
-        label: 'USDA APHIS — Pet Travel US to Germany',
-        url: 'https://www.aphis.usda.gov/pet-travel/us-to-another-country-export/pet-travel-us-germany',
-        type: 'official',
-        description: 'Official USDA guidance on microchip, vaccination, and health certificate requirements.',
-      },
-      {
-        label: 'Army.mil — How to PCS to Germany with Pets',
+        label: 'Army.mil — PCS to Germany with Pets',
         url: 'https://www.army.mil/article/256103/how_to_pcs_to_germany_with_pets',
         type: 'official',
-        description: 'Breed restrictions, DD Form 2209, and installation vet clinic guidance.',
+        description: 'Official Army guidance on microchip, vaccination, health certificate, and breed restrictions.',
+      },
+      {
+        label: 'Military OneSource — Pet Travel',
+        url: 'https://www.militaryonesource.mil/moving-housing/moving/planning-your-move/',
+        type: 'official',
+        description: 'DoD resource for moving with pets overseas.',
       },
       {
         label: 'European Living: Germany Banking Guide',
@@ -205,8 +205,8 @@ const PHASES: Phase[] = [
     ],
     resources: [
       {
-        label: 'USAA Auto Insurance — USAREUR Coverage',
-        url: 'https://www.usaa.com/inet/wc/auto-insurance-overseas',
+        label: 'USAA Auto Insurance — Overseas Coverage',
+        url: 'https://www.usaa.com/insurance/overseas/?akredirect=true',
         type: 'official',
         description: 'USAA offers USAREUR-compliant coverage. Get a quote before you buy a vehicle.',
       },
@@ -223,10 +223,10 @@ const PHASES: Phase[] = [
         description: 'Register with TRICARE Europe and find authorized local providers.',
       },
       {
-        label: 'USAREUR Vehicle Registration Guide',
-        url: 'https://www.eur.army.mil/Organizations/Vehicle-Registration/',
+        label: 'USAREUR Vehicle Registration',
+        url: 'https://www.eur.army.mil',
         type: 'official',
-        description: 'Required documents and process for registering and insuring a vehicle in USAREUR.',
+        description: 'Visit eur.army.mil and search Vehicle Registration for your installation\'s requirements.',
       },
       {
         label: 'N26 — Online German Bank Account',
@@ -371,13 +371,15 @@ function PhaseCard({ phase, isOpen, onToggle }: {
   onToggle: () => void;
 }) {
   return (
-    <div style={{
-      marginBottom: '2px',
-      borderRadius: isOpen ? '12px' : '12px',
-      overflow: 'hidden',
-      boxShadow: isOpen ? '0 4px 24px rgba(27,58,92,0.12)' : '0 1px 4px rgba(0,0,0,0.06)',
-      transition: 'box-shadow 0.2s ease',
-    }}>
+    <div
+      id={`phase-${phase.id}`}
+      style={{
+        marginBottom: '2px',
+        borderRadius: isOpen ? '12px' : '12px',
+        overflow: 'hidden',
+        boxShadow: isOpen ? '0 4px 24px rgba(27,58,92,0.12)' : '0 1px 4px rgba(0,0,0,0.06)',
+        transition: 'box-shadow 0.2s ease',
+      }}>
       {/* Phase header */}
       <button
         onClick={onToggle}
@@ -678,6 +680,14 @@ export default function PCSGuidePage() {
 
   const togglePhase = (id: string) => {
     setOpenPhase(prev => prev === id ? null : id);
+    // Prevent browser from jumping when expanding bottom phases
+    const el = document.getElementById(`phase-${id}`);
+    if (el) {
+      setTimeout(() => {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }, 50);
+    }
   };
 
   return (
