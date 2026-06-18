@@ -3,58 +3,107 @@
 
   <!-- Home -->
   <url>
-    <loc>https://european-living.live/</loc>
+    <loc>https://www.european-living.live/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Day Trips -->
+  <!-- PCS Guide -->
   <url>
-    <loc>https://european-living.live/day-trips</loc>
-    <changefreq>weekly</changefreq>
+    <loc>https://www.european-living.live/pcs-guide</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Services Directory -->
   <url>
-    <loc>https://european-living.live/services-directory</loc>
+    <loc>https://www.european-living.live/services-directory</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Submit a Business -->
+  <!-- Day Trips -->
   <url>
-    <loc>https://european-living.live/submit-business</loc>
+    <loc>https://www.european-living.live/day-trips</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Family Adventures -->
+  <url>
+    <loc>https://www.european-living.live/family-adventures</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Articles -->
+  <url>
+    <loc>https://www.european-living.live/articles/pcs-germany-checklist</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/first-72-hours-germany</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/sofa-status-germany</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/banking-in-germany</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/buying-car-germany-military</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/renting-off-post-germany</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- About -->
   <url>
-    <loc>https://european-living.live/about</loc>
+    <loc>https://www.european-living.live/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Privacy Policy -->
+  <!-- Submit a Business -->
   <url>
-    <loc>https://european-living.live/privacy-policy</loc>
+    <loc>https://www.european-living.live/submit-business</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Legal -->
+  <url>
+    <loc>https://www.european-living.live/impressum</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
-  <!--
-    NOTE: Dynamic routes (articles, businesses, day trips by ID, destinations)
-    should be added here programmatically. Consider using a build-time script
-    that queries Supabase and generates this file before each deployment.
-    
-    Example entries for dynamic content:
-    
-    <url>
-      <loc>https://european-living.live/articles/living-near-ramstein</loc>
-      <changefreq>monthly</changefreq>
-      <priority>0.8</priority>
-    </url>
-  -->
+  <url>
+    <loc>https://www.european-living.live/terms-of-service</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/privacy-policy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 
 </urlset>

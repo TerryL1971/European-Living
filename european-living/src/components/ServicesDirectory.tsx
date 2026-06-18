@@ -34,13 +34,10 @@ export default function ServicesDirectory() {
   const [minRating, setMinRating] = useState(0);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
 
-  // ✅ Fixed: useBusinesses takes no arguments
   const { data: allBusinesses = [], isLoading, error, refetch } = useBusinesses();
 
-  // Filter by base manually
   const services = useMemo(() => {
     if (!selectedBase || selectedBase === 'all') return allBusinesses;
-    
     return allBusinesses.filter(business => 
       business.basesServed?.includes(selectedBase)
     );
@@ -54,7 +51,6 @@ export default function ServicesDirectory() {
       militaryDiscount: militaryDiscountOnly || undefined,
       minRating: minRating || undefined,
     });
-
     return sortServices(filtered, sortBy);
   }, [services, selectedCategory, selectedCity, searchQuery, militaryDiscountOnly, minRating, sortBy]);
 
@@ -160,17 +156,41 @@ export default function ServicesDirectory() {
   return (
     <div className="min-h-screen bg-[var(--brand-bg)] py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        
+
         <div className="mb-6">
-           <BaseSelector />
+          <BaseSelector />
         </div>
 
+        {/* ── SEO Intro Block ────────────────────────────────────────────────
+            Static, indexable text for Google. Placed above the dynamic filter
+            UI so crawlers read it regardless of JS execution. Do not remove.
+        ─────────────────────────────────────────────────────────────────── */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-[var(--brand-dark)] mb-2">Services Directory</h1>
-          <p className="text-lg text-[var(--brand-dark)] opacity-80">English-friendly businesses serving Americans in Germany</p>
+          <h1 className="text-4xl font-bold text-[var(--brand-dark)] mb-3">Services Directory</h1>
+          <p className="text-lg text-[var(--brand-dark)] opacity-80 mb-4">
+            English-friendly businesses serving Americans in Germany
+          </p>
+          <div className="prose prose-gray max-w-none text-gray-700 text-base leading-relaxed">
+            <p>
+              Finding reliable, English-speaking services near a US military base in Germany
+              shouldn't be a scavenger hunt. European Living's Services Directory connects
+              American military families and expats with verified local businesses that
+              understand SOFA status, speak English fluently, and have experience working
+              with the US military community.
+            </p>
+            <p className="mt-3">
+              Browse restaurants, mechanics, real estate agents, attorneys, healthcare
+              providers, and more — all vetted for English capability and military
+              familiarity. Filter by base, city, or category to find what you need near
+              Ramstein, Stuttgart, Kaiserslautern, Wiesbaden, or Grafenwöhr. Many listed
+              businesses offer military discounts and are familiar with the unique
+              requirements of USAREUR families, from Anmeldung assistance to SOFA-compliant
+              vehicle registration support.
+            </p>
+          </div>
           {currentBaseDisplay}
         </div>
-        
+
         {error && (
           <ErrorMessage
             title="Failed to load businesses"

@@ -62,26 +62,12 @@
     <link rel="manifest" href="/manifest.json" />
 
     <!-- ============================================================
-         GITHUB PAGES SPA ROUTING FIX
-         When GitHub Pages serves the 404.html, it encodes the real
-         path into the query string. This script restores it so that
-         React Router sees the correct URL.
-         DO NOT REMOVE — this is required for all direct-URL navigation.
+         PRECONNECT HINTS
+         Establishes early connections to critical third-party origins,
+         reducing latency for GA4 and Supabase requests.
     ============================================================ -->
-    <script type="text/javascript">
-      (function(l) {
-        if (l.search[1] === '/') {
-          var decoded = l.search.slice(1).split('&').map(function(s) {
-            return s.replace(/~and~/g, '&');
-          }).join('?');
-          window.history.replaceState(
-            null,
-            null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      }(window.location));
-    </script>
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://pkacbcohrygpyapgtzpq.supabase.co" />
 
     <!-- ============================================================
          GOOGLE ANALYTICS 4
@@ -116,25 +102,9 @@
 
     <!-- ============================================================
          SCHEMA.ORG — Organization structured data
-         Helps Google understand what this site is about.
+         NOTE: SEO.tsx dynamically injects this at runtime via React
+         Helmet. Do not add a static version here — it would duplicate.
     ============================================================ -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "European Living",
-      "url": "https://www.european-living.live",
-      "logo": "https://www.european-living.live/EL_Logo.png",
-      "description": "Resources, services, and community guides for US military families and American expats living in Europe.",
-      "areaServed": [
-        "Germany", "United Kingdom", "Italy", "Spain", "Europe"
-      ],
-      "audience": {
-        "@type": "Audience",
-        "audienceType": "US military families and American expats in Europe"
-      }
-    }
-    </script>
   </head>
   <body>
     <div id="root"></div>

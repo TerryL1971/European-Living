@@ -1,4 +1,4 @@
-// src/components/page/Header.tsx - FIXED SENTRY ERROR
+// src/components/page/Header.tsx
 
 import { useState, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -122,12 +122,13 @@ export default function Header() {
                 Travel Phrases
               </button>
 
-              <button
-                onClick={() => scrollToSection('english-services')}
-                className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--brand-bg-alt)]"
+              {/* FIX: Was a scroll button — now a real <Link> so Google can crawl /services-directory */}
+              <Link
+                to="/services-directory"
+                className="px-4 py-2 text-sm font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg"
               >
                 English Services
-              </button>
+              </Link>
 
               <Link
                 to="/about"
@@ -202,7 +203,7 @@ export default function Header() {
                 Day Trips
               </Link>
 
-              {/* PCS Guide — mobile, with USO context note */}
+              {/* PCS Guide — mobile */}
               <Link
                 to="/pcs-guide"
                 onClick={() => setMobileMenuOpen(false)}
@@ -235,12 +236,14 @@ export default function Header() {
                 Travel Phrases
               </button>
 
-              <button
-                onClick={() => scrollToSection('english-services')}
-                className="w-full text-left px-4 py-3 text-base font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg transition"
+              {/* FIX: Was a scroll button — now a real <Link> so Google can crawl /services-directory */}
+              <Link
+                to="/services-directory"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block px-4 py-3 text-base font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg transition"
               >
                 English Services
-              </button>
+              </Link>
 
               <Link
                 to="/about"
