@@ -24,6 +24,8 @@ const ServicesDirectory      = lazy(() => import('./components/ServicesDirectory
 const BusinessSubmissionForm = lazy(() => import('./components/BusinessSubmissionForm'));
 const BusinessDataEntry      = lazy(() => import('./pages/admin/BusinessDataEntry'));
 const PrivacyPolicy          = lazy(() => import('./pages/PrivacyPolicy'));
+const ImpressumPage          = lazy(() => import('./pages/ImpressumPage'));
+const TermsOfServicePage     = lazy(() => import('./pages/TermsOfServicePage'));
 const DayTripsPage           = lazy(() => import('./pages/DayTripsPage'));
 const AboutPage              = lazy(() => import('./pages/AboutPage'));
 const FamilyAdventuresPage   = lazy(() => import('./pages/FamilyAdventuresPage'));
@@ -226,6 +228,28 @@ export default function App() {
               </div>
             }
           />
+
+          {/* ── Impressum (German legal requirements §5 TMG) ────────────────────────────────── */}
+          <Route
+            path="/impressum"
+            element={
+              <div className="pt-16">
+                <SEO title="Impressum" />
+                <ImpressumPage />
+              </div>
+            }
+          />
+
+          {/* ── Terms of Service ───────────────────────────────── */}
+          <Route
+            path="/terms-of-service"
+            element={
+              <div className="pt-16">
+                <SEO title="Terms of Service" />
+                <TermsOfServicePage />
+              </div>
+            }
+          />  
 
           {/* ── Admin (no SEO indexing) ───────────────────────── */}
           <Route
