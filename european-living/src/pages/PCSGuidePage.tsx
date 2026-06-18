@@ -40,7 +40,7 @@ const PHASES: Phase[] = [
     timing: 'When orders arrive',
     title: 'You Got Orders',
     subtitle: 'The first 72 hours after orders drop are the most important.',
-    color: '#1B3A5C',
+    color: 'var(--brand-primary-dark, #0C4A6E)',
     steps: [
       'Read your orders carefully — confirm your gaining unit, report date, and authorized dependents.',
       'Contact your gaining unit\'s sponsorship coordinator immediately. If none is assigned, ask your gaining unit\'s S1.',
@@ -64,8 +64,8 @@ const PHASES: Phase[] = [
         description: 'Look up current housing allowance rates for your gaining installation.',
       },
       {
-        label: 'No-Fee Passport Application (DS-11)',
-        url: 'https://travel.state.gov/content/travel/en/passports/need-passport/military.html',
+        label: 'No-Fee Passport — State Department',
+        url: 'https://travel.state.gov/en/passports/apply/unique-needs/special-issuance-passport.html',
         type: 'official',
         description: 'Official State Department guidance for military no-fee passports.',
       },
@@ -83,7 +83,7 @@ const PHASES: Phase[] = [
     timing: '60–30 days before departure',
     title: 'Preparing to Leave',
     subtitle: 'This window closes fast. Do these in order.',
-    color: '#2A5F8F',
+    color: 'var(--brand-primary, #0284C7)',
     steps: [
       'Schedule your household goods (HHG) and unaccompanied baggage (UAB) shipments through your transportation office. UAB arrives first — pack accordingly.',
       'Arrange pet travel. Germany requires EU pet passport, rabies vaccination, and microchip. This takes time — start immediately.',
@@ -134,7 +134,7 @@ const PHASES: Phase[] = [
     timing: 'Travel day & first 72 hours',
     title: 'In Transit',
     subtitle: 'You\'re moving. Here\'s what to do the moment you land.',
-    color: '#1B3A5C',
+    color: 'var(--brand-primary-dark, #0C4A6E)',
     steps: [
       'Land at Frankfurt (FRA) or Ramstein (RAX) if flying Space-A. USO lounges are available at FRA — this guide was made for you.',
       'Contact your sponsor or gaining unit POC immediately upon landing.',
@@ -177,7 +177,7 @@ const PHASES: Phase[] = [
     timing: 'Days 1–30 after arrival',
     title: 'First 30 Days — Getting Mobile & Set Up',
     subtitle: 'Transportation first, then banking, then everything else. In that order.',
-    color: '#2A5F8F',
+    color: 'var(--brand-primary, #0284C7)',
     steps: [
       // ── Transportation (most urgent) ──────────────────────────
       'Get a rental car immediately if you did not ship a vehicle. On-post car rental (Enterprise, Hertz) accepts your US license for the first 6 months. Off-post German rental agencies also accept it. Book ahead — availability near bases is limited during PCS season (June–August).',
@@ -223,10 +223,22 @@ const PHASES: Phase[] = [
         description: 'Register with TRICARE Europe and find authorized local providers.',
       },
       {
-        label: 'USAREUR Vehicle Registration',
-        url: 'https://www.eur.army.mil',
+        label: 'Vehicle Registration — USAG Stuttgart',
+        url: 'https://www.stuttgart.army.mil/services-vehiclereg.html',
         type: 'official',
-        description: 'Visit eur.army.mil and search Vehicle Registration for your installation\'s requirements.',
+        description: 'Panzer Kaserne Bldg 2930. Appointments required. CAC needed for online scheduling.',
+      },
+      {
+        label: 'Vehicle Registration — USAG Bavaria (Grafenwöhr / Vilseck)',
+        url: 'https://home.army.mil/bavaria/Directorates/DES/vehicleregistrationservice',
+        type: 'official',
+        description: 'Appointments via online scheduler. Walk-ins accepted daily. FASTTRACK program for newcomers.',
+      },
+      {
+        label: 'Vehicle Registration — All Installations',
+        url: 'https://installations.militaryonesource.mil',
+        type: 'official',
+        description: 'Search your installation on MilitaryInstallations for local VRO hours, location, and requirements.',
       },
       {
         label: 'N26 — Online German Bank Account',
@@ -273,7 +285,7 @@ const PHASES: Phase[] = [
     timing: 'Days 30–90 and beyond',
     title: 'Getting Settled',
     subtitle: 'You\'re past the sprint. Now make it home.',
-    color: '#1B3A5C',
+    color: 'var(--brand-primary-dark, #0C4A6E)',
     steps: [
       'Explore your local area. Germany\'s train network (Deutsche Bahn) connects you to all of Europe. A Deutschland-Ticket (€49/month) covers local and regional trains.',
       'Learn basic German phrases. Most Germans near US bases speak English, but effort is appreciated and opens doors.',
@@ -343,9 +355,9 @@ const FAQ_ITEMS = [
 
 function ResourceBadge({ type }: { type: Resource['type'] }) {
   const config = {
-    official: { label: 'Official', bg: '#1B3A5C', color: '#fff' },
-    download: { label: '⬇ Download', bg: '#9da586', color: '#fff' },
-    guide: { label: 'EL Guide', bg: '#C9733A', color: '#fff' },
+    official: { label: 'Official', bg: 'var(--brand-primary-dark, #0C4A6E)', color: '#fff' },
+    download: { label: '⬇ Download', bg: 'var(--brand-secondary, #F59E0B)', color: '#fff' },
+    guide: { label: 'EL Guide', bg: 'var(--brand-amber, #D97706)', color: '#fff' },
   }[type];
   return (
     <span style={{
@@ -390,7 +402,7 @@ function PhaseCard({ phase, isOpen, onToggle }: {
           gap: '16px',
           padding: '20px 24px',
           backgroundColor: isOpen ? phase.color : '#fff',
-          color: isOpen ? '#fff' : '#1B3A5C',
+          color: isOpen ? '#fff' : 'var(--brand-primary-dark, #0C4A6E)',
           border: `1.5px solid ${isOpen ? phase.color : '#e5e7eb'}`,
           borderBottom: isOpen ? 'none' : undefined,
           borderRadius: isOpen ? '12px 12px 0 0' : '12px',
@@ -419,7 +431,7 @@ function PhaseCard({ phase, isOpen, onToggle }: {
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
             opacity: isOpen ? 0.75 : 1,
-            color: isOpen ? '#fff' : '#9da586',
+            color: isOpen ? '#fff' : 'var(--brand-secondary, #F59E0B)',
             marginBottom: '2px',
           }}>
             {phase.timing}
@@ -587,7 +599,7 @@ function PhaseCard({ phase, isOpen, onToggle }: {
                       <div style={{
                         fontSize: '13px',
                         fontWeight: 600,
-                        color: r.comingSoon ? '#6b7280' : '#1B3A5C',
+                        color: r.comingSoon ? '#6b7280' : 'var(--brand-primary-dark, #0C4A6E)',
                         marginBottom: '3px',
                       }}>
                         {r.label}
@@ -645,7 +657,7 @@ function FAQItem({ item }: { item: typeof FAQ_ITEMS[0] }) {
           textAlign: 'left',
           fontSize: '15px',
           fontWeight: 600,
-          color: '#1B3A5C',
+          color: 'var(--brand-primary-dark, #0C4A6E)',
           lineHeight: 1.4,
         }}
       >
@@ -655,7 +667,7 @@ function FAQItem({ item }: { item: typeof FAQ_ITEMS[0] }) {
           fontSize: '18px',
           transform: open ? 'rotate(180deg)' : 'rotate(0)',
           transition: 'transform 0.2s',
-          color: '#9da586',
+          color: 'var(--brand-secondary, #F59E0B)',
           marginTop: '2px',
         }}>↓</span>
       </button>
@@ -703,12 +715,16 @@ export default function PCSGuidePage() {
         { name: 'PCS Guide to Germany', url: '/pcs-guide' },
       ]} />
 
-      <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif", color: '#111827' }}>
+      <div style={{
+        fontFamily: 'var(--font-sans, "Inter", -apple-system, BlinkMacSystemFont, sans-serif)',
+        color: 'var(--brand-text, #111827)',
+        backgroundColor: 'var(--brand-bg, #ffffff)',
+      }}>
 
         {/* ── USO Partnership Banner — hidden until partnership is confirmed ── */}
         {SHOW_USO_BANNER && (
           <div style={{
-            backgroundColor: '#1B3A5C',
+            backgroundColor: 'var(--brand-primary-dark, #0C4A6E)',
             color: '#fff',
             padding: '10px 24px',
             display: 'flex',
@@ -722,7 +738,7 @@ export default function PCSGuidePage() {
           }}>
             <span style={{ opacity: 0.75 }}>Available at USO Lounges across the United States</span>
             <span style={{
-              backgroundColor: '#9da586',
+              backgroundColor: 'var(--brand-secondary, #F59E0B)',
               color: '#fff',
               padding: '3px 10px',
               borderRadius: '20px',
@@ -738,7 +754,7 @@ export default function PCSGuidePage() {
 
         {/* ── Hero ──────────────────────────────────────────── */}
         <div style={{
-          background: 'linear-gradient(135deg, #1B3A5C 0%, #2A5F8F 60%, #9da586 100%)',
+          background: 'linear-gradient(135deg, var(--brand-primary-dark, #0C4A6E) 0%, var(--brand-primary, #0284C7) 60%, var(--brand-secondary, #F59E0B) 100%)',
           padding: 'clamp(48px, 8vw, 96px) 24px',
           textAlign: 'center',
           color: '#fff',
@@ -797,7 +813,7 @@ export default function PCSGuidePage() {
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <a href="#phases" style={{
-                backgroundColor: '#9da586',
+                backgroundColor: 'var(--brand-primary, #0284C7)',
                 color: '#fff',
                 padding: '14px 28px',
                 borderRadius: '8px',
@@ -848,7 +864,7 @@ export default function PCSGuidePage() {
               { num: 'All', label: 'Major Bases in Germany' },
             ].map((s, i) => (
               <div key={i}>
-                <div style={{ fontSize: '24px', fontWeight: 800, color: '#1B3A5C' }}>{s.num}</div>
+                <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--brand-primary-dark, #0C4A6E)' }}>{s.num}</div>
                 <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: 500 }}>{s.label}</div>
               </div>
             ))}
@@ -869,12 +885,12 @@ export default function PCSGuidePage() {
                 fontWeight: 700,
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
-                color: '#9da586',
+                color: 'var(--brand-secondary, #F59E0B)',
                 marginBottom: '8px',
               }}>
                 Who this guide is for
               </div>
-              <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: '#1B3A5C', margin: 0 }}>
+              <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: 'var(--brand-primary-dark, #0C4A6E)', margin: 0 }}>
                 Every American family headed to Germany
               </h2>
             </div>
@@ -887,11 +903,11 @@ export default function PCSGuidePage() {
               <div key={i} style={{
                 padding: '20px',
                 backgroundColor: '#fff',
-                border: '1.5px solid #e5e7eb',
+                border: '1.5px solid var(--brand-border, #94A3B8)',
                 borderRadius: '12px',
               }}>
                 <div style={{ fontSize: '28px', marginBottom: '10px' }}>{p.icon}</div>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1B3A5C', marginBottom: '6px' }}>{p.title}</div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--brand-primary-dark, #0C4A6E)', marginBottom: '6px' }}>{p.title}</div>
                 <div style={{ fontSize: '13px', color: '#6b7280', lineHeight: 1.5 }}>{p.desc}</div>
               </div>
             ))}
@@ -910,7 +926,7 @@ export default function PCSGuidePage() {
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              color: '#9da586',
+              color: 'var(--brand-secondary, #F59E0B)',
               marginBottom: '8px',
             }}>
               Phase-by-phase guide
@@ -918,7 +934,7 @@ export default function PCSGuidePage() {
             <h2 style={{
               fontSize: 'clamp(22px, 3vw, 32px)',
               fontWeight: 700,
-              color: '#1B3A5C',
+              color: 'var(--brand-primary-dark, #0C4A6E)',
               margin: '0 0 8px',
             }}>
               Select your phase
@@ -952,12 +968,12 @@ export default function PCSGuidePage() {
             fontWeight: 700,
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
-            color: '#9da586',
+            color: 'var(--brand-secondary, #F59E0B)',
             marginBottom: '8px',
           }}>
             Keep these saved
           </div>
-          <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: '#1B3A5C', margin: '0 0 24px' }}>
+          <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: 'var(--brand-primary-dark, #0C4A6E)', margin: '0 0 24px' }}>
             Key contacts for Germany
           </h2>
           <div style={{
@@ -976,11 +992,11 @@ export default function PCSGuidePage() {
               <div key={i} style={{
                 padding: '16px',
                 backgroundColor: '#fff',
-                border: '1.5px solid #e5e7eb',
+                border: '1.5px solid var(--brand-border, #94A3B8)',
                 borderRadius: '10px',
               }}>
-                <div style={{ fontSize: '12px', color: '#9da586', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{c.label}</div>
-                <div style={{ fontSize: '15px', fontWeight: 700, color: '#1B3A5C', marginBottom: '3px' }}>{c.number}</div>
+                <div style={{ fontSize: '12px', color: 'var(--brand-secondary, #F59E0B)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{c.label}</div>
+                <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--brand-primary-dark, #0C4A6E)', marginBottom: '3px' }}>{c.number}</div>
                 <div style={{ fontSize: '12px', color: '#9ca3af' }}>{c.note}</div>
               </div>
             ))}
@@ -999,12 +1015,12 @@ export default function PCSGuidePage() {
               fontWeight: 700,
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
-              color: '#9da586',
+              color: 'var(--brand-secondary, #F59E0B)',
               marginBottom: '8px',
             }}>
               Common questions
             </div>
-            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: '#1B3A5C', margin: '0 0 8px' }}>
+            <h2 style={{ fontSize: 'clamp(22px, 3vw, 32px)', fontWeight: 700, color: 'var(--brand-primary-dark, #0C4A6E)', margin: '0 0 8px' }}>
               Things families ask before they land
             </h2>
             <p style={{ fontSize: '14px', color: '#6b7280', margin: '0 0 32px', lineHeight: 1.6 }}>
@@ -1020,7 +1036,7 @@ export default function PCSGuidePage() {
 
         {/* ── Services CTA ──────────────────────────────────── */}
         <div style={{
-          background: 'linear-gradient(135deg, #1B3A5C 0%, #2A5F8F 100%)',
+          background: 'linear-gradient(135deg, var(--brand-primary-dark, #0C4A6E) 0%, var(--brand-primary, #0284C7) 100%)',
           padding: 'clamp(48px, 8vw, 80px) 24px',
           textAlign: 'center',
           color: '#fff',
@@ -1037,7 +1053,7 @@ export default function PCSGuidePage() {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <a href="/services-directory" style={{
-                backgroundColor: '#9da586',
+                backgroundColor: 'var(--brand-secondary, #F59E0B)',
                 color: '#fff',
                 padding: '14px 28px',
                 borderRadius: '8px',
