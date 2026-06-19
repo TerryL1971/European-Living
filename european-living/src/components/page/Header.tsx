@@ -122,13 +122,15 @@ export default function Header() {
                 Travel Phrases
               </button>
 
-              {/* FIX: Was a scroll button — now a real <Link> so Google can crawl /services-directory */}
-              <Link
-                to="/services-directory"
-                className="px-4 py-2 text-sm font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg"
+              {/* REVERTED: back to scroll-to-section behavior on the homepage.
+                  /services-directory is now accessed via a dedicated link
+                  inside ServicesCategoriesSection.tsx instead of the nav. */}
+              <button
+                onClick={() => scrollToSection('english-services')}
+                className="px-4 py-2 text-sm rounded-lg hover:bg-[var(--brand-bg-alt)]"
               >
                 English Services
-              </Link>
+              </button>
 
               <Link
                 to="/about"
@@ -236,14 +238,13 @@ export default function Header() {
                 Travel Phrases
               </button>
 
-              {/* FIX: Was a scroll button — now a real <Link> so Google can crawl /services-directory */}
-              <Link
-                to="/services-directory"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-4 py-3 text-base font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg transition"
+              {/* REVERTED: back to scroll-to-section behavior on the homepage */}
+              <button
+                onClick={() => scrollToSection('english-services')}
+                className="w-full text-left px-4 py-3 text-base font-medium text-[var(--brand-text)] hover:text-[var(--brand-primary)] hover:bg-[var(--brand-bg-alt)] rounded-lg transition"
               >
                 English Services
-              </Link>
+              </button>
 
               <Link
                 to="/about"

@@ -103,12 +103,12 @@ const Footer: React.FC = () => {
               </li>
               <li>
                 <a
-                  href="https://framedwithwonder.com"
+                  href="https://expattax.de/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  Framed With Wonder
+                  German Tax Advice for English Speaking Expats
                 </a>
               </li>
             </ul>

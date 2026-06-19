@@ -8,6 +8,7 @@ import {
   Utensils,
   ShoppingBag,
   Home,
+  ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
@@ -160,6 +161,19 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
           <p className="text-lg text-white/90 font-medium max-w-3xl mx-auto">
             Find personally verified, English-speaking businesses across Europe that understand U.S. military, civilian, and contractors, and their families — offering trusted local support and peace of mind wherever you're stationed.
           </p>
+
+          {/* View Full Directory link — gives the standalone /services-directory
+              page a second crawlable entry point without touching the category
+              card navigation below. */}
+          <div className="mt-6">
+            <Link
+              to="/services-directory"
+              className="inline-flex items-center gap-1.5 text-white font-semibold underline underline-offset-4 hover:text-[var(--brand-secondary)] transition-colors"
+            >
+              View Full Services Directory
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
 
         {/* Category Cards Grid */}
