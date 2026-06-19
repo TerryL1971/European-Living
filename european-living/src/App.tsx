@@ -32,6 +32,7 @@ const FamilyAdventuresPage   = lazy(() => import('./pages/FamilyAdventuresPage')
 const FeaturedContentAdmin   = lazy(() => import('./pages/admin/FeaturedContentAdmin'));
 const DayTripDetailPage      = lazy(() => import('./pages/DayTripDetailPage'));
 const PCSGuidePage           = lazy(() => import('./pages/PCSGuidePage'));
+const ContactPage            = lazy(() => import('./pages/ContactPage'));
 
 // ── Reading progress bar ────────────────────────────────────────────────────
 const ReadingProgress = () => {
@@ -217,6 +218,9 @@ export default function App() {
               </div>
             }
           />
+
+          {/* ── Contact ───────────────────────────────────────── */}
+          <Route path="/contact" element={<ContactPage />} />
 
           {/* ── Privacy Policy ────────────────────────────────── */}
           <Route

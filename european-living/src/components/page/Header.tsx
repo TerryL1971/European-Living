@@ -144,13 +144,13 @@ export default function Header() {
             <div className="hidden lg:flex items-center gap-3">
               <button
                 onClick={() => scrollToSection('contact')}
-                className="px-6 py-2.5 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-full hover:scale-105 transition"
+                className="px-6 py-2.5 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-full hover:scale-105 transition whitespace-nowrap"
               >
                 Contact Us
               </button>
               <button
                 onClick={resetBaseSelection}
-                className="text-sm text-red-500 hover:text-red-700 underline"
+                className="text-sm text-red-500 hover:text-red-700 underline whitespace-nowrap"
               >
                 Reset Base
               </button>
