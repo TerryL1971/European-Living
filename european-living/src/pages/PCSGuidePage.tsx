@@ -179,27 +179,21 @@ const PHASES: Phase[] = [
     subtitle: 'Transportation first, then banking, then everything else. In that order.',
     color: 'var(--brand-primary, #0284C7)',
     steps: [
-      // ── Transportation (most urgent) ──────────────────────────
       'Get a rental car immediately if you did not ship a vehicle. On-post car rental (Enterprise, Hertz) accepts your US license for the first 6 months. Off-post German rental agencies also accept it. Book ahead — availability near bases is limited during PCS season (June–August).',
       'Get your USAREUR driver\'s license within your first 6 months — this is the clock that starts the day you report, not the day you arrive in Germany. Bring your US license, orders, and a USAREUR Form 190-1 to your installation\'s vehicle registration office. A written test on German traffic law is required.',
       'Decide: buy on-post or buy off-post? On-post car lots (like the Grafenwöhr or Kaiserslautern auto sales) sell US-spec vehicles — easier to finance with USAA or Navy Federal, no German paperwork. Off-post German vehicles are cheaper and better suited for German roads and autobahn driving but require more documentation and a German bank account.',
       'If buying a German vehicle off-post: understand the market before you walk onto any lot. The "lemon lot" — private sales on post — is full of vehicles being offloaded by families PCSing out. Prices look attractive but there is no warranty, no recourse, and no inspection requirement. Many of these vehicles have deferred maintenance that the seller knows about and you won\'t discover until after you\'ve driven off. A €6,000 lemon lot car that needs €3,000 in repairs immediately is not a deal. Reputable dealers near US bases who specialize in military families — such as Used Car Guys GmbH (usedcarguys.net) — offer both US-spec and EU-spec vehicles with a 1-year warranty and a guaranteed buyback program, which matters enormously when you PCS out in 3 years. They also allow you to reserve a vehicle before you arrive and handle most of the paperwork in advance, so you are not scrambling for transportation in your first week. Whatever you buy, make sure your insurance is in place before you drive it off the lot.',
       'If buying on-post: bring your orders, military ID, a pre-approval letter from USAA or Navy Federal, and your IDP. Financing is available through the auto sales office. US-spec vehicles require USAREUR plates and on-post insurance (available through USAA or Armed Forces Insurance).',
       'Get USAREUR vehicle insurance before you drive anything off the lot — this is not optional and is not negotiable. Your US insurance policy does not cover you in Germany. Options include USAA, GEICO Military, Armed Forces Insurance, and American Auto Nation Insurance (americanautonation.com), which specializes in coverage for military families buying vehicles in Germany and can often have you covered same-day. Minimum required liability coverage in Germany is €7.5 million — higher than anything you carried in the US, but standard here.',
-      // ── Phone & connectivity ──────────────────────────────────
       'Get a German SIM card or activate an international phone plan on Day 1. Without a local number you cannot call landlords, doctors, or German businesses. Aldi Talk, Congstar, and Telekom all sell prepaid SIMs at any supermarket or electronics store — no German ID required for prepaid. Bring your unlocked phone.',
       'Set up internet at your off-post home. Deutsche Telekom, Vodafone, and o2 are the main providers. Contracts are 24 months — start the process early because installation takes 2–4 weeks. In the meantime, a mobile hotspot (available at the PX) bridges the gap.',
-      // ── Banking ───────────────────────────────────────────────
       'Open a German bank account if living off-post. Your landlord will require SEPA bank transfers — US wire transfers are not accepted for rent. Deutsche Bank and Commerzbank have English-speaking staff near most bases. N26 is a digital option that opens entirely online and works immediately.',
       'Apply for your SOFA tax exemption card (VAT Form 7600) at your installation\'s Vehicle Registration / SOFA office. This card exempts you from Germany\'s 19% VAT on most purchases. Bring it every time you shop — you will save hundreds of euros per year.',
-      // ── Housing ───────────────────────────────────────────────
       'If living off-post, complete the Anmeldung (address registration) at your local Einwohnermeldeamt within 14 days of moving in. Bring your passport, lease agreement, and a Wohnungsgeberbestätigung (landlord confirmation form — your landlord must provide this). This is required by German law and unlocks access to German services.',
       'Walk through your rental property with your landlord and complete the Übergabeprotokoll (move-in inspection form) on day one. Document every scratch, scuff, and imperfection with photos. German landlords can charge for pre-existing damage at move-out if it is not documented at move-in. This is the most common financial mistake military families make in Germany.',
-      // ── Medical & family ─────────────────────────────────────
       'Register with TRICARE Europe within your first week. Your coverage carries over but you must register locally to use German providers, make appointments, and get referrals. Keep your US TRICARE card — you will need it for stateside care during leave.',
       'Find an English-speaking doctor and dentist near your installation before you need one. European Living\'s services directory has verified English-speaking providers near every major US base in Germany. Do not wait until someone is sick.',
       'Enroll your children in school immediately. DoDEA schools are on-post, free, and follow a US curriculum — enrollment is through your installation\'s DoDEA school office. If attending a German or international school off-post, contact the school directly as soon as your address is confirmed.',
-      // ── Grocery & daily life ──────────────────────────────────
       'Learn the local grocery stores. REWE, Edeka, and Kaufland are the main German supermarkets — most have basic English-speaking staff near bases. ALDI and Lidl are excellent for produce and everyday items. The commissary on-post carries US products but can be expensive for non-staples. Germans shop daily or every few days — refrigerators are smaller than US ones.',
       'Understand German shopping hours. Most stores close by 8–10pm and are closed on Sundays. Gas stations stay open Sundays for basics. Plan your weekly shopping accordingly — running out of something Sunday afternoon is a rite of passage for every American family in Germany.',
     ],
@@ -692,7 +686,6 @@ export default function PCSGuidePage() {
 
   const togglePhase = (id: string) => {
     setOpenPhase(prev => prev === id ? null : id);
-    // Prevent browser from jumping when expanding bottom phases
     const el = document.getElementById(`phase-${id}`);
     if (el) {
       setTimeout(() => {
@@ -721,7 +714,6 @@ export default function PCSGuidePage() {
         backgroundColor: 'var(--brand-bg, #ffffff)',
       }}>
 
-        {/* ── USO Partnership Banner — hidden until partnership is confirmed ── */}
         {SHOW_USO_BANNER && (
           <div style={{
             backgroundColor: 'var(--brand-primary-dark, #0C4A6E)',
@@ -754,18 +746,29 @@ export default function PCSGuidePage() {
 
         {/* ── Hero ──────────────────────────────────────────── */}
         <div style={{
-          background: 'linear-gradient(135deg, var(--brand-primary-dark, #0C4A6E) 0%, var(--brand-primary, #0284C7) 60%, var(--brand-secondary, #F59E0B) 100%)',
+          backgroundImage: `url("https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/pcs-guide-background.png")`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center 55%',
           padding: 'clamp(48px, 8vw, 96px) 24px',
           textAlign: 'center',
           color: '#fff',
           position: 'relative',
           overflow: 'hidden',
         }}>
-          {/* Background texture pattern */}
+          {/* Dark gradient overlay — matches HeroSection.tsx so text stays readable over the photo */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(157,165,134,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 40%)',
+            background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 100%)',
+            pointerEvents: 'none',
+          }} />
+
+          {/* Bottom vignette */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.4) 100%)',
             pointerEvents: 'none',
           }} />
 
@@ -782,6 +785,7 @@ export default function PCSGuidePage() {
               padding: '6px 16px',
               borderRadius: '20px',
               marginBottom: '20px',
+              backdropFilter: 'blur(4px)',
             }}>
               Germany Edition · All Bases Covered
             </div>
@@ -792,19 +796,21 @@ export default function PCSGuidePage() {
               lineHeight: 1.1,
               margin: '0 0 16px',
               letterSpacing: '-0.02em',
+              textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)',
             }}>
               Your PCS to Germany.<br />
-              <span style={{ color: '#c8d4b4' }}>Step by step.</span>
+              <span style={{ color: '#F5C04A' }}>Step by step.</span>
             </h1>
 
             <p style={{
               fontSize: 'clamp(15px, 2vw, 18px)',
               lineHeight: 1.6,
-              opacity: 0.85,
+              opacity: 0.95,
               margin: '0 0 32px',
               maxWidth: '560px',
               marginLeft: 'auto',
               marginRight: 'auto',
+              textShadow: '0 2px 8px rgba(0, 0, 0, 0.8), 0 1px 3px rgba(0, 0, 0, 0.6)',
             }}>
               From the day your orders drop to the day you feel at home in Germany.
               Verified steps, official resources, and honest advice — whether your
@@ -821,19 +827,21 @@ export default function PCSGuidePage() {
                 fontWeight: 600,
                 textDecoration: 'none',
                 display: 'inline-block',
+                boxShadow: '0 4px 14px rgba(0,0,0,0.35)',
               }}>
                 Start the Guide ↓
               </a>
               <a href="/services-directory" style={{
                 backgroundColor: 'rgba(255,255,255,0.15)',
                 color: '#fff',
-                border: '1.5px solid rgba(255,255,255,0.3)',
+                border: '1.5px solid rgba(255,255,255,0.4)',
                 padding: '14px 28px',
                 borderRadius: '8px',
                 fontSize: '15px',
                 fontWeight: 600,
                 textDecoration: 'none',
                 display: 'inline-block',
+                backdropFilter: 'blur(4px)',
               }}>
                 Find Services Near Your Base
               </a>
