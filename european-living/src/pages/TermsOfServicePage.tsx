@@ -43,6 +43,12 @@ export default function TermsOfServicePage() {
                 information resource for US military families and American expats
                 living in or moving to Europe.
               </p>
+              <p className="mt-3 text-[var(--brand-text-muted)]">
+                This site is intended for use by individuals who are at least
+                18 years of age, or the age of legal majority in their
+                jurisdiction. By using the site or submitting content, you
+                represent that you meet this requirement.
+              </p>
             </section>
 
             {/* 1 */}
@@ -131,6 +137,12 @@ export default function TermsOfServicePage() {
                 You are solely responsible for content you submit. You agree not
                 to submit content that is defamatory, fraudulent, harassing,
                 unlawful, or that infringes on the rights of any third party.
+              </p>
+              <p className="mt-2 text-[var(--brand-text-muted)]">
+                We reserve the right, but are not obligated, to review, edit,
+                refuse, or remove any submitted content at our sole discretion,
+                and to suspend or restrict access to the site for users who
+                violate these Terms.
               </p>
             </section>
 
