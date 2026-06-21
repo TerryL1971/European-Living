@@ -121,7 +121,7 @@ export default function DayTripsPage() {
 
       <div className="min-h-screen bg-[var(--brand-bg)] pt-16">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-dark)] text-[var(--brand-light)] py-16">
+        <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-dark)] text-[var(--brand-white)] py-16">
           <div className="max-w-7xl mx-auto px-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               🗺️ Day Trips & Weekend Getaways
@@ -247,8 +247,8 @@ export default function DayTripsPage() {
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="h-48 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-dark)] flex items-center justify-center">
-                        <MapPin className="w-16 h-16 text-[var(--brand-light)] opacity-50" />
+                      <div className="h-48 bg-gradient-to-br from-[var(--brand-primary)] to-[var(--brand-primary-dark)] flex items-center justify-center">
+                        <MapPin className="w-16 h-16 text-[var(--brand-white)] opacity-50" />
                       </div>
                     )}
 
@@ -298,7 +298,7 @@ export default function DayTripsPage() {
                       </div>
                       {trip.train_time && (
                         <div className="flex items-center gap-2 text-sm text-[var(--muted-foreground)]">
-                          <Train size={16} className="text-[var(--brand-button)]" />
+                          <Train size={16} className="text-[var(--brand-amber)]" />
                           <span>{trip.train_time} by train</span>
                         </div>
                       )}
@@ -307,7 +307,7 @@ export default function DayTripsPage() {
                     {/* Badges */}
                     <div className="flex flex-wrap gap-2 mb-4">
                       <span className={`text-xs px-2 py-1 rounded-full ${
-                        trip.difficulty === 'Easy' ? 'bg-[var(--brand-button)] bg-opacity-20 text-[var(--brand-dark)]' :
+                        trip.difficulty === 'Easy' ? 'bg-[var(--brand-gold)] bg-opacity-20 text-[var(--brand-dark)]' :
                         trip.difficulty === 'Moderate' ? 'bg-[var(--brand-gold)] bg-opacity-30 text-[var(--brand-dark)]' :
                         'bg-[var(--brand-primary)] bg-opacity-20 text-[var(--brand-dark)]'
                       }`}>

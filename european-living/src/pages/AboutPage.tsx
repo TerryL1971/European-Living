@@ -1,6 +1,6 @@
 // src/pages/AboutPage.tsx - YOUR AUTHENTIC STORY
 import SEO from '../components/SEO';
-import { Heart, MapPin, Users, Plane, Coffee, Home } from 'lucide-react';
+import { Heart, MapPin, Plane, Coffee, Home } from 'lucide-react';
 
 export default function AboutPage() {
   return (
@@ -13,15 +13,18 @@ export default function AboutPage() {
 
       <div className="min-h-screen bg-[var(--brand-bg)] pt-16">
         {/* Hero Section - Personal & Warm */}
-        <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-dark)] text-[var(--brand-light)] py-20">
+        <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-dark)] text-[var(--brand-white)] py-20">
           <div className="max-w-4xl mx-auto px-6">
             <div className="flex flex-col md:flex-row items-center gap-8">
-              {/* Profile Photo Placeholder */}
-              <div className="w-48 h-48 bg-white/10 rounded-full flex items-center justify-center flex-shrink-0 border-4 border-white/20">
-                <Users className="w-20 h-20 text-white/40" />
-                <img src="https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/My-Photo.png" alt="Terry Lombardi" className="w-full h-full rounded-full object-cover" />
+              {/* Profile Photo */}
+              <div className="w-48 h-48 rounded-full flex-shrink-0 border-4 border-white/20 overflow-hidden">
+                <img
+                  src="https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/My-Photo.png"
+                  alt="Terry Lombardi"
+                  className="w-full h-full rounded-full object-cover"
+                />
               </div>
-              
+
               <div className="text-center md:text-left">
                 <h1 className="text-5xl font-bold mb-4">
                   Hi, I'm Terry 👋
@@ -39,7 +42,7 @@ export default function AboutPage() {
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto px-6 py-16">
-          
+
           {/* The Beginning */}
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-[var(--brand-dark)] mb-6 flex items-center gap-3">
@@ -57,7 +60,7 @@ export default function AboutPage() {
                 <p className="text-lg leading-relaxed mb-4">
                   When I was 8, my parents divorced. Everything changed. From that day forward, only English was spoken in the house. That part of my identity — the German half, the European half — got locked away.
                 </p>
-                <p className="text-lg leading-relaxed mb-4">
+                <p className="text-lg leading-relaxed">
                   But I never forgot.
                 </p>
               </div>
@@ -126,7 +129,7 @@ export default function AboutPage() {
               <Plane className="w-8 h-8 text-[var(--brand-primary)]" />
               We Finally Did It
             </h2>
-            <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-dark)] rounded-lg p-8 text-[var(--brand-light)]">
+            <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-dark)] rounded-lg p-8 text-[var(--brand-white)]">
               <p className="text-lg leading-relaxed mb-4">
                 By late 2015, we were tired of just talking about it.
               </p>
@@ -234,10 +237,10 @@ export default function AboutPage() {
           {/* The Mission */}
           <section className="mb-16">
             <h2 className="text-3xl font-bold text-[var(--brand-dark)] mb-6 flex items-center gap-3">
-              <MapPin className="w-8 h-8 text-[var(--brand-button)]" />
+              <MapPin className="w-8 h-8 text-[var(--brand-gold)]" />
               Why European Living Exists
             </h2>
-            <div className="bg-gradient-to-r from-[var(--brand-button)] to-[var(--brand-gold)] rounded-lg p-8">
+            <div className="bg-gradient-to-r from-[var(--brand-gold)] to-[var(--brand-secondary-light)] rounded-lg p-8">
               <p className="text-xl text-[var(--brand-dark)] leading-relaxed mb-6 font-semibold">
                 I built this site to be the resource I wish existed when Americans first arrive in Germany.
               </p>
@@ -355,11 +358,11 @@ export default function AboutPage() {
           <section className="mb-16">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white rounded-lg p-6 shadow-md border border-[var(--border)] text-center">
-                <div className="text-3xl font-bold text-[var(--brand-primary)] mb-1">9+</div>
+                <div className="text-3xl font-bold text-[var(--brand-primary)] mb-1">10+</div>
                 <div className="text-sm text-[var(--muted-foreground)]">Years Living in Germany</div>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-md border border-[var(--border)] text-center">
-                <div className="text-3xl font-bold text-[var(--brand-button)] mb-1">3</div>
+                <div className="text-3xl font-bold text-[var(--brand-amber)] mb-1">3</div>
                 <div className="text-sm text-[var(--muted-foreground)]">Cities Called Home</div>
               </div>
               <div className="bg-white rounded-lg p-6 shadow-md border border-[var(--border)] text-center">
@@ -388,7 +391,7 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
-                  href="mailto:terry@european-living.live"
+                  href="mailto:info@european-living.live"
                   className="bg-[var(--brand-primary)] text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center"
                 >
                   📧 Email Me
@@ -399,7 +402,7 @@ export default function AboutPage() {
 
           {/* Final CTA */}
           <section className="text-center">
-            <div className="bg-gradient-to-r from-[var(--brand-button)] to-[var(--brand-gold)] rounded-lg p-12">
+            <div className="bg-gradient-to-r from-[var(--brand-gold)] to-[var(--brand-secondary-light)] rounded-lg p-12">
               <Plane className="w-16 h-16 mx-auto mb-6 text-[var(--brand-dark)]" />
               <h2 className="text-3xl font-bold text-[var(--brand-dark)] mb-4">
                 Your European Adventure Starts This Weekend
@@ -410,7 +413,7 @@ export default function AboutPage() {
               <div className="flex gap-4 justify-center flex-wrap">
                 <a
                   href="/day-trips"
-                  className="bg-[var(--brand-dark)] text-[var(--brand-light)] px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition text-lg"
+                  className="bg-[var(--brand-dark)] text-[var(--brand-white)] px-8 py-4 rounded-lg font-semibold hover:opacity-90 transition text-lg"
                 >
                   Explore 33 Day Trips →
                 </a>
