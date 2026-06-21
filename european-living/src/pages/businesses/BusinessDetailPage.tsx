@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Star, MapPin, Phone, Mail, Globe, ArrowLeft, Navigation } from "lucide-react";
 import MapView from "../../components/MapView";
 import ReviewForm from "../../components/ReviewForm";
-// ✅ FIX: Updated imports to use correct function names and types
+import SEO, { BreadcrumbSchema } from "../../components/SEO";
 import { Business, Review } from "../../types/business";
 import { fetchBusinessById, fetchReviews } from "../../services/businessServices";
 
@@ -20,14 +20,10 @@ export default function BusinessDetailPage() {
       if (!id) return;
 
       try {
-        // ✅ FIX: Updated function names
         const [bizData, reviewData] = await Promise.all([
           fetchBusinessById(id),
           fetchReviews(id),
         ]);
-        console.log('Business ID:', id);
-        console.log('Business data:', bizData);
-        console.log('Reviews:', reviewData);
         setBusiness(bizData);
         setReviews(reviewData);
       } catch (error) {
@@ -43,7 +39,6 @@ export default function BusinessDetailPage() {
   const refreshReviews = async () => {
     if (!id) return;
     try {
-      // ✅ FIX: Updated function name
       const reviewData = await fetchReviews(id);
       setReviews(reviewData);
     } catch (error) {
@@ -63,6 +58,7 @@ export default function BusinessDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
         <div className="text-center">
+          <SEO title="Business Not Found" noIndex={true} />
           <h1 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
             Business not found
           </h1>
@@ -82,8 +78,41 @@ export default function BusinessDetailPage() {
       ? reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
       : 0;
 
+  // ── Dynamic SEO per business ──────────────────────────────────────────
+  const seoTitle = business.location
+    ? `${business.name} — ${business.location}`
+    : business.name;
+
+  const seoDescription = business.description
+    ? business.description.slice(0, 155)
+    : `${business.name} is an English-friendly business serving Americans near US military bases in Germany. Find contact info, reviews, and directions.`;
+
   return (
     <div className="min-h-screen bg-[var(--brand-bg)] pt-28 pb-12 px-4">
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        businessSchema={{
+          name: business.name,
+          description: business.description ?? undefined,
+          telephone: business.phone ?? undefined,
+          image: business.imageUrl ?? undefined,
+          address: business.address
+            ? { streetAddress: business.address, addressCountry: 'DE' }
+            : undefined,
+          geo: business.latitude && business.longitude
+            ? { latitude: business.latitude, longitude: business.longitude }
+            : undefined,
+        }}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: '/' },
+          { name: 'Services Directory', url: '/services-directory' },
+          { name: business.name, url: `/businesses/${business.id}` },
+        ]}
+      />
+
       <div className="max-w-4xl mx-auto">
         <button
           onClick={() => navigate(-1)}
@@ -100,13 +129,17 @@ export default function BusinessDetailPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               {/* Business Image */}
               {business.imageUrl && (
-                <div className="rounded-lg overflow-hidden">
+                <div className="rounded-lg overflow-hidden bg-white/10 flex items-center justify-center min-h-[16rem]">
                   <img
                     src={business.imageUrl}
                     alt={business.name}
                     className="w-full h-64 object-cover"
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = '<div class="text-white/50 text-sm">Image unavailable</div>';
+                      }
                     }}
                   />
                 </div>
@@ -266,13 +299,16 @@ export default function BusinessDetailPage() {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             {/* Only show image if it exists */}
             {business.imageUrl && (
-              <div className="w-full h-64 bg-gray-100">
+              <div className="w-full h-64 bg-gray-100 flex items-center justify-center">
                 <img
                   src={business.imageUrl}
                   alt={business.name ?? "Business"}
                   className="w-full h-64 object-cover"
                   onError={(e) => {
-                    e.currentTarget.parentElement!.style.display = 'none';
+                    const parent = e.currentTarget.parentElement;
+                    if (parent) {
+                      parent.innerHTML = '<div class="text-gray-400 text-sm">Image unavailable</div>';
+                    }
                   }}
                 />
               </div>

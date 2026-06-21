@@ -12,10 +12,6 @@ import TableOfContents from '../../components/TableOfContents';
 type MarkdownImageProps = HTMLProps<HTMLImageElement>;
 
 // ── Print stylesheet injected into <head> once ─────────────────────────────
-// NOTE: Print media queries use literal hex values rather than CSS variables.
-// var(--brand-primary-dark) / var(--brand-gold) correspond to #0C4A6E / #F59E0B.
-// Some browsers' print engines don't reliably resolve custom properties in
-// @media print, so these stay hardcoded but matched to the real brand palette.
 const PRINT_STYLES = `
 @media print {
   /* Hide everything except the article content */
@@ -44,7 +40,7 @@ const PRINT_STYLES = `
   /* Print header — show site name and URL */
   .print-header {
     display: block !important;
-    border-bottom: 2pt solid #0C4A6E;
+    border-bottom: 2pt solid #1B3A5C;
     padding-bottom: 8pt;
     margin-bottom: 16pt;
   }
@@ -56,7 +52,7 @@ const PRINT_STYLES = `
 
   /* Blockquotes (tips/warnings) */
   blockquote {
-    border-left: 3pt solid #F59E0B !important;
+    border-left: 3pt solid #9da586 !important;
     padding-left: 10pt !important;
     margin: 8pt 0 !important;
     background: #f9f9f9 !important;
@@ -73,7 +69,7 @@ const PRINT_STYLES = `
     padding: 4pt 8pt !important;
   }
   th {
-    background: #0C4A6E !important;
+    background: #1B3A5C !important;
     color: white !important;
   }
 
@@ -277,13 +273,13 @@ export default function ArticlePage() {
   const hotelsUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destinationName)}`;
 
   return (
-    <div className="min-h-screen bg-[var(--brand-bg)]">
+    <div className="min-h-screen bg-[var(--brand-light)]">
 
       {/* ── Hidden print header — only shows when printing ── */}
       <div className="print-header" style={{ display: 'none' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '16pt', color: '#0C4A6E' }}>
+            <div style={{ fontWeight: 700, fontSize: '16pt', color: '#1B3A5C' }}>
               European Living
             </div>
             <div style={{ fontSize: '9pt', color: '#6b7280' }}>
@@ -301,7 +297,7 @@ export default function ArticlePage() {
         <div className="max-w-7xl mx-auto px-4 mt-18 py-6">
 
           {article.category && (
-            <span className="inline-block bg-[var(--brand-primary)] text-white text-sm px-3 py-1 rounded-full mb-4">
+            <span className="inline-block bg-[var(--brand-primary)] text-[var(--muted)] text-sm px-3 py-1 rounded-full mb-4">
               {article.category}
             </span>
           )}
@@ -340,7 +336,7 @@ export default function ArticlePage() {
               {article.tags.map(tag => (
                 <span
                   key={tag}
-                  className="flex items-center bg-[var(--brand-primary)] text-white text-xs px-2 py-1 rounded"
+                  className="flex items-center bg-[var(--brand-primary)] text-[var(--muted)] text-xs px-2 py-1 rounded"
                 >
                   <Tag className="w-3 h-3 mr-1" />
                   {tag}
@@ -352,7 +348,7 @@ export default function ArticlePage() {
           <div className="flex items-center gap-4 mt-4 flex-wrap">
             <button
               onClick={() => navigate(backConfig.path)}
-              className="text-[var(--brand-primary)] hover:text-[var(--brand-primary-dark)] hover:underline font-medium"
+              className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline font-medium"
             >
               {backConfig.text}
             </button>
@@ -360,7 +356,7 @@ export default function ArticlePage() {
             {/* Print / Save button — shown on all articles but especially useful for PCS Guides */}
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--brand-primary-dark)] text-[var(--brand-primary-dark)] text-sm font-semibold hover:bg-[var(--brand-primary-dark)] hover:text-white transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#1B3A5C] text-[#1B3A5C] text-sm font-semibold hover:bg-[#1B3A5C] hover:text-white transition-colors"
               title="Print or save as PDF"
             >
               <Printer className="w-4 h-4" />
@@ -376,7 +372,7 @@ export default function ArticlePage() {
           <div
             className="rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
             style={{
-              background: 'linear-gradient(135deg, #0C4A6E 0%, #0284C7 100%)',
+              background: 'linear-gradient(135deg, #1B3A5C 0%, #2A5F8F 100%)',
               color: '#fff',
             }}
           >
@@ -390,7 +386,7 @@ export default function ArticlePage() {
             <button
               onClick={handlePrint}
               className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all hover:scale-105"
-              style={{ backgroundColor: '#F59E0B', color: '#fff' }}
+              style={{ backgroundColor: '#9da586', color: '#fff' }}
             >
               <Printer className="w-4 h-4" />
               Print / Save as PDF
@@ -473,13 +469,13 @@ export default function ArticlePage() {
       <div className="no-print max-w-7xl mx-auto px-4 py-8 border-t flex items-center justify-between flex-wrap gap-4">
         <button
           onClick={() => navigate(backConfig.path)}
-          className="text-[var(--brand-primary)] hover:text-[var(--brand-primary-dark)] hover:underline font-medium"
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline font-medium"
         >
           {backConfig.text}
         </button>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--brand-primary-dark)] text-[var(--brand-primary-dark)] text-sm font-semibold hover:bg-[var(--brand-primary-dark)] hover:text-white transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#1B3A5C] text-[#1B3A5C] text-sm font-semibold hover:bg-[#1B3A5C] hover:text-white transition-colors"
         >
           <Printer className="w-4 h-4" />
           {isPCSGuide ? 'Print / Save Checklist' : 'Print Article'}
@@ -498,7 +494,7 @@ export default function ArticlePage() {
                 className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 cursor-pointer"
               >
                 {relatedArticle.category && (
-                  <span className="inline-block bg-[var(--muted)] text-[var(--brand-primary-dark)] text-xs px-2 py-1 rounded mb-2">
+                  <span className="inline-block bg-[var(--muted)] text-[var(--primary)] text-xs px-2 py-1 rounded mb-2">
                     {relatedArticle.category}
                   </span>
                 )}
@@ -522,7 +518,7 @@ export default function ArticlePage() {
       <div className="no-print max-w-7xl mx-auto px-4 py-8 border-t text-center">
         <button
           onClick={() => navigate('/')}
-          className="text-[var(--brand-primary)] hover:text-[var(--brand-primary-dark)] hover:underline font-semibold text-lg"
+          className="text-[var(--brand-primary)] hover:text-[var(--brand-dark)] hover:underline font-semibold text-lg"
         >
           European Living
         </button>
