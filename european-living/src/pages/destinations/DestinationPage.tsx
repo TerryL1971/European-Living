@@ -8,10 +8,15 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { Navigation, Hotel, Mail, ArrowLeft } from "lucide-react";
-import { getArticles } from "../../services/articleService";
+import { getArticleBySlug } from "../../services/articleService";
 import type { Article } from "../../services/articleService";
+import SEO, { BreadcrumbSchema } from "../../components/SEO";
 import TableOfContents from "../../components/TableOfContents";
 import CollapsibleContent from "../../components/CollapsibleContent";
+
+// Fallback image when an article has no featured_image_url — a real hosted
+// image rather than a /public path, since no local placeholder file exists.
+const FALLBACK_IMAGE = "https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/hero-bg.jpg";
 
 export default function DestinationPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,23 +28,17 @@ export default function DestinationPage() {
   useEffect(() => {
     const loadContent = async () => {
       if (!id) return;
-      
+
       setLoading(true);
       setError(null);
-      
+
       try {
-        // Fetch article by slug
-        const articles = await getArticles({ 
-          published: true 
-        });
-        
-        const found = articles.find(a => a.slug === id);
-        
+        // Targeted single-row query instead of fetching every published
+        // article and filtering client-side.
+        const found = await getArticleBySlug(id);
+
         if (found) {
           setArticle(found);
-          
-          // TODO: Increment view count
-          // You might want to add a separate function to increment views
         } else {
           setError('Destination not found.');
         }
@@ -50,7 +49,7 @@ export default function DestinationPage() {
         setLoading(false);
       }
     };
-    
+
     loadContent();
   }, [id]);
 
@@ -69,6 +68,7 @@ export default function DestinationPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--brand-bg)]">
         <div className="text-center">
+          <SEO title="Destination Not Found" noIndex={true} />
           <h1 className="text-2xl font-bold text-[var(--brand-dark)] mb-4">
             {error || 'Destination not found'}
           </h1>
@@ -85,19 +85,36 @@ export default function DestinationPage() {
 
   // Extract country from tags (usually tags[1] is the country)
   const country = article.tags && article.tags[1] ? article.tags[1] : '';
-  
+
   // Generate URLs for action buttons
-  // Note: You might want to add lat/lng to your articles table for more accurate maps
   const destinationName = article.destination_name || article.title;
-  
+
   const directionsUrl = `https://www.google.com/maps/search/${encodeURIComponent(destinationName)}`;
-  
+
   const hotelsUrl = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destinationName)}`;
 
   const content = article.content || '';
 
+  // ── Dynamic SEO per destination ──────────────────────────────────────
+  const seoDescription = article.excerpt
+    ? article.excerpt.slice(0, 155)
+    : `Discover ${destinationName} — travel tips, things to do, and practical info for US military families and Americans exploring Europe.`;
+
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]">
+      <SEO
+        title={destinationName}
+        description={seoDescription}
+        keywords={`${destinationName} day trip, ${destinationName} Germany, things to do ${destinationName}, ${country}`}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: '/' },
+          { name: 'Destinations', url: '/#destinations' },
+          { name: destinationName, url: `/destinations/${article.slug}` },
+        ]}
+      />
+
       <div className="max-w-7xl mx-auto px-4 py-8 pt-16">
         <button
           type="button"
@@ -108,18 +125,15 @@ export default function DestinationPage() {
           ← Back to Destinations
         </button>
 
-
-
-
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Main Content */}
           <div className="flex-1 bg-white rounded-lg shadow-lg overflow-hidden">
             <img
-              src={article.featured_image_url || '/placeholder-city.jpg'}
+              src={article.featured_image_url || FALLBACK_IMAGE}
               alt={destinationName}
               className="w-full h-64 object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder-city.jpg';
+                (e.target as HTMLImageElement).src = FALLBACK_IMAGE;
               }}
             />
 
@@ -158,7 +172,7 @@ export default function DestinationPage() {
                     Find Hotels
                   </a>
                   <a
-                    href="mailto:info@european-living.live.com?subject=Help with Trip Planning"
+                    href="mailto:info@european-living.live?subject=Help with Trip Planning"
                     className="flex-1 bg-white border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] px-4 py-3 rounded-lg hover:bg-[var(--brand-primary)] hover:text-white transition font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                   >
                     <Mail className="w-5 h-5" />

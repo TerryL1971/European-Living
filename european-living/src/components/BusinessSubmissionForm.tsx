@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Building2, MapPin, Phone, Languages, Award, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
+import SEO from './SEO';
 
 interface FormData {
   businessName: string;
@@ -136,23 +137,13 @@ export default function BusinessSubmissionForm() {
         updated_at: new Date().toISOString()
       };
 
-      console.log('📤 Attempting to insert business:', insertPayload);
-
       // Insert into Supabase
-      const { data, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from('businesses')
         .insert(insertPayload)
         .select();
 
       if (insertError) {
-        console.error('❌ Supabase insert error:', insertError);
-        console.error('Error details:', {
-          message: insertError.message,
-          details: insertError.details,
-          hint: insertError.hint,
-          code: insertError.code
-        });
-        
         // Provide more specific error messages
         if (insertError.code === '42501') {
           throw new Error('Permission denied. Please contact support.');
@@ -163,14 +154,12 @@ export default function BusinessSubmissionForm() {
         }
       }
 
-      console.log('✅ Business submission created:', data);
-
       setSubmitted(true);
       setSubmitting(false);
     } catch (err) {
-      console.error('❌ Error submitting business:', err);
+      console.error('Error submitting business:', err);
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
-      setError(`Submission failed: ${errorMessage}. Please try again or contact us at support@europeanlivingguide.com`);
+      setError(`Submission failed: ${errorMessage}. Please try again or contact us at info@european-living.live`);
       setSubmitting(false);
     }
   };
@@ -195,8 +184,9 @@ export default function BusinessSubmissionForm() {
   if (submitted) {
     return (
       <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4">
+        <SEO title="Submission Received" noIndex={true} />
         <div className="max-w-2xl mx-auto">
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-lg p-8 text-center border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-lg p-8 text-center border border-[var(--border)]">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
@@ -232,7 +222,7 @@ export default function BusinessSubmissionForm() {
                     additionalNotes: ''
                   });
                 }}
-                className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200"
+                className="px-6 py-3 bg-[var(--brand-gold)] text-white rounded-lg font-semibold hover:bg-[var(--brand-primary)] transition-colors duration-200"
               >
                 Submit Another Business
               </button>
@@ -251,6 +241,10 @@ export default function BusinessSubmissionForm() {
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)] py-12 px-4 transition-colors duration-300">
+      <SEO
+        title="Submit Your Business"
+        description="List your English-speaking business in European Living's directory to reach American military families and expats across Germany."
+      />
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-[var(--brand-dark)] mb-2">Add Your Business</h1>
@@ -271,7 +265,7 @@ export default function BusinessSubmissionForm() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <Building2 className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Basic Information</h2>
@@ -287,7 +281,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.businessName}
                   onChange={(e) => handleChange('businessName', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="Enter your business name"
                 />
               </div>
@@ -300,7 +294,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.category}
                   onChange={(e) => handleChange('category', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                 >
                   <option value="">Select a category</option>
                   {categories.map(cat => (
@@ -317,7 +311,7 @@ export default function BusinessSubmissionForm() {
                   type="text"
                   value={formData.subcategory}
                   onChange={(e) => handleChange('subcategory', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="e.g., car-dealerships, general-practitioners"
                 />
               </div>
@@ -331,7 +325,7 @@ export default function BusinessSubmissionForm() {
                   value={formData.description}
                   onChange={(e) => handleChange('description', e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="Describe your business and what makes it great for American families..."
                 />
               </div>
@@ -339,7 +333,7 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Location */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <MapPin className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Location</h2>
@@ -354,7 +348,7 @@ export default function BusinessSubmissionForm() {
                   type="text"
                   value={formData.address}
                   onChange={(e) => handleChange('address', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="123 Main Street"
                 />
               </div>
@@ -368,7 +362,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.city}
                   onChange={(e) => handleChange('city', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="Stuttgart"
                 />
               </div>
@@ -381,7 +375,7 @@ export default function BusinessSubmissionForm() {
                   type="text"
                   value={formData.postalCode}
                   onChange={(e) => handleChange('postalCode', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="70173"
                 />
               </div>
@@ -408,7 +402,7 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Contact Information */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <Phone className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Contact Information</h2>
@@ -424,7 +418,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.phone}
                   onChange={(e) => handleChange('phone', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="+49 711 555-1234"
                 />
               </div>
@@ -438,7 +432,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="info@yourbusiness.de"
                 />
               </div>
@@ -451,7 +445,7 @@ export default function BusinessSubmissionForm() {
                   type="url"
                   value={formData.website}
                   onChange={(e) => handleChange('website', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="https://yourbusiness.de"
                 />
               </div>
@@ -459,7 +453,7 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Language Support */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <Languages className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Language Support</h2>
@@ -474,7 +468,7 @@ export default function BusinessSubmissionForm() {
                   required
                   value={formData.englishFluency}
                   onChange={(e) => handleChange('englishFluency', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                 >
                   <option value="">Select fluency level</option>
                   <option value="fluent">Fluent - Native or near-native speakers</option>
@@ -491,7 +485,7 @@ export default function BusinessSubmissionForm() {
                   type="text"
                   value={formData.otherLanguages}
                   onChange={(e) => handleChange('otherLanguages', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="e.g., French, Spanish, Italian"
                 />
               </div>
@@ -499,7 +493,7 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Military-Friendly Features */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <Award className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Military-Friendly Features</h2>
@@ -544,7 +538,7 @@ export default function BusinessSubmissionForm() {
                       onChange={(e) => handleChange('discountPercent', e.target.value)}
                       min="0"
                       max="100"
-                      className="w-32 px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                      className="w-32 px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                       placeholder="10"
                     />
                     <span className="text-[var(--brand-dark)] font-medium">%</span>
@@ -581,7 +575,7 @@ export default function BusinessSubmissionForm() {
           </div>
 
           {/* Business Hours */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <div className="flex items-center gap-2 mb-6">
               <Clock className="w-6 h-6 text-[var(--brand-primary)]" />
               <h2 className="text-2xl font-bold text-[var(--brand-dark)]">Business Hours</h2>
@@ -595,14 +589,14 @@ export default function BusinessSubmissionForm() {
                 value={formData.hours}
                 onChange={(e) => handleChange('hours', e.target.value)}
                 rows={3}
-                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200 font-mono text-sm"
+                className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200 font-mono text-sm"
                 placeholder="Mon-Fri: 9:00-18:00&#10;Sat: 10:00-16:00&#10;Sun: Closed"
               />
             </div>
           </div>
 
           {/* Additional Information */}
-          <div className="bg-[var(--brand-light)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
             <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6">Additional Information</h2>
 
             <div className="space-y-4">
@@ -613,13 +607,12 @@ export default function BusinessSubmissionForm() {
                 <select
                   value={formData.priceRange}
                   onChange={(e) => handleChange('priceRange', e.target.value)}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                 >
                   <option value="">Select price range</option>
                   <option value="$">$ - Budget-friendly</option>
-                  <option value="$">$ - Moderate</option>
-                  <option value="$$">$$ - Upscale</option>
-                  <option value="$$">$$ - Premium</option>
+                  <option value="$$">$$ - Moderate</option>
+                  <option value="$$$">$$$ - Premium</option>
                 </select>
               </div>
 
@@ -631,7 +624,7 @@ export default function BusinessSubmissionForm() {
                   value={formData.additionalNotes}
                   onChange={(e) => handleChange('additionalNotes', e.target.value)}
                   rows={4}
-                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-light)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="Any other information that would be helpful for American military families..."
                 />
               </div>
@@ -650,7 +643,7 @@ export default function BusinessSubmissionForm() {
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-3 bg-[var(--brand-button)] text-[var(--brand-dark)] rounded-lg font-semibold hover:bg-[var(--brand-primary)] hover:text-white transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-3 bg-[var(--brand-gold)] text-white rounded-lg font-semibold hover:bg-[var(--brand-primary)] transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {submitting ? (
                 <>

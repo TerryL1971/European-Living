@@ -7,6 +7,7 @@ import { useBusinesses } from "../../hooks/useBusinessQueries";
 import { getBaseById } from "../../data/bases";
 import BusinessCardWithMap from "../../components/BusinessCardWithMap";
 import BaseSelector from "../../components/page/BaseSelector";
+import SEO, { BreadcrumbSchema } from "../../components/SEO";
 import { formatSubcategoryName } from "../../lib/utils";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -21,6 +22,19 @@ const categoryTitles: Record<string, string> = {
   legal: "Legal Services",
   education: "Education",
   business: "Business Services",
+};
+
+// ── SEO descriptions per category — used as meta description fallback ──────
+const categoryDescriptions: Record<string, string> = {
+  automotive: "English-speaking car dealers, mechanics, and inspection stations serving American military families near US bases in Germany.",
+  healthcare: "English-speaking doctors, dentists, specialists, and pharmacies near US military bases in Germany.",
+  restaurants: "English-friendly restaurants and cafes serving Americans living near US military bases in Germany.",
+  shopping: "English-friendly stores, malls, and personal services near US military bases in Germany.",
+  "home-services": "English-speaking plumbers, electricians, and handymen serving American families near US bases in Germany.",
+  "real-estate": "Housing agents familiar with American military housing needs near US bases in Germany.",
+  legal: "Lawyers who understand SOFA status and military regulations, serving Americans in Germany.",
+  education: "International schools and tutors for military families near US bases in Germany.",
+  business: "Tax advisors and accountants familiar with US/German requirements, serving Americans in Germany.",
 };
 
 const subcategoryOrder: Record<string, string[]> = {
@@ -71,6 +85,9 @@ export default function ServiceCategoryPage() {
   }
 
   const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
+  const categoryDescription = categoryId
+    ? categoryDescriptions[categoryId] || "English-friendly businesses near US military bases in Germany."
+    : "English-friendly businesses near US military bases in Germany.";
   const currentBase = getBaseById(selectedBase);
 
   // Group businesses by subcategory
@@ -105,6 +122,19 @@ export default function ServiceCategoryPage() {
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]"> 
+      <SEO
+        title={`${categoryTitle}${currentBase?.name ? ` near ${currentBase.name}` : ''}`}
+        description={categoryDescription}
+        keywords={`${categoryTitle.toLowerCase()} Germany, English speaking ${categoryTitle.toLowerCase()}, US military families ${categoryTitle.toLowerCase()}`}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: '/' },
+          { name: 'Services Directory', url: '/services-directory' },
+          { name: categoryTitle, url: `/services/${categoryId}` },
+        ]}
+      />
+
       {/* Base Selector */}
       <div className="bg-[var(--brand-primary)] py-4 sticky top-16 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,7 +146,7 @@ export default function ServiceCategoryPage() {
       <div className="py-12 px-4"> 
         <div className="max-w-7xl mx-auto">
           <button
-            onClick={() => navigate("/", { state: { scrollTo: "services" } })}
+            onClick={() => navigate("/", { state: { scrollTo: "english-services" } })}
             className="flex items-center gap-2 text-[var(--brand-primary)] hover:text-[var(--brand-dark)] mb-8 font-medium mt-8"
           >
             <ArrowLeft className="w-4 h-4" />
