@@ -9,7 +9,6 @@ import {
 import { FeaturedContent } from '../../types/featuredContent';
 import AdminAuthWrapper from '../../components/AdminAuthWrapper';
 import { Plus, Edit2, Trash2, Eye, EyeOff, MoveUp, MoveDown, Save, X } from 'lucide-react';
-import SEO from '../../components/SEO';
 
 type FormData = {
   title: string;
@@ -79,18 +78,12 @@ export default function FeaturedContentAdmin() {
       end_date: formData.end_date || undefined,
     };
 
-    console.log('Submitting payload:', payload);
-
     try {
       let result;
       if (editingId) {
-        console.log('Updating item:', editingId);
         result = await updateFeaturedContent(editingId, payload);
-        console.log('Update result:', result);
       } else {
-        console.log('Creating new item');
         result = await createFeaturedContent(payload);
-        console.log('Create result:', result);
       }
 
       if (result) {
@@ -171,11 +164,6 @@ export default function FeaturedContentAdmin() {
   return (
     <AdminAuthWrapper>
       <>
-        <SEO
-          title="Manage Featured Content - Admin"
-          description="Manage featured content displayed on the homepage"
-        />
-
         <div className="min-h-screen bg-[var(--brand-bg)] py-12">
           <div className="max-w-7xl mx-auto px-6">
             {/* Header */}

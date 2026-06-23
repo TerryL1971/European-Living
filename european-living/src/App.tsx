@@ -120,14 +120,14 @@ export default function App() {
           <Route
             path="/day-trips"
             element={
-              <div className="pt-16">
+              <>
                 <SEO
                   title="Day Trips from US Bases in Germany"
                   description="Discover the best day trips from US military bases in Germany. Weekend getaways from Ramstein, Stuttgart, Kaiserslautern and more."
                   keywords="day trips Germany, weekend trips Ramstein, Kaiserslautern day trips, Stuttgart day trips, US military families Europe travel"
                 />
                 <DayTripsPage />
-              </div>
+              </>
             }
           />
 
@@ -185,13 +185,13 @@ export default function App() {
           <Route
             path="/about"
             element={
-              <div className="pt-16">
+              <>
                 <SEO
                   title="About European Living"
                   description="European Living helps US military families and American expats navigate life in Europe. Find services, community, and travel guides."
                 />
                 <AboutPage />
-              </div>
+              </>
             }
           />
 
@@ -199,13 +199,13 @@ export default function App() {
           <Route
             path="/family-adventures"
             element={
-              <div className="pt-16">
+              <>
                 <SEO
                   title="Family Adventures in Europe"
                   description="Discover family-friendly destinations, activities, and services in Europe for US military families. Explore with your kids near US bases."
                 />
                 <FamilyAdventuresPage />
-              </div>
+              </>
             }
           />
 
