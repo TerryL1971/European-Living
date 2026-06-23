@@ -121,13 +121,47 @@ export default function DayTripsPage() {
 
       <div className="min-h-screen bg-[var(--brand-bg)] pt-16">
         {/* Hero Section */}
-        <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-dark)] text-[var(--brand-white)] py-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+        <div
+          className="relative overflow-hidden text-[var(--brand-white)] flex items-end aspect-[4.3/1] min-h-[300px] max-h-[460px]"
+          style={{
+            backgroundImage:
+              'url("https://pkacbcohrygpyapgtzpq.supabase.co/storage/v1/object/public/images/Day-Trips-&-Weekend-Getaways.jpeg")',
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center 35%',
+          }}
+        >
+          {/* Dark gradient overlay — matches HeroSection.tsx so text stays readable over the photo */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{
+              background:
+                'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%)',
+            }}
+          />
+
+          {/* Bottom vignette */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            aria-hidden="true"
+            style={{
+              background: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%)',
+            }}
+          />
+
+          <div className="relative max-w-7xl mx-auto px-6 py-10 w-full">
+            <h1
+              className="text-4xl md:text-5xl font-bold mb-4"
+              style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)' }}
+            >
               🗺️ Day Trips & Weekend Getaways
             </h1>
-            <p className="text-xl text-[var(--brand-bg-alt)] max-w-3xl">
-              Explore incredible destinations within a few hours of your base. From medieval castles 
+            <p
+              className="text-xl max-w-3xl"
+              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.6)' }}
+            >
+              Explore incredible destinations within a few hours of your base. From medieval castles
               to vibrant cities, discover the best of Europe on a day trip.
             </p>
           </div>
