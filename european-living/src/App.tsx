@@ -131,14 +131,7 @@ export default function App() {
             }
           />
 
-          <Route
-            path="/day-trips/:id"
-            element={
-              <div className="pt-16">
-                <DayTripDetailPage />
-              </div>
-            }
-          />
+          <Route path="/day-trips/:id" element={<DayTripDetailPage />} />
 
           {/* ── Services ──────────────────────────────────────── */}
           <Route
@@ -223,37 +216,13 @@ export default function App() {
           <Route path="/contact" element={<ContactPage />} />
 
           {/* ── Privacy Policy ────────────────────────────────── */}
-          <Route
-            path="/privacy-policy"
-            element={
-              <div className="pt-16">
-                <SEO title="Privacy Policy" />
-                <PrivacyPolicy />
-              </div>
-            }
-          />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* ── Impressum (German legal requirements §5 TMG) ────────────────────────────────── */}
-          <Route
-            path="/impressum"
-            element={
-              <div className="pt-16">
-                <SEO title="Impressum" />
-                <ImpressumPage />
-              </div>
-            }
-          />
+          <Route path="/impressum" element={<ImpressumPage />} />
 
           {/* ── Terms of Service ───────────────────────────────── */}
-          <Route
-            path="/terms-of-service"
-            element={
-              <div className="pt-16">
-                <SEO title="Terms of Service" />
-                <TermsOfServicePage />
-              </div>
-            }
-          />  
+          <Route path="/terms-of-service" element={<TermsOfServicePage />} />
 
           {/* ── Admin (no SEO indexing) ───────────────────────── */}
           <Route
