@@ -9,22 +9,14 @@ import BusinessCardWithMap from "../../components/BusinessCardWithMap";
 import BaseSelector from "../../components/page/BaseSelector";
 import SEO, { BreadcrumbSchema } from "../../components/SEO";
 import { formatSubcategoryName } from "../../lib/utils";
+import { getCategoryStructure, getSubcategory } from "../../data/subcategories";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import ErrorMessage from "../../components/ErrorMessage";
 
-const categoryTitles: Record<string, string> = {
-  automotive: "Automotive Services",
-  healthcare: "Healthcare",
-  restaurants: "Restaurants & Dining",
-  shopping: "Shopping",
-  "home-services": "Home Services",
-  "real-estate": "Real Estate",
-  legal: "Legal Services",
-  education: "Education",
-  business: "Business Services",
-};
-
 // ── SEO descriptions per category — used as meta description fallback ──────
+// (Category titles and subcategory ordering/names come from
+// src/data/subcategories.ts — CATEGORY_STRUCTURE — so there's one source
+// of truth instead of a second hand-maintained copy here.)
 const categoryDescriptions: Record<string, string> = {
   automotive: "English-speaking car dealers, mechanics, and inspection stations serving American military families near US bases in Germany.",
   healthcare: "English-speaking doctors, dentists, specialists, and pharmacies near US military bases in Germany.",
@@ -35,12 +27,6 @@ const categoryDescriptions: Record<string, string> = {
   legal: "Lawyers who understand SOFA status and military regulations, serving Americans in Germany.",
   education: "International schools and tutors for military families near US bases in Germany.",
   business: "Tax advisors and accountants familiar with US/German requirements, serving Americans in Germany.",
-};
-
-const subcategoryOrder: Record<string, string[]> = {
-  automotive: ["car-dealerships", "mechanics", "inspection-stations", "auto-parts"], 
-  healthcare: ["general-practitioners", "dentists", "specialists", "pharmacies", "veterinary-services"],
-  restaurants: ["american-food", "international", "cafes"],
 };
 
 export default function ServiceCategoryPage() {
@@ -84,7 +70,8 @@ export default function ServiceCategoryPage() {
     );
   }
 
-  const categoryTitle = categoryId ? categoryTitles[categoryId] || "Services" : "Services";
+  const categoryStructure = categoryId ? getCategoryStructure(categoryId) : undefined;
+  const categoryTitle = categoryStructure?.name || "Services";
   const categoryDescription = categoryId
     ? categoryDescriptions[categoryId] || "English-friendly businesses near US military bases in Germany."
     : "English-friendly businesses near US military bases in Germany.";
@@ -110,15 +97,26 @@ export default function ServiceCategoryPage() {
     });
   });
 
-  // Get ordered subcategories
-  const orderedSubcats = categoryId && subcategoryOrder[categoryId] 
+  // Get ordered subcategories — canonical order now comes from
+  // CATEGORY_STRUCTURE (src/data/subcategories.ts), which covers all 9
+  // categories instead of just 3. Any subcategory present in the data but
+  // not in the canonical list (e.g. legacy/unexpected values) is appended
+  // alphabetically at the end, same fallback behavior as before.
+  const canonicalSubcatOrder = categoryStructure?.subcategories.map((s) => s.id) ?? [];
+  const orderedSubcats = canonicalSubcatOrder.length > 0
     ? [
-        ...subcategoryOrder[categoryId],
+        ...canonicalSubcatOrder,
         ...Object.keys(groupedBySubcategory).filter(
-          subcat => !subcategoryOrder[categoryId].includes(subcat)
+          subcat => !canonicalSubcatOrder.includes(subcat)
         ).sort()
       ]
     : Object.keys(groupedBySubcategory).sort();
+
+  // Prefer the canonical display name from CATEGORY_STRUCTURE (e.g.
+  // "SOFA Status Lawyers" instead of the auto-formatted "Sofa Lawyers");
+  // fall back to the generic formatter for anything not in the canonical list.
+  const subcategoryLabel = (subcatId: string): string =>
+    (categoryId && getSubcategory(categoryId, subcatId)?.name) || formatSubcategoryName(subcatId);
 
   return (
     <div className="min-h-screen bg-[var(--brand-bg)]"> 
@@ -188,7 +186,7 @@ export default function ServiceCategoryPage() {
                       }}
                       className="bg-[var(--brand-primary)] text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-[var(--brand-dark)] transition whitespace-nowrap flex-shrink-0"
                     >
-                      {formatSubcategoryName(subcatId)}
+                      {subcategoryLabel(subcatId)}
                       <span className="ml-1.5 opacity-75">({businesses.length})</span>
                     </button>
                   );
@@ -208,7 +206,7 @@ export default function ServiceCategoryPage() {
                   <div key={subcatId} id={`subcategory-${subcatId}`}>
                     {(subcatId !== "other" || orderedSubcats.length > 1) && (
                       <h2 className="text-2xl font-bold text-[var(--brand-dark)] mb-6 border-b-2 border-[var(--brand-primary)] pb-2">
-                        {formatSubcategoryName(subcatId)}
+                        {subcategoryLabel(subcatId)}
                       </h2>
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
