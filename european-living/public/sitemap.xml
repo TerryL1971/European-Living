@@ -112,10 +112,4 @@
     <priority>0.3</priority>
   </url>
 
-  <url>
-    <loc>https://www.european-living.live/day-trips/destinations</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-
 </urlset>
