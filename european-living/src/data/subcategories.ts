@@ -1,4 +1,21 @@
 // src/data/subcategories.ts
+//
+// NOTE: This was rebuilt against a real export of the `businesses` table
+// (203 live rows) rather than the original planning draft. Several
+// subcategories below (car-service, car-rental, obgyn, dermatology,
+// hair-salons, malls, sports, general, furniture, department-stores,
+// markets, home-improvement, specialty, housing-agency, temporary-lodging,
+// housing-referral, military-defense, on-base-legal, dodea-schools,
+// private-schools) didn't exist in the original file at all, even though
+// they account for the majority of live listings in their categories.
+//
+// A handful of legacy rows store the *same* subcategory under two
+// different exact strings (e.g. "International School" vs.
+// "international-school"). Since ServiceCategoryPage groups businesses by
+// the raw subcategory string, those pairs currently render as duplicate
+// section headers on the live site. See normalize-subcategories.sql for
+// the one-time data fix — run that once, and this file's ids will match
+// every row going forward.
 
 export interface Subcategory {
   id: string;
@@ -28,9 +45,19 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
         description: "Auto repair, maintenance, and diagnostic services",
       },
       {
+        id: "car-service",
+        name: "Auto Detailing & Body Shops",
+        description: "Detailing, paint and body work, and specialty auto services",
+      },
+      {
         id: "inspection-stations",
         name: "Inspection Stations (TÜV)",
         description: "Official vehicle inspection and TÜV services",
+      },
+      {
+        id: "car-rental",
+        name: "Car Rental",
+        description: "On- and off-base vehicle rental services",
       },
       {
         id: "auto-parts",
@@ -56,7 +83,17 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
       {
         id: "specialists",
         name: "Medical Specialists",
-        description: "Specialized medical care (cardiology, dermatology, etc.)",
+        description: "Specialized medical care (cardiology, orthopedics, etc.)",
+      },
+      {
+        id: "obgyn",
+        name: "OB/GYN",
+        description: "Obstetrics and gynecology care",
+      },
+      {
+        id: "dermatology",
+        name: "Dermatology",
+        description: "Skin care and dermatology services",
       },
       {
         id: "pharmacies",
@@ -96,11 +133,6 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
     name: "Shopping",
     subcategories: [
       {
-        id: "grocery",
-        name: "Grocery Stores",
-        description: "Supermarkets and food shopping",
-      },
-      {
         id: "clothing",
         name: "Clothing & Fashion",
         description: "Apparel and fashion retailers",
@@ -109,6 +141,56 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
         id: "electronics",
         name: "Electronics",
         description: "Tech stores and electronics retailers",
+      },
+      {
+        id: "grocery",
+        name: "Grocery Stores",
+        description: "Supermarkets and food shopping",
+      },
+      {
+        id: "malls",
+        name: "Shopping Malls",
+        description: "Indoor shopping centers and retail arcades",
+      },
+      {
+        id: "department-stores",
+        name: "Department Stores",
+        description: "Multi-category discount and department stores",
+      },
+      {
+        id: "furniture",
+        name: "Furniture & Home Goods",
+        description: "Furniture, home goods, and household supplies",
+      },
+      {
+        id: "home-improvement",
+        name: "Home Improvement",
+        description: "Hardware and home improvement supplies",
+      },
+      {
+        id: "sports",
+        name: "Sporting Goods",
+        description: "Sports equipment and outdoor apparel",
+      },
+      {
+        id: "hair-salons",
+        name: "Hair Salons",
+        description: "English-speaking hair salons and stylists",
+      },
+      {
+        id: "markets",
+        name: "Markets",
+        description: "Indoor and outdoor food markets",
+      },
+      {
+        id: "general",
+        name: "General Merchandise",
+        description: "Discount and general merchandise stores",
+      },
+      {
+        id: "specialty",
+        name: "Specialty Retail",
+        description: "Specialty and niche retailers",
       },
     ],
   },
@@ -138,14 +220,24 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
     name: "Real Estate",
     subcategories: [
       {
-        id: "rental-agents",
-        name: "Rental Agents",
-        description: "Off-base housing rental assistance",
+        id: "housing-agency",
+        name: "Housing & Relocation Agencies",
+        description: "Off-base housing search and military relocation assistance",
       },
       {
         id: "property-management",
         name: "Property Management",
         description: "Property management services",
+      },
+      {
+        id: "temporary-lodging",
+        name: "Temporary Lodging",
+        description: "Short-term furnished housing for PCS moves",
+      },
+      {
+        id: "housing-referral",
+        name: "Housing Referral Services",
+        description: "Official base housing referral contractors",
       },
     ],
   },
@@ -159,6 +251,16 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
         description: "Legal experts in SOFA regulations",
       },
       {
+        id: "military-defense",
+        name: "Military Defense Attorneys",
+        description: "Court-martial and UCMJ defense counsel",
+      },
+      {
+        id: "on-base-legal",
+        name: "On-Base Legal Assistance",
+        description: "Free legal services provided through the military legal assistance office",
+      },
+      {
         id: "immigration",
         name: "Immigration Lawyers",
         description: "Visa and immigration legal services",
@@ -170,9 +272,19 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
     name: "Education",
     subcategories: [
       {
+        id: "dodea-schools",
+        name: "DoDEA Schools",
+        description: "Department of Defense Education Activity schools for military dependents",
+      },
+      {
         id: "international-schools",
         name: "International Schools",
         description: "English-language schools and curricula",
+      },
+      {
+        id: "private-schools",
+        name: "Private Schools",
+        description: "Private and parochial schools",
       },
       {
         id: "tutors",
