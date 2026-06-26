@@ -42,7 +42,7 @@
     <!-- ============================================================
          PWA META TAGS
     ============================================================ -->
-    <meta name="theme-color" content="#9da586" />
+    <meta name="theme-color" content="#0284C7" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -54,7 +54,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/EL_Logo.png" />
-    <link rel="mask-icon" href="/favicon.svg" color="#9da586" />
+    <link rel="mask-icon" href="/favicon.svg" color="#0284C7" />
 
     <!-- ============================================================
          PWA MANIFEST
@@ -68,6 +68,16 @@
     ============================================================ -->
     <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://pkacbcohrygpyapgtzpq.supabase.co" />
+
+    <!-- ============================================================
+         BRAND TYPEFACE (Inter)
+         index.css declares font-family: Inter, but nothing was ever
+         actually fetching it — every visitor was silently falling back
+         to their OS system font. This loads the real thing.
+    ============================================================ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- ============================================================
          GOOGLE ANALYTICS 4

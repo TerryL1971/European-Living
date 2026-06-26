@@ -12,11 +12,11 @@ const baseStyles =
 
 const variants: Record<ButtonVariants, string> = {
   default:
-    "bg-brand-green text-brand-black hover:bg-brand-black hover:text-brand-green focus:ring-brand-green",
+    "bg-primary text-primary-foreground hover:bg-[var(--brand-primary-light)] focus:ring-ring",
   outline:
-    "border border-brand-green text-brand-green hover:bg-brand-green hover:text-brand-black focus:ring-brand-green",
+    "border border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground focus:ring-ring",
   ghost:
-    "text-brand-green hover:text-brand-black hover:bg-brand-green/10 focus:ring-brand-green",
+    "text-secondary hover:text-secondary-foreground hover:bg-secondary/10 focus:ring-ring",
 };
 
 // Two prop types: one for <button> and one for <Link>

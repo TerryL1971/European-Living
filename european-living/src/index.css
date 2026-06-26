@@ -355,6 +355,12 @@ body {
   --color-input: var(--input); 
   --color-ring: var(--ring); 
 
+  /* Card surface — Card.tsx already uses bg-card/text-card-foreground
+     (standard shadcn convention) but these were never registered, so
+     the component was rendering with no background/text color at all. */
+  --color-card: var(--brand-bg-card);
+  --color-card-foreground: var(--brand-text);
+
   /* Extended color utilities */
   --color-ocean: var(--brand-ocean);
   --color-blue: var(--brand-blue);
