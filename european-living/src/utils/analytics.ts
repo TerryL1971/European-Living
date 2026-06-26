@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-const GA_MEASUREMENT_ID = 'G-6RPDS8PFEB';
+const GA_MEASUREMENT_ID = 'G-49Y2Z5J60D';
 
 /**
  * Initialize Google Analytics
