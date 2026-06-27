@@ -83,6 +83,7 @@ export default function BusinessImage({
         <img
           src={imageUrl}
           alt={businessName}
+          loading="lazy"
           className="w-full h-full object-contain"
           onError={(e) => {
             // If image fails to load, hide it and show fallback

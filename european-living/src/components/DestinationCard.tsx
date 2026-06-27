@@ -30,6 +30,7 @@ export default function DestinationCard({ article, isFeatured = false, featuredR
         <img
           src={article.featured_image_url || '/placeholder-city.jpg'}
           alt={article.destination_name || article.title}
+          loading="lazy"
           className="h-48 w-full object-cover"
           onError={(e) => {
             // Fallback to placeholder if image fails to load
