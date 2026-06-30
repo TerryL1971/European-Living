@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/articles/buying-a-car-in-germany-american-guide",
+      "destination": "/articles/buying-car-germany-military",
+      "statusCode": 301
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
