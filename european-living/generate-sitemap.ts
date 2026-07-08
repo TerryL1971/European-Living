@@ -71,6 +71,9 @@ interface CityGuideRow {
   updated_at: string | null;
 }
 
+// Same shape — PCS Guide articles also live at /articles/:slug
+type PCSGuideRow = CityGuideRow;
+
 function escapeXml(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -140,6 +143,12 @@ async function main() {
   );
   console.log(`   → ${cityGuides.length} destination(s) found`);
 
+  console.log('📡 Fetching "PCS Guides" articles from Supabase...');
+  const pcsGuides = await fetchAll<PCSGuideRow>('articles', 'slug, updated_at', (q) =>
+    q.eq('category', 'PCS Guides').eq('published', true)
+  );
+  console.log(`   → ${pcsGuides.length} PCS guide article(s) found`);
+
   const blocks: string[] = [];
 
   for (const entry of STATIC_ENTRIES) {
@@ -160,13 +169,20 @@ async function main() {
     blocks.push(buildUrlBlock(`/destinations/${guide.slug}`, 'monthly', '0.6', toLastmod(guide.updated_at)));
   }
 
+  if (pcsGuides.length > 0) {
+    blocks.push('\n  <!-- PCS Guide Articles (auto-generated from Supabase: articles where category = PCS Guides) -->');
+  }
+  for (const guide of pcsGuides) {
+    blocks.push(buildUrlBlock(`/articles/${guide.slug}`, 'monthly', '0.8', toLastmod(guide.updated_at)));
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n\n${blocks.join('\n\n')}\n\n</urlset>\n`;
 
   fs.writeFileSync(OUTPUT_PATH, xml, 'utf-8');
 
-  const total = STATIC_ENTRIES.length + dayTrips.length + cityGuides.length;
+  const total = STATIC_ENTRIES.length + dayTrips.length + cityGuides.length + pcsGuides.length;
   console.log(`✅ Wrote ${OUTPUT_PATH} with ${total} URLs`);
-  console.log(`   (${STATIC_ENTRIES.length} static + ${dayTrips.length} day trips + ${cityGuides.length} destinations)`);
+  console.log(`   (${STATIC_ENTRIES.length} static + ${dayTrips.length} day trips + ${cityGuides.length} destinations + ${pcsGuides.length} PCS guide articles)`);
   console.log('👉 Don\'t forget to resubmit the sitemap in Google Search Console after deploying.');
 }
 

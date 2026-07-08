@@ -3,7 +3,9 @@
 // Designed for the USO lounge partnership: readable on tablet/phone,
 // downloadable resources per phase, clean enough for kiosk display.
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getArticles } from '../services/articleService';
+import type { Article } from '../services/articleService';
 import SEO, { BreadcrumbSchema } from '../components/SEO';
 
 // ── Feature flags ──────────────────────────────────────────────────────────
@@ -679,6 +681,129 @@ function FAQItem({ item }: { item: typeof FAQ_ITEMS[0] }) {
   );
 }
 
+// ── Dynamic PCS Guide Articles section ────────────────────────────────────
+// Pulls all published articles with category "PCS Guides" from Supabase.
+// Any new article added to the database automatically appears here —
+// no code changes needed.
+function PCSArticles() {
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getArticles({ category: 'PCS Guides' })
+      .then(data => setArticles(data.filter(a => a.published)))
+      .catch(() => setArticles([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading || articles.length === 0) return null;
+
+  return (
+    <div style={{
+      padding: 'clamp(40px, 6vw, 72px) 24px',
+      maxWidth: '900px',
+      margin: '0 auto',
+    }}>
+      <div style={{
+        fontSize: '11px',
+        fontWeight: 700,
+        textTransform: 'uppercase',
+        letterSpacing: '0.1em',
+        color: 'var(--brand-secondary, #F59E0B)',
+        marginBottom: '8px',
+      }}>
+        In-depth guides
+      </div>
+      <h2 style={{
+        fontSize: 'clamp(22px, 3vw, 32px)',
+        fontWeight: 700,
+        color: 'var(--brand-primary-dark, #0C4A6E)',
+        margin: '0 0 8px',
+      }}>
+        Deep Dives for Germany Families
+      </h2>
+      <p style={{
+        fontSize: '14px',
+        color: '#6b7280',
+        margin: '0 0 32px',
+        lineHeight: 1.6,
+      }}>
+        Detailed guides on housing, healthcare, schools, vehicles, and more —
+        written specifically for US military families living in Germany.
+      </p>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+        gap: '16px',
+      }}>
+        {articles.map(article => (
+          <a
+            key={article.id}
+            href={`/articles/${article.slug}`}
+            style={{
+              display: 'block',
+              padding: '20px',
+              backgroundColor: '#fff',
+              border: '1.5px solid #e5e7eb',
+              borderRadius: '12px',
+              textDecoration: 'none',
+              color: 'inherit',
+              transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(12,74,110,0.12)';
+              (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-primary, #0284C7)';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+              (e.currentTarget as HTMLElement).style.borderColor = '#e5e7eb';
+            }}
+          >
+            <div style={{
+              fontSize: '11px',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'var(--brand-secondary, #F59E0B)',
+              marginBottom: '8px',
+            }}>
+              PCS Guide
+            </div>
+            <div style={{
+              fontSize: '15px',
+              fontWeight: 700,
+              color: 'var(--brand-primary-dark, #0C4A6E)',
+              lineHeight: 1.3,
+              marginBottom: '8px',
+            }}>
+              {article.title}
+            </div>
+            {article.subtitle && (
+              <div style={{
+                fontSize: '13px',
+                color: '#6b7280',
+                lineHeight: 1.5,
+                marginBottom: '12px',
+              }}>
+                {article.subtitle.length > 90
+                  ? article.subtitle.slice(0, 90) + '…'
+                  : article.subtitle}
+              </div>
+            )}
+            <div style={{
+              fontSize: '13px',
+              fontWeight: 600,
+              color: 'var(--brand-primary, #0284C7)',
+            }}>
+              Read guide →
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ──────────────────────────────────────────────────────────────
 
 export default function PCSGuidePage() {
@@ -1041,6 +1166,9 @@ export default function PCSGuidePage() {
             </div>
           </div>
         </div>
+
+        {/* ── In-Depth PCS Guides ─────────────────────────── */}
+        <PCSArticles />
 
         {/* ── Services CTA ──────────────────────────────────── */}
         <div style={{
