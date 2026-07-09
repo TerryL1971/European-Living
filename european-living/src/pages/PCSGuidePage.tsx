@@ -1004,6 +1004,61 @@ export default function PCSGuidePage() {
           </div>
         </div>
 
+        {/* ── Quick jump nav ────────────────────────────────── */}
+        <div style={{
+          position: 'sticky',
+          top: '64px',
+          zIndex: 40,
+          backgroundColor: '#fff',
+          borderBottom: '1px solid #e5e7eb',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        }}>
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto',
+            padding: '0 24px',
+            display: 'flex',
+            gap: '4px',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+          }}>
+            {[
+              { label: '📋 PCS Phases', id: 'phases' },
+              { label: '📚 In-Depth Guides', id: 'guides' },
+              { label: '📞 Key Contacts', id: 'contacts' },
+              { label: '❓ FAQs', id: 'faq' },
+            ].map(({ label, id }) => (
+              <button
+                key={id}
+                onClick={() => {
+                  const el = document.getElementById(id);
+                  if (el) {
+                    const offset = 116; // 64px site header + 48px this nav
+                    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                  }
+                }}
+                style={{
+                  padding: '14px 16px',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: 'var(--brand-primary-dark, #0C4A6E)',
+                  background: 'none',
+                  border: 'none',
+                  borderBottom: '3px solid transparent',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* ── Who this is for ───────────────────────────────── */}
         <div style={{ padding: 'clamp(40px, 6vw, 72px) 24px', maxWidth: '900px', margin: '0 auto' }}>
           <div style={{
@@ -1095,7 +1150,7 @@ export default function PCSGuidePage() {
         </div>
 
         {/* ── Important numbers ─────────────────────────────── */}
-        <div style={{ padding: 'clamp(40px, 6vw, 72px) 24px', maxWidth: '900px', margin: '0 auto' }}>
+        <div id="contacts" style={{ padding: 'clamp(40px, 6vw, 72px) 24px', maxWidth: '900px', margin: '0 auto' }}>
           <div style={{
             fontSize: '11px',
             fontWeight: 700,
@@ -1137,7 +1192,7 @@ export default function PCSGuidePage() {
         </div>
 
         {/* ── FAQ ───────────────────────────────────────────── */}
-        <div style={{
+        <div id="faq" style={{
           backgroundColor: '#f9fafb',
           borderTop: '1px solid #e5e7eb',
           padding: 'clamp(40px, 6vw, 72px) 24px',
@@ -1168,7 +1223,9 @@ export default function PCSGuidePage() {
         </div>
 
         {/* ── In-Depth PCS Guides ─────────────────────────── */}
-        <PCSArticles />
+        <div id="guides">
+          <PCSArticles />
+        </div>
 
         {/* ── Services CTA ──────────────────────────────────── */}
         <div style={{
