@@ -268,7 +268,7 @@ export default function DayTripsPage() {
 
               return (
                 <div
-                  key={trip.slug}
+                  key={trip.id}
                   onClick={() => handleTripClick(trip.id)}
                   className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden border border-[var(--border)] group"
                 >
