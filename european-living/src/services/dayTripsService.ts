@@ -133,12 +133,12 @@ export async function fetchDayTripById(tripId: string): Promise<DayTrip> {
   try {
     const { data: trip, error } = await supabase
       .from('day_trips')
-      .select(`
-        *,
-        tags:day_trip_tags(
-          tag:tags(name)
-        )
-      `)
+        .select(`
+          *,
+          tags:day_trip_tags(
+            tag:tags(name)
+          )
+        `)
       .eq('id', tripId)
       .single();
 

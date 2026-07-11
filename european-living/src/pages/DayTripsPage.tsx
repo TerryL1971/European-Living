@@ -91,8 +91,8 @@ export default function DayTripsPage() {
 
   const hasActiveFilters = searchTerm !== '' || selectedDifficulty !== 'all' || selectedCost !== 'all' || selectedCategory !== 'all';
 
-  const handleTripClick = (tripId: string) => {
-    navigate(`/day-trips/${tripId}`);
+  const handleTripClick = (tripSlug: string) => {
+  navigate(`/day-trips/${tripSlug}`);
   };
 
   if (isLoading) {
@@ -269,7 +269,7 @@ export default function DayTripsPage() {
               return (
                 <div
                   key={trip.id}
-                  onClick={() => handleTripClick(trip.id)}
+                  onClick={() => handleTripClick(trip.slug ?? trip.id)}
                   className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden border border-[var(--border)] group"
                 >
                   {/* Image */}

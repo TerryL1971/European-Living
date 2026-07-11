@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchDayTripById } from '../services/dayTripsService';
+import { fetchDayTripBySlug } from '../services/dayTripsService';
 import type { DayTrip } from '../services/dayTripsService';
 import SEO, { BreadcrumbSchema } from '../components/SEO';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -43,7 +44,7 @@ export default function DayTripDetailPage() {
 
     async function loadDayTrip() {
       try {
-        const data = await fetchDayTripById(id!);
+        const data = await fetchDayTripBySlug(id!);
         clearTimeout(timeoutId);
         if (!data) {
           setError('not-found');

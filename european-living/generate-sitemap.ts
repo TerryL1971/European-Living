@@ -63,6 +63,7 @@ const STATIC_ENTRIES: StaticEntry[] = [
 
 interface DayTripRow {
   id: string;
+  slug: string;
   updated_at: string | null;
 }
 
@@ -159,7 +160,7 @@ async function main() {
     blocks.push('\n  <!-- Day Trip Detail Pages (auto-generated from Supabase: day_trips) -->');
   }
   for (const trip of dayTrips) {
-    blocks.push(buildUrlBlock(`/day-trips/${trip.id}`, 'monthly', '0.6', toLastmod(trip.updated_at)));
+    blocks.push(buildUrlBlock(`/day-trips/${trip.slug || trip.id}`, 'monthly', '0.6', toLastmod(trip.updated_at)));
   }
 
   if (cityGuides.length > 0) {

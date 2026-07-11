@@ -392,15 +392,15 @@
   </url>
 
   <url>
-    <loc>https://www.european-living.live/destinations/berlin</loc>
-    <lastmod>2025-11-24</lastmod>
+    <loc>https://www.european-living.live/destinations/stuttgart</loc>
+    <lastmod>2025-11-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://www.european-living.live/destinations/stuttgart</loc>
-    <lastmod>2025-11-22</lastmod>
+    <loc>https://www.european-living.live/destinations/berlin</loc>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -486,15 +486,8 @@
   <!-- PCS Guide Articles (auto-generated from Supabase: articles where category = PCS Guides) -->
 
   <url>
-    <loc>https://www.european-living.live/articles/schools-germany-military-dodea-options</loc>
+    <loc>https://www.european-living.live/articles/utilities-germany-military-guide</loc>
     <lastmod>2026-07-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://www.european-living.live/articles/living-near-usag-wiesbaden-military-guide</loc>
-    <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -535,7 +528,28 @@
   </url>
 
   <url>
+    <loc>https://www.european-living.live/articles/banking-in-germany</loc>
+    <lastmod>2026-06-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/schools-germany-military-dodea-options</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
     <loc>https://www.european-living.live/articles/living-near-spangdahlem-air-base-guide</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/living-near-usag-wiesbaden-military-guide</loc>
     <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -549,15 +563,8 @@
   </url>
 
   <url>
-    <loc>https://www.european-living.live/articles/banking-in-germany</loc>
+    <loc>https://www.european-living.live/articles/pcs-germany-checklist</loc>
     <lastmod>2026-06-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://www.european-living.live/articles/best-day-trips-ramstein-air-base</loc>
-    <lastmod>2026-07-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -570,22 +577,22 @@
   </url>
 
   <url>
-    <loc>https://www.european-living.live/articles/utilities-germany-military-guide</loc>
-    <lastmod>2026-07-06</lastmod>
+    <loc>https://www.european-living.live/articles/best-day-trips-wiesbaden-military-base</loc>
+    <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://www.european-living.live/articles/pcs-germany-checklist</loc>
+    <loc>https://www.european-living.live/articles/best-day-trips-ramstein-air-base</loc>
+    <lastmod>2026-07-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/first-72-hours-germany</loc>
     <lastmod>2026-06-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://www.european-living.live/articles/oha-miha-germany-military</loc>
-    <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -605,8 +612,15 @@
   </url>
 
   <url>
-    <loc>https://www.european-living.live/articles/first-72-hours-germany</loc>
-    <lastmod>2026-06-17</lastmod>
+    <loc>https://www.european-living.live/articles/oha-miha-germany-military</loc>
+    <lastmod>2026-07-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://www.european-living.live/articles/living-near-usag-stuttgart-military-guide</loc>
+    <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -619,8 +633,8 @@
   </url>
 
   <url>
-    <loc>https://www.european-living.live/articles/living-near-usag-stuttgart-military-guide</loc>
-    <lastmod>2026-07-06</lastmod>
+    <loc>https://www.european-living.live/articles/sofa-status-germany</loc>
+    <lastmod>2026-06-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -635,20 +649,6 @@
   <url>
     <loc>https://www.european-living.live/articles/living-near-ramstein-kmc-military-guide</loc>
     <lastmod>2026-07-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://www.european-living.live/articles/best-day-trips-wiesbaden-military-base</loc>
-    <lastmod>2026-07-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://www.european-living.live/articles/sofa-status-germany</loc>
-    <lastmod>2026-06-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
