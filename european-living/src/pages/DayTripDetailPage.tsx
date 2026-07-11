@@ -203,7 +203,7 @@ export default function DayTripDetailPage() {
         items={[
           { name: 'Home',       url: '/' },
           { name: 'Day Trips',  url: '/day-trips' },
-          { name: dayTrip.name, url: `/day-trips/${dayTrip.slug}` },
+          { name: dayTrip.name, url: `/day-trips/${dayTrip.id}` },
         ]}
       />
 

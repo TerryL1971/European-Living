@@ -137,8 +137,7 @@ export async function fetchDayTripById(tripId: string): Promise<DayTrip> {
         *,
         tags:day_trip_tags(
           tag:tags(name)
-        ),
-        photos:day_trip_photos(image_url, caption, display_order)
+        )
       `)
       .eq('id', tripId)
       .single();
