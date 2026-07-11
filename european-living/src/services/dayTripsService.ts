@@ -148,10 +148,6 @@ export async function fetchDayTripById(tripId: string): Promise<DayTrip> {
       ? (trip.tags as TagResponse[]).map((t) => ({ name: t.tag.name })) 
       : [];
 
-    if (trip.photos && Array.isArray(trip.photos)) {
-      trip.photos.sort((a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order);
-    }
-
     return trip;
   } catch (error) {
     console.error('Error fetching day trip:', error);
@@ -170,8 +166,7 @@ export async function fetchDayTripBySlug(slug: string): Promise<DayTrip> {
         *,
         tags:day_trip_tags(
           tag:tags(name)
-        ),
-        photos:day_trip_photos(image_url, caption, display_order)
+        )
       `)
       .eq('slug', slug)
       .single();
@@ -181,10 +176,6 @@ export async function fetchDayTripBySlug(slug: string): Promise<DayTrip> {
     trip.tags = Array.isArray(trip.tags) 
       ? (trip.tags as TagResponse[]).map((t) => ({ name: t.tag.name })) 
       : [];
-
-    if (trip.photos && Array.isArray(trip.photos)) {
-      trip.photos.sort((a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order);
-    }
 
     return trip;
   } catch (error) {
