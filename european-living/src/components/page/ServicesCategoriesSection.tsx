@@ -23,7 +23,7 @@ const serviceCategories = [
   },
   {
     id: "healthcare",
-    title: "Healthcare",
+    title: "Healthcare & Veterinary Services",
     icon: Stethoscope,
     description: "English-speaking doctors, dentists, veterinarians, and specialists near European US Bases",
   },
