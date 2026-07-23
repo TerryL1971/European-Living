@@ -52,10 +52,10 @@ const serviceCategories = [
     description: "Housing agents familiar with American military housing needs",
   },
   {
-    id: "legal",
-    title: "Legal Services",
+    id: "legal-business",
+    title: "Legal & Business Services",
     icon: Scale,
-    description: "Lawyers who understand SOFA status and military regulations",
+    description: "Lawyers who understand SOFA status and military regulations and accountants familiar with US/German requirements",
   },
   {
     id: "education",
@@ -64,10 +64,10 @@ const serviceCategories = [
     description: "International schools and tutors for military families",
   },
   {
-    id: "business",
-    title: "Business Services",
+    id: "hbb",
+    title: "Home Based Businesses",
     icon: Briefcase,
-    description: "Tax advisors and accountants familiar with US/German requirements",
+    description: "Various home-based businesses that cater to American military families in Europe",
   },
 ];
 

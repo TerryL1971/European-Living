@@ -20,9 +20,9 @@ export type ServiceCategory =
   | 'shopping'
   | 'home-services'
   | 'real-estate'
-  | 'legal'
+  | 'legal-business'
   | 'education'
-  | 'business';
+  | 'hbb';
 
 export type EnglishFluency = 'fluent' | 'conversational' | 'basic';
 export type FeaturedTier = 'free' | 'verified' | 'featured' | 'sponsored';
