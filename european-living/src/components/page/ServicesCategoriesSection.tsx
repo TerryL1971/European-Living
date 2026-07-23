@@ -206,7 +206,7 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
                 </div>
 
                 {/* Middle section: Description (grows to fill space) */}
-                <p className="text-[var(--brand-text-muted)] mb-12 flex-grow">{category.description}</p>
+                <p className="text-[var(--brand-text-muted)] mb-8 flex-grow">{category.description}</p>
 
                 {/* Bottom section: Uniform Button */}
                 {count > 0 ? (
