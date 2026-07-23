@@ -186,27 +186,29 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
               <Link
                 key={category.id}
                 to={count > 0 ? `/services/${category.id}?base=${selectedBase}` : "#"}
-                // Use a different style for 'Coming Soon' to show it's disabled
-                className={`bg-[var(--brand-bg-card)] rounded-xl p-6 border border-[var(--brand-border)] transition-all ${
-                  count > 0 
-                    ? "hover:shadow-xl hover:-translate-y-1 cursor-pointer" 
+                className={`flex flex-col h-full bg-[var(--brand-bg-card)] rounded-xl p-6 pb-8 border border-[var(--brand-border)] transition-all ${
+                  count > 0
+                    ? "hover:shadow-xl hover:-translate-y-1 cursor-pointer"
                     : "opacity-60 cursor-not-allowed pointer-events-none"
                 }`}
               >
+                {/* Top section: Icon and Title */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className={`p-3 rounded-lg ${count > 0 ? 'bg-[var(--brand-primary)]' : 'bg-[var(--brand-gray)]/50'}`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-[var(--brand-text)]">{category.title}</h3>
+                    <h3 className="text-xl font-bold text-[var-[brand-text)]">{category.title}</h3>
                     <p className="text-sm text-[var(--brand-text-muted)]">
                       {count} {count === 1 ? "business" : "businesses"}
                     </p>
                   </div>
                 </div>
 
-                <p className="text-[var(--brand-text-muted)] mb-4">{category.description}</p>
+                {/* Middle section: Description (grows to fill space) */}
+                <p className="text-[var(--brand-text-muted)] mb-14 flex-grow">{category.description}</p>
 
+                {/* Bottom section: Uniform Button */}
                 {count > 0 ? (
                   <div className="w-full bg-[var(--brand-primary)] text-white py-2 px-4 rounded-lg hover:bg-[var(--brand-primary-light)] transition font-medium text-center">
                     View {count} {count === 1 ? "Business" : "Businesses"}
