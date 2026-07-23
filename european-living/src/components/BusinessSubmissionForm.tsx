@@ -63,9 +63,9 @@ export default function BusinessSubmissionForm() {
     { id: 'shopping', name: 'Shopping' },
     { id: 'home-services', name: 'Home Services' },
     { id: 'real-estate', name: 'Real Estate' },
-    { id: 'legal', name: 'Legal Services' },
+    { id: 'legal-business', name: 'Legal & Business Services' },
     { id: 'education', name: 'Education' },
-    { id: 'business', name: 'Business Services' }
+    { id: 'hbb', name: 'Home Based Businesses' }
   ];
 
   const bases = [
