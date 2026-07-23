@@ -263,7 +263,7 @@ export const SERVICE_SUBCATEGORIES: Record<ServiceCategory, string[]> = {
     'Furniture Rental',
     'Storage'
   ],
-  legal: [
+  'legal-business': [
     'Immigration Law',
     'SOFA Status',
     'Family Law',
@@ -271,7 +271,15 @@ export const SERVICE_SUBCATEGORIES: Record<ServiceCategory, string[]> = {
     'Estate Planning',
     'Notary Services',
     'Traffic Violations',
-    'Tax Law'
+    'Tax Law',
+    'Tax Advisors',
+    'Accountants',
+    'US Tax Preparation',
+    'Business Formation',
+    'Translation Services',
+    'Insurance Agents',
+    'Financial Planning',
+    'Consulting'
   ],
   education: [
     'International Schools',
@@ -284,15 +292,17 @@ export const SERVICE_SUBCATEGORIES: Record<ServiceCategory, string[]> = {
     'After-School Care',
     'University Programs'
   ],
-  business: [
-    'Tax Advisors',
-    'Accountants',
-    'US Tax Preparation',
-    'Business Formation',
-    'Translation Services',
-    'Insurance Agents',
-    'Financial Planning',
-    'Consulting'
+  'hbb': [
+    'Baking & Catering',
+    'Handmade Crafts',
+    'Tutoring & Lessons',
+    'Pet Services',
+    'Photography',
+    'Event Planning',
+    'Fitness & Wellness',
+    'Home Decor',
+    'Jewelry & Accessories',
+    'Custom Clothing'
   ]
 };
 
@@ -307,9 +317,9 @@ export function getCategoryDisplayName(category: ServiceCategory): string {
     'shopping': 'Shopping',
     'home-services': 'Home Services',
     'real-estate': 'Real Estate',
-    'legal': 'Legal Services',
+    'legal-business': 'Legal Services',
     'education': 'Education',
-    'business': 'Business Services'
+    'hbb': 'Home Based Businesses'
   };
   return names[category] || category;
 }
@@ -349,9 +359,9 @@ export function getCategoryIcon(category: ServiceCategory): string {
     'shopping': '🛍️',
     'home-services': '🔧',
     'real-estate': '🏠',
-    'legal': '⚖️',
+    'legal-business': '⚖️ & 💼',
     'education': '🎓',
-    'business': '💼'
+    'hbb': '🏡 👩‍💻 🎨'
   };
   return icons[category] || '📍';
 }
