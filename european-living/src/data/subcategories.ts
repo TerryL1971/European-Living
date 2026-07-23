@@ -242,7 +242,7 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
     ],
   },
   {
-    id: "legal",
+    id: "legal-business",
     name: "Legal Services",
     subcategories: [
       {
@@ -264,6 +264,16 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
         id: "immigration",
         name: "Immigration Lawyers",
         description: "Visa and immigration legal services",
+      },
+      {
+        id: "tax-advisors",
+        name: "Tax Advisors",
+        description: "US and German tax preparation",
+      },
+      {
+        id: "accountants",
+        name: "Accountants",
+        description: "Accounting and bookkeeping services",
       },
     ],
   },
@@ -294,18 +304,58 @@ export const CATEGORY_STRUCTURE: CategoryStructure[] = [
     ],
   },
   {
-    id: "business",
-    name: "Business Services",
+    id: "hbb",
+    name: "Home Based Businesses",
     subcategories: [
       {
-        id: "tax-advisors",
-        name: "Tax Advisors",
-        description: "US and German tax preparation",
+        id: "baking-catering",
+        name: "Baking & Catering",
+        description: "Home-based bakers and catering services",
       },
       {
-        id: "accountants",
-        name: "Accountants",
-        description: "Accounting and bookkeeping services",
+        id: "handmade-crafts",
+        name: "Handmade Crafts",
+        description: "Artisan crafts and handmade goods",
+      },
+      {
+        id: "tutoring-lessons",
+        name: "Tutoring & Lessons",
+        description: "Private tutors and lesson providers",
+      },
+      {
+        id: "pet-services",
+        name: "Pet Services",
+        description: "Pet care, grooming, and training services",
+      },
+      {
+        id: "photography",
+        name: "Photography",
+        description: "Professional photography services",
+      },
+      {
+        id: "event-planning",
+        name: "Event Planning",
+        description: "Event planning and coordination services",
+      },
+      {
+        id: "fitness-wellness",
+        name: "Fitness & Wellness",
+        description: "Personal trainers, yoga instructors, and wellness coaches",
+      },
+      {
+        id: "home-decor",
+        name: "Home Decor",
+        description: "Home decoration and interior design services",
+      },
+      {
+        id: "jewelry-accessories",
+        name: "Jewelry & Accessories",
+        description: "Handmade jewelry and fashion accessories",
+      },
+      {
+        id: "custom-clothing",
+        name: "Custom Clothing",
+        description: "Tailoring and custom clothing services",
       },
     ],
   },

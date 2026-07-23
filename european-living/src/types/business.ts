@@ -317,7 +317,7 @@ export function getCategoryDisplayName(category: ServiceCategory): string {
     'shopping': 'Shopping',
     'home-services': 'Home Services',
     'real-estate': 'Real Estate',
-    'legal-business': 'Legal Services',
+    'legal-business': 'Legal & Business Services',
     'education': 'Education',
     'hbb': 'Home Based Businesses'
   };
