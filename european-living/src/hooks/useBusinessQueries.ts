@@ -55,11 +55,19 @@ export function useBusinessesByBase(base: string) {
   return useQuery({
     queryKey: ['businesses', 'base', base],
     queryFn: async (): Promise<Business[]> => {
-      const { data, error } = await supabase
+      // 1. Initialize the base query object
+      let query = supabase
         .from('businesses')
         .select('*')
-        .eq('status', 'active')
-        .contains('bases_served', [base])
+        .eq('status', 'active');
+
+      // 2. Conditionally append the location constraint if base is NOT "all"
+      if (base !== 'all') {
+        query = query.contains('bases_served', [base]);
+      }
+
+      // 3. Finalize execution with global sorting rules
+      const { data, error } = await query
         .order('featured', { ascending: false })
         .order('name', { ascending: true });
 
@@ -74,6 +82,7 @@ export function useBusinessesByBase(base: string) {
     staleTime: 5 * 60 * 1000,
   });
 }
+
 
 export function useBusiness(id: string) {
   return useQuery({

@@ -88,6 +88,15 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
   console.log("Selected Base:", selectedBase);
   console.log("Businesses Returned:", allBusinesses);
 
+  console.log("--- HOOK DEBUG VALUES ---");
+console.log("Active selectedBase state passed in:", selectedBase);
+console.log("Raw hook data array:", allBusinesses);
+if (allBusinesses.length > 0) {
+  console.log("Sample business entry keys:", Object.keys(allBusinesses[0]));
+  console.log("Sample business category value:", allBusinesses[0].category);
+}
+console.log("-------------------------");
+
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     allBusinesses.forEach(business => {
