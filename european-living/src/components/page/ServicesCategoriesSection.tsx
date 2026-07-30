@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
-import { useBusinesses } from "../../hooks/useBusinessQueries";
+import { useBusinessesByBase } from "../../hooks/useBusinessQueries";
 
 const serviceCategories = [
   {
@@ -84,7 +84,9 @@ export default function ServicesCategoriesSection({ selectedBase }: ServicesCate
   
   // The hook is called, but we assume it might use the selectedBase internally for filtering
   // If the hook assumes filtering happens via context/global state, calling it here is fine.
-  const { data: allBusinesses = [], isLoading } = useBusinesses();
+  const { data: allBusinesses = [], isLoading } = useBusinessesByBase(selectedBase);
+  console.log("Selected Base:", selectedBase);
+  console.log("Businesses Returned:", allBusinesses);
 
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
