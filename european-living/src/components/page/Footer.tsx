@@ -167,7 +167,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-[var(--brand-primary)] border-opacity-30 pt-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
             <div>
-              <div className="text-[var(--brand-gold)] font-bold mb-2">📍 150+ Businesses</div>
+              <div className="text-[var(--brand-gold)] font-bold mb-2">📍 15+ Businesses</div>
               <div className="text-sm text-[var(--brand-bg-alt)]">
                 Verified English-friendly services
               </div>

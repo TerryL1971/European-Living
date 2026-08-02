@@ -93,7 +93,7 @@ export default function HeroSection(): JSX.Element {
           </div>
           <div className="flex items-center gap-2">
             <Users className="w-5 h-5 text-[var(--brand-gold)]" />
-            <span className="font-semibold">200+ Businesses</span>
+            <span className="font-semibold">15+ Businesses</span>
           </div>
           <div className="flex items-center gap-2">
             <Plane className="w-5 h-5 text-[var(--brand-gold)]" />
