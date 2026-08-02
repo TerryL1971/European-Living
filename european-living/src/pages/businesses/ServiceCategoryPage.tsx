@@ -1,4 +1,5 @@
 // src/pages/businesses/ServiceCategoryPage.tsx
+
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";

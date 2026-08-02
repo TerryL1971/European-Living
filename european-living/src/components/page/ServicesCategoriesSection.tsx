@@ -1,3 +1,5 @@
+// src/components/page/ServicesCategoriesSection.tsx
+
 import {
   Stethoscope,
   Scale,
