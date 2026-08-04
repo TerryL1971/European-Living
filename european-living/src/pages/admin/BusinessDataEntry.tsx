@@ -11,7 +11,9 @@ import {
   Loader,
   MapPin,
   Plus,
-  X
+  X,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import React from 'react';
@@ -51,6 +53,10 @@ interface Business {
   createdAt?: string;
   updatedAt?: string;
   city?: string;
+  isVisible?: boolean;
+  consentStatus?: string;
+  submittedByName?: string;
+  submittedByEmail?: string;
 }
 
 interface BusinessRow {
@@ -79,6 +85,10 @@ interface BusinessRow {
   created_at?: string;
   updated_at?: string;
   city?: string;
+  is_visible?: boolean;
+  consent_status?: string;
+  submitted_by_name?: string;
+  submitted_by_email?: string;
 }
 
 function mapBusinessRow(row: BusinessRow): Business {
@@ -108,6 +118,10 @@ function mapBusinessRow(row: BusinessRow): Business {
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     city: row.city,
+    isVisible: row.is_visible,
+    consentStatus: row.consent_status,
+    submittedByName: row.submitted_by_name,
+    submittedByEmail: row.submitted_by_email,
   };
 }
 
@@ -148,17 +162,23 @@ const createEmptyBusiness = (): Business => ({
   latitude: undefined,
   longitude: undefined,
   googleMapsUrl: '',
-  city: ''
+  city: '',
+  isVisible: false,
 });
 
-// ✅ ADD THIS NEW FUNCTION HERE
 const normalizeSubcategory = (subcategory: string): string => {
   if (!subcategory) return '';
   return subcategory
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-')  // Convert spaces to hyphens
-    .replace(/_/g, '-');    // Convert underscores to hyphens
+    .replace(/\s+/g, '-')
+    .replace(/_/g, '-');
+};
+
+const CONSENT_BADGE_STYLES: Record<string, string> = {
+  confirmed: 'bg-green-100 text-green-800',
+  pending: 'bg-amber-100 text-amber-800',
+  revoked: 'bg-red-100 text-red-800',
 };
 
 export default function BusinessDataEntry() {
@@ -188,9 +208,8 @@ export default function BusinessDataEntry() {
 
       const mapped = (data as BusinessRow[]).map(mapBusinessRow);
       setBusinesses(mapped);
-      
+
       if (mapped.length > 0) {
-        // Start with first pending business if available
         const initialFilteredIndex = mapped.findIndex(b => b.status === 'pending');
         const startIndex = initialFilteredIndex !== -1 ? initialFilteredIndex : 0;
 
@@ -227,6 +246,7 @@ export default function BusinessDataEntry() {
       if (filter === 'pending') return matchesSearch && b.status === 'pending';
       if (filter === 'no-coordinates') return matchesSearch && (!b.latitude || !b.longitude);
       if (filter === 'no-contact') return matchesSearch && (!b.phone && !b.email && !b.website);
+      if (filter === 'hidden') return matchesSearch && !b.isVisible;
 
       return matchesSearch;
     });
@@ -291,11 +311,18 @@ export default function BusinessDataEntry() {
     setSaveStatus('saving');
     setValidationErrors([]);
 
+    // Detect whether visibility changed since the last load, so we know
+    // whether to log a revoke/restore event after a successful save.
+    const previousBusiness = businesses.find(b => b.id === formData.id);
+    const visibilityChanged = !isNewBusiness
+      && previousBusiness !== undefined
+      && previousBusiness.isVisible !== formData.isVisible;
+
     try {
       const payload = {
         name: formData.name,
         category: formData.category,
-        subcategory: normalizeSubcategory(formData.subcategory || ''),  // ← UPDATED LINE
+        subcategory: normalizeSubcategory(formData.subcategory || ''),
         location: formData.location,
         address: formData.address,
         phone: formData.phone,
@@ -313,11 +340,11 @@ export default function BusinessDataEntry() {
         image_url: formData.imageUrl,
         status: formData.status,
         bases_served: formData.basesServed,
+        is_visible: formData.isVisible,
         updated_at: new Date().toISOString()
       };
 
       if (isNewBusiness) {
-        // INSERT new business
         const { data, error } = await supabase
           .from('businesses')
           .insert({
@@ -342,11 +369,10 @@ export default function BusinessDataEntry() {
           setSaveStatus('saved');
           setTimeout(() => {
             setSaveStatus('idle');
-            loadBusinesses(); // Refresh the list
+            loadBusinesses();
           }, 2000);
         }
       } else {
-        // UPDATE existing business
         const { data, error } = await supabase
           .from('businesses')
           .update(payload)
@@ -366,6 +392,20 @@ export default function BusinessDataEntry() {
           setSaveStatus('error');
           setTimeout(() => setSaveStatus('idle'), 5000);
           return;
+        }
+
+        // Log the revoke/restore event now that the update succeeded.
+        if (visibilityChanged) {
+          const { error: logError } = await supabase.from('business_consent_log').insert({
+            business_id: formData.id,
+            event_type: formData.isVisible ? 'restored' : 'revoked',
+            email: formData.submittedByEmail || formData.email || 'unknown',
+          });
+          if (logError) {
+            // Don't fail the whole save over a logging error — but do
+            // surface it, since the audit trail matters here.
+            console.error('Failed to log visibility change:', logError);
+          }
         }
 
         setBusinesses(prev => prev.map(b => b.id === formData.id ? formData : b));
@@ -486,6 +526,7 @@ export default function BusinessDataEntry() {
   const missingFields = getMissingFields(formData);
   const completionPercentage = Math.round(((7 - missingFields.length) / 7) * 100);
   const pendingCount = businesses.filter(b => b.status === 'pending').length;
+  const hiddenCount = businesses.filter(b => !b.isVisible).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -552,6 +593,7 @@ export default function BusinessDataEntry() {
                   <option value="unverified">Unverified ({businesses.filter(b => !b.verified).length})</option>
                   <option value="no-coordinates">No Coordinates ({businesses.filter(b => !b.latitude || !b.longitude).length})</option>
                   <option value="no-contact">No Contact Info ({businesses.filter(b => !b.phone && !b.email && !b.website).length})</option>
+                  <option value="hidden">Hidden ({hiddenCount})</option>
                 </select>
               </div>
             </div>
@@ -634,6 +676,62 @@ export default function BusinessDataEntry() {
               </span>
             )}
           </h2>
+
+          {/* Visibility & Consent */}
+          {!isNewBusiness && (
+            <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Visibility & Consent</p>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {formData.consentStatus && (
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                        CONSENT_BADGE_STYLES[formData.consentStatus] || 'bg-gray-100 text-gray-800'
+                      }`}>
+                        Consent: {formData.consentStatus}
+                      </span>
+                    )}
+                    {(formData.submittedByName || formData.submittedByEmail) && (
+                      <span className="text-xs text-gray-500">
+                        Submitted by {formData.submittedByName || 'unknown'}
+                        {formData.submittedByEmail ? ` (${formData.submittedByEmail})` : ''}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <span className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                    {formData.isVisible ? (
+                      <><Eye className="w-4 h-4 text-green-600" /> Visible on site</>
+                    ) : (
+                      <><EyeOff className="w-4 h-4 text-gray-500" /> Hidden from site</>
+                    )}
+                  </span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={!!formData.isVisible}
+                    onClick={() => handleInputChange('isVisible', !formData.isVisible)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      formData.isVisible ? 'bg-green-600' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        formData.isVisible ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </label>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Toggling this off hides the listing from the public site immediately on save, without
+                deleting it or its consent record — flip it back on any time to restore it, no
+                resubmission needed. This is separate from the "Status" field below.
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

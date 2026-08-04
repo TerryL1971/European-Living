@@ -402,7 +402,7 @@ export default function BusinessSubmissionForm() {
 
               <div>
                 <label className="block text-sm font-medium text-[var(--brand-dark)] mb-2">
-                  Logo or Photo (optional)
+                  Logo or Photo (optional, but an AI generated image will be used if none is provided)
                 </label>
                 <div className="flex items-start gap-4">
                   {logoPreviewUrl && (
