@@ -1,10 +1,11 @@
 // src/components/BusinessSubmissionForm.tsx
 import React, { useState } from 'react';
-import { Building2, MapPin, Phone, Languages, Award, Clock, CheckCircle, Loader, AlertCircle } from 'lucide-react';
+import { Building2, MapPin, Phone, Languages, Award, Clock, CheckCircle, Loader, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { supabase } from '../services/supabaseClient';
 import SEO from './SEO';
 
 interface FormData {
+  submitterName: string;
   businessName: string;
   category: string;
   subcategory: string;
@@ -28,11 +29,16 @@ interface FormData {
   additionalNotes: string;
 }
 
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
+
 export default function BusinessSubmissionForm() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState<FormData>({
+    submitterName: '',
     businessName: '',
     category: '',
     subcategory: '',
@@ -58,7 +64,7 @@ export default function BusinessSubmissionForm() {
 
   const categories = [
     { id: 'automotive', name: 'Automotive Services' },
-    { id: 'healthcare', name: 'Healthcare' },
+    { id: 'healthcare', name: 'Healthcare / Veterinarian' },
     { id: 'restaurants', name: 'Restaurants & Dining' },
     { id: 'shopping', name: 'Shopping' },
     { id: 'home-services', name: 'Home Services' },
@@ -77,13 +83,33 @@ export default function BusinessSubmissionForm() {
     { id: 'spangdahlem', name: 'Spangdahlem AB' }
   ];
 
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setLogoFile(null);
+      setLogoPreviewUrl(null);
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      setError('Please choose an image file (PNG, JPG, or WebP).');
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
+      setError('That image is larger than 5MB — please choose a smaller file.');
+      return;
+    }
+    setError(null);
+    setLogoFile(file);
+    setLogoPreviewUrl(URL.createObjectURL(file));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
 
     // Basic validation
-    if (!formData.businessName || !formData.category || !formData.city || 
+    if (!formData.submitterName || !formData.businessName || !formData.category || !formData.city ||
         !formData.phone || !formData.email || !formData.englishFluency) {
       setError('Please fill in all required fields (marked with *)');
       setSubmitting(false);
@@ -116,42 +142,63 @@ export default function BusinessSubmissionForm() {
       if (formData.additionalNotes) notesArray.push(formData.additionalNotes);
       const notes = notesArray.join(' | ');
 
-      // Prepare the insert payload
-      const insertPayload = {
-        name: formData.businessName,
-        category: formData.category,
-        subcategory: formData.subcategory || null,
-        description: formData.description || null,
-        location: location,
-        address: formData.address || null,
-        phone: formData.phone,
-        email: formData.email,
-        website: formData.website || null,
-        english_fluency: formData.englishFluency,
-        verified: false,
-        featured: false,
-        status: 'pending',
-        bases_served: formData.nearbyBases,
-        notes: notes || null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+      // Upload the logo/photo first, if one was chosen
+      let logo_url: string | null = null;
+      if (logoFile) {
+        const fileExt = logoFile.name.split('.').pop();
+        const baseSlug = formData.nearbyBases[0]; // e.g. 'stuttgart', 'ramstein'
+        const nameSlug = formData.businessName
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '');
+        const uniqueSuffix = crypto.randomUUID().slice(0, 6);
+        const filePath = `${baseSlug}-${nameSlug}-${uniqueSuffix}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(filePath, logoFile);
 
-      // Insert into Supabase
-      const { error: insertError } = await supabase
-        .from('businesses')
-        .insert(insertPayload)
-        .select();
-
-      if (insertError) {
-        // Provide more specific error messages
-        if (insertError.code === '42501') {
-          throw new Error('Permission denied. Please contact support.');
-        } else if (insertError.code === '23505') {
-          throw new Error('A business with this information already exists.');
-        } else {
-          throw new Error(`Database error: ${insertError.message}`);
+        if (uploadError) {
+          throw new Error(`Image upload failed: ${uploadError.message}`);
         }
+
+        const { data: publicUrlData } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+        logo_url = publicUrlData.publicUrl;
+      }
+
+      // Send to the consent-verification Edge Function instead of inserting directly.
+      // The business goes in as pending/invisible until the submitter confirms
+      // the verification email sent to the address below.
+      const { data: fnData, error: fnError } = await supabase.functions.invoke(
+        'request-business-consent',
+        {
+          body: {
+            submitted_by_name: formData.submitterName,
+            submitted_by_email: formData.email,
+            name: formData.businessName,
+            category: formData.category,
+            subcategory: formData.subcategory || null,
+            description: formData.description || null,
+            location,
+            address: formData.address || null,
+            phone: formData.phone,
+            email: formData.email,
+            website: formData.website || null,
+            english_fluency: formData.englishFluency,
+            bases_served: formData.nearbyBases,
+            notes: notes || null,
+            logo_url,
+          },
+        }
+      );
+
+      if (fnError) {
+        throw new Error(fnError.message || 'Could not submit your business.');
+      }
+      if (fnData?.error) {
+        throw new Error(fnData.error);
       }
 
       setSubmitted(true);
@@ -190,15 +237,20 @@ export default function BusinessSubmissionForm() {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h2 className="text-3xl font-bold text-[var(--brand-dark)] mb-2">Thank You!</h2>
+            <h2 className="text-3xl font-bold text-[var(--brand-dark)] mb-2">Almost there!</h2>
             <p className="text-lg text-[var(--muted-foreground)] mb-6">
-              Your business submission has been received. We'll review it and get back to you within 2-3 business days.
+              We've sent a confirmation link to <strong>{formData.email}</strong>. Click it to verify
+              you submitted this listing and authorize us to publish it — your business will appear
+              in the directory as soon as you confirm.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => {
                   setSubmitted(false);
+                  setLogoFile(null);
+                  setLogoPreviewUrl(null);
                   setFormData({
+                    submitterName: '',
                     businessName: '',
                     category: '',
                     subcategory: '',
@@ -274,6 +326,24 @@ export default function BusinessSubmissionForm() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-[var(--brand-dark)] mb-2">
+                  Your Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.submitterName}
+                  onChange={(e) => handleChange('submitterName', e.target.value)}
+                  className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
+                  placeholder="Your full name"
+                />
+                <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                  So we know who's submitting this listing — we'll send a confirmation link to the
+                  email address below before anything goes live.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--brand-dark)] mb-2">
                   Business Name *
                 </label>
                 <input
@@ -328,6 +398,39 @@ export default function BusinessSubmissionForm() {
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="Describe your business and what makes it great for American families..."
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-[var(--brand-dark)] mb-2">
+                  Logo or Photo (optional)
+                </label>
+                <div className="flex items-start gap-4">
+                  {logoPreviewUrl && (
+                    <img
+                      src={logoPreviewUrl}
+                      alt="Preview"
+                      className="w-20 h-20 object-cover rounded-lg border border-[var(--border)]"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <label className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-[var(--border)] rounded-lg cursor-pointer hover:bg-[var(--muted)] transition-colors">
+                      <ImageIcon className="w-5 h-5 text-[var(--brand-primary)]" />
+                      <span className="text-sm text-[var(--brand-dark)]">
+                        {logoFile ? logoFile.name : 'Choose an image'}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        onChange={handleLogoChange}
+                        className="hidden"
+                      />
+                    </label>
+                    <p className="text-xs text-[var(--muted-foreground)] mt-2">
+                      Recommended: at least 500×500px, square, JPG/PNG/WebP, up to 5MB. This is
+                      used as the thumbnail on your business card in the directory.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -435,6 +538,9 @@ export default function BusinessSubmissionForm() {
                   className="w-full px-4 py-2 border border-[var(--border)] rounded-lg bg-[var(--brand-bg-card)] text-[var(--brand-dark)] focus:ring-2 focus:ring-[var(--brand-primary)] focus:outline-none transition-all duration-200"
                   placeholder="info@yourbusiness.de"
                 />
+                <p className="text-xs text-[var(--muted-foreground)] mt-1">
+                  We'll send a confirmation link here before this listing goes live.
+                </p>
               </div>
 
               <div className="md:col-span-2">
@@ -663,19 +769,19 @@ export default function BusinessSubmissionForm() {
           <ul className="space-y-2 text-sm text-[var(--muted-foreground)]">
             <li className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span>We'll review your submission within 2-3 business days</span>
+              <span>We'll email you a confirmation link right away</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span>We may contact you for additional information or verification</span>
+              <span>Clicking it confirms you submitted this yourself and authorizes us to publish it</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span>Once approved, your business will appear in the directory</span>
+              <span>Your business appears in the directory as soon as you confirm — no waiting on manual review</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
-              <span>You can update your information anytime by contacting us</span>
+              <span>You can ask us to remove your listing at any time by contacting privacy@european-living.live</span>
             </li>
           </ul>
         </div>
