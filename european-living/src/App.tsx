@@ -14,6 +14,7 @@ import CookieConsentModal from './components/CookieConsentModal';
 import BaseSelectionModal from './components/page/BaseSelectionModal';
 import LoadingSpinner from './components/LoadingSpinner';
 import HomePage from "./pages/HomePage";
+import AdminAuthWrapper from './components/AdminAuthWrapper';
 
 // ── Lazy loaded ─────────────────────────────────────────────────────────────
 const ArticlePage            = lazy(() => import('./pages/articles/ArticlePage'));
@@ -228,19 +229,23 @@ export default function App() {
           <Route
             path="/admin/data-entry"
             element={
-              <div className="pt-16">
-                <SEO title="Admin — Data Entry" noIndex={true} />
-                <BusinessDataEntry />
-              </div>
+              <AdminAuthWrapper>
+                <div className="pt-16">
+                  <SEO title="Admin — Data Entry" noIndex={true} />
+                  <BusinessDataEntry />
+                </div>
+              </AdminAuthWrapper>
             }
           />
           <Route
             path="/admin/featured-content"
             element={
-              <div className="pt-16">
-                <SEO title="Admin — Featured Content" noIndex={true} />
-                <FeaturedContentAdmin />
-              </div>
+              <AdminAuthWrapper>
+                <div className="pt-16">
+                  <SEO title="Admin — Featured Content" noIndex={true} />
+                  <FeaturedContentAdmin />
+                </div>
+              </AdminAuthWrapper>
             }
           />
 
