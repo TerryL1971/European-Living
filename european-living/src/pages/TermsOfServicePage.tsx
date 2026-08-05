@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
               Terms of Service
             </h1>
             <p className="text-sm text-[var(--brand-text-muted)]">
-              Effective date: June 2026 · Last updated: June 2026
+              Effective date: June 2026 · Last updated: August 2026
             </p>
           </div>
 
@@ -96,7 +96,7 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 3 */}
+            {/* 3 — EXPANDED */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
                 3. Business Listings
@@ -118,6 +118,53 @@ export default function TermsOfServicePage() {
                 provided is accurate and that they have the legal right to offer
                 the services described. Fraudulent submissions may be reported
                 to relevant authorities.
+              </p>
+
+              <h3 className="font-semibold text-[var(--brand-text)] mt-4 mb-1">
+                No Right to Inclusion
+              </h3>
+              <p className="text-[var(--brand-text-muted)]">
+                There is no right to be included in the Directory, and inclusion
+                is never automatic. A business appears in the Directory only
+                after it (or its authorized representative) voluntarily submits
+                a listing and confirms that submission through our double
+                opt-in verification process. We do not seek out, select, or
+                curate which businesses to approach for listing. Accordingly,
+                a business's absence from the Directory reflects only that no
+                submission has been made and confirmed — it is not, and should
+                not be interpreted as, any judgment, exclusion, or decision
+                regarding that business. Any business may submit a listing at
+                any time through the "List Your Business" form.
+              </p>
+
+              <h3 className="font-semibold text-[var(--brand-text)] mt-4 mb-1">
+                Neutral Ordering
+              </h3>
+              <p className="text-[var(--brand-text-muted)]">
+                Where multiple businesses appear within the same category,
+                listings are displayed in a consistent, non-preferential order
+                and are not ranked, sorted, or promoted based on payment,
+                sponsorship, or any relationship with the site operator. As of
+                the date of these Terms, European Living does not offer, and
+                has never sold, paid placement, sponsored ranking, or
+                preferential positioning of any kind. Internal classification
+                labels that may appear on a listing (such as "verified" or
+                "featured") reflect only the completeness or confirmation
+                status of that business's own submitted information — never
+                payment, sponsorship, or favoritism — and do not currently
+                affect display order on the site.
+              </p>
+
+              <h3 className="font-semibold text-[var(--brand-text)] mt-4 mb-1">
+                Future Sponsored Placements
+              </h3>
+              <p className="text-[var(--brand-text-muted)]">
+                Should European Living ever introduce paid or sponsored
+                placements, any such placement will be clearly and
+                conspicuously labeled as sponsored or paid advertising at the
+                point of display, consistent with German advertising
+                disclosure requirements (§5a UWG), and these Terms will be
+                updated accordingly before any such placement goes live.
               </p>
             </section>
 
@@ -271,7 +318,7 @@ export default function TermsOfServicePage() {
           {/* Footer note */}
           <div className="mt-10 pt-6 border-t border-[var(--brand-border)]">
             <p className="text-xs text-[var(--brand-text-muted)]">
-              Effective date: June 2026 · Last updated: June 2026
+              Effective date: June 2026 · Last updated: August 2026
             </p>
             <div className="flex gap-4 mt-3 text-xs">
               <a href="/privacy-policy" className="text-[var(--brand-primary)] hover:underline">
