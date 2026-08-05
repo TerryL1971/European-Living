@@ -712,7 +712,18 @@ export default function BusinessDataEntry() {
                     type="button"
                     role="switch"
                     aria-checked={!!formData.isVisible}
-                    onClick={() => handleInputChange('isVisible', !formData.isVisible)}
+                    onClick={() => {
+                      const nextVisible = !formData.isVisible;
+                      setFormData(prev => prev ? {
+                        ...prev,
+                        isVisible: nextVisible,
+                        // Keep the legacy status field in sync automatically —
+                        // having these driftable independently is what caused
+                        // a business to vanish from the site without this
+                        // toggle or the consent log reflecting it.
+                        status: nextVisible ? 'active' : 'inactive',
+                      } : null);
+                    }}
                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                       formData.isVisible ? 'bg-green-600' : 'bg-gray-300'
                     }`}
@@ -728,6 +739,7 @@ export default function BusinessDataEntry() {
               <p className="text-xs text-gray-500 mt-2">
                 Toggling this off hides the listing from the public site immediately on save, without
                 deleting it or its consent record — flip it back on any time to restore it, no
+
                 resubmission needed. This is separate from the "Status" field below.
               </p>
             </div>
@@ -959,16 +971,18 @@ export default function BusinessDataEntry() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select
-                  value={formData.status || 'active'}
-                  onChange={({ target }) => handleInputChange('status', target.value as 'active' | 'pending' | 'inactive')}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="active">Active</option>
-                  <option value="pending">Pending</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status <span className="text-gray-400 font-normal">(set by the toggle above)</span>
+                </label>
+                <div className={`w-full px-4 py-2 border rounded-lg ${
+                  formData.status === 'active'
+                    ? 'bg-green-50 border-green-200 text-green-800'
+                    : formData.status === 'inactive'
+                    ? 'bg-gray-100 border-gray-300 text-gray-600'
+                    : 'bg-amber-50 border-amber-200 text-amber-800'
+                }`}>
+                  {formData.status === 'active' ? 'Active' : formData.status === 'inactive' ? 'Inactive' : 'Pending (never toggled)'}
+                </div>
               </div>
 
               <div>
