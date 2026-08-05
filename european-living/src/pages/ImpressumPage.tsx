@@ -108,6 +108,99 @@ export default function ImpressumPage() {
             </div>
           </section>
 
+          {/* Directory & Editorial Policy — NEW SECTION */}
+          <section className="mb-8">
+            <h2 className="text-lg font-semibold text-[var(--brand-primary-dark)] mb-3 pb-2 border-b border-[var(--brand-border)]">
+              Verzeichnis &amp; Redaktionelle Richtlinie / Directory &amp; Editorial Policy
+            </h2>
+
+            <div className="space-y-4 text-sm text-[var(--brand-text)] leading-relaxed">
+              <div>
+                <h3 className="font-semibold mb-1">Kein Sponsoring, keine Empfehlung</h3>
+                <p className="text-[var(--brand-text-muted)]">
+                  European Living betreibt das Services-Verzeichnis ausschließlich als
+                  unabhängige Informationsplattform. Die Aufnahme eines Unternehmens in
+                  das Verzeichnis stellt weder eine Empfehlung noch eine
+                  Qualitätsgarantie noch eine geschäftliche Partnerschaft dar. Über
+                  Aufnahme oder Nichtaufnahme entscheidet der Betreiber nach eigenem
+                  redaktionellem Ermessen.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-1">No Sponsorship, No Endorsement</h3>
+                <p className="text-[var(--brand-text-muted)]">
+                  European Living operates its Services Directory strictly as an
+                  independent information resource. Inclusion of any business in the
+                  directory does not constitute an endorsement, a recommendation, a
+                  quality guarantee, or a commercial partnership between European
+                  Living and that business. Inclusion, exclusion, ordering, and
+                  categorization of listings are determined solely at the operator's
+                  editorial discretion, for informational purposes only.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-1">
+                  Arbeitgeber des Betreibers / Operator's Employer
+                </h3>
+                <p className="text-[var(--brand-text-muted)]">
+                  Der Betreiber dieser Website ist bei der Used Car Guys GmbH,
+                  Sindelfingen, in einer Rolle für Community-Outreach und Kundenbetreuung
+                  angestellt. Die Used Car Guys GmbH finanziert, sponsert oder
+                  kontrolliert diese Website nicht und hat keinen redaktionellen
+                  Einfluss auf deren Inhalte. Dieses Projekt ist ein unabhängiges,
+                  privates Projekt des Betreibers und wird nicht im Rahmen seiner
+                  Anstellung vergütet.
+                </p>
+                <p className="text-[var(--brand-text-muted)] mt-2">
+                  Der Arbeitgeber des Betreibers erscheint im Verzeichnis in der
+                  Kategorie Automotive Services als Community-Ressource. Aus einer
+                  ausdrücklichen redaktionellen Richtlinie zur Vermeidung von
+                  Interessenkonflikten werden derzeit keine weiteren
+                  Autohändler in das Verzeichnis aufgenommen, solange der Betreiber
+                  dort beschäftigt ist.
+                </p>
+                <p className="text-[var(--brand-text-muted)] mt-3 italic">
+                  The operator of this website is employed by Used Car Guys GmbH,
+                  Sindelfingen, in a community outreach and customer care capacity.
+                  Used Car Guys GmbH does not fund, sponsor, or control this website
+                  and has no editorial influence over its content. This project is the
+                  operator's independent, private project and is not compensated as
+                  part of his employment.
+                </p>
+                <p className="text-[var(--brand-text-muted)] mt-2 italic">
+                  The operator's employer appears in the directory in the Automotive
+                  Services category as a community resource. As a matter of explicit
+                  editorial policy to avoid any conflict of interest, no other
+                  automotive dealerships are currently listed in the directory for as
+                  long as the operator remains employed there.
+                </p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-1">
+                  Keine bezahlten Platzierungen / No Paid Placements
+                </h3>
+                <p className="text-[var(--brand-text-muted)]">
+                  Zum Stand dieses Impressums nimmt European Living kein Entgelt für
+                  die Aufnahme, Hervorhebung oder Platzierung von Unternehmen im
+                  Verzeichnis entgegen. Sollte sich dies zukünftig ändern, werden
+                  bezahlte Platzierungen eindeutig als solche gekennzeichnet und
+                  dieses Impressum sowie die Allgemeinen Geschäftsbedingungen
+                  entsprechend aktualisiert.
+                </p>
+                <p className="text-[var(--brand-text-muted)] mt-2 italic">
+                  As of the date of this notice, European Living does not accept
+                  payment for inclusion, featuring, or placement of any business in
+                  the directory. Should this change in the future, any paid
+                  placements will be clearly labeled as such, and this Impressum and
+                  the Terms of Service will be updated accordingly.
+                </p>
+              </div>
+            </div>
+          </section>
+
           {/* Disclaimer */}
           <section className="mb-8">
             <h2 className="text-lg font-semibold text-[var(--brand-primary-dark)] mb-3 pb-2 border-b border-[var(--brand-border)]">
@@ -194,7 +287,7 @@ export default function ImpressumPage() {
           {/* Last updated */}
           <div className="mt-10 pt-6 border-t border-[var(--brand-border)]">
             <p className="text-xs text-[var(--brand-text-muted)]">
-              Stand / Last updated: Juni 2026
+              Stand / Last updated: August 2026
             </p>
           </div>
 
