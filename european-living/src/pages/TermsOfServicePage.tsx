@@ -75,18 +75,22 @@ export default function TermsOfServicePage() {
                 2. Information Accuracy
               </h2>
               <p className="text-[var(--brand-text-muted)]">
-                European Living provides general guidance for informational
-                purposes only. We make reasonable efforts to keep content
-                accurate and current, but we make no warranties — express or
-                implied — regarding the completeness, accuracy, or fitness for
-                a particular purpose of any information on this site.
+                The information on European Living is provided for general
+                informational purposes only. While we strive to keep our
+                content accurate and up to date, laws, regulations, military
+                policies, and procedures change frequently — including in
+                areas such as SOFA status, customs regulations, VAT and tax
+                matters, vehicle registration, German driver's licenses,
+                immigration, healthcare and TRICARE, USPS on-base mail and
+                APO/FPO service, base access, and employment in Germany.
               </p>
               <p className="mt-2 text-[var(--brand-text-muted)]">
-                Military regulations, SOFA provisions, German laws, housing
-                allowances, and official procedures change regularly. Always
-                verify critical information with your unit, installation legal
-                office, or the relevant official authority before making
-                decisions.
+                We make no warranties — express or implied — regarding the
+                completeness, accuracy, or fitness for a particular purpose of
+                any information on this site. Readers should verify
+                information with the appropriate U.S. military office, German
+                government authority, or qualified professional before making
+                decisions based on the information provided here.
               </p>
               <p className="mt-2 text-[var(--brand-text-muted)]">
                 European Living is not affiliated with the U.S. Department of
@@ -96,10 +100,32 @@ export default function TermsOfServicePage() {
               </p>
             </section>
 
-            {/* 3 — EXPANDED */}
+            {/* 3 — NEW */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                3. Business Listings
+                3. Scope and Applicability
+              </h2>
+              <p className="text-[var(--brand-text-muted)]">
+                Content on European Living is generally written for people who
+                are living in, relocating to, or otherwise connected to
+                Germany as part of the U.S. military community. It may not
+                apply to other countries, and it may not apply equally across
+                Germany — military regulations, installation policies, and
+                local procedures can vary significantly by location, command,
+                and service branch, and can change without notice.
+              </p>
+              <p className="mt-2 text-[var(--brand-text-muted)]">
+                Content is not tailored to any individual's specific
+                circumstances and should not be treated as a substitute for
+                guidance from your own command, installation legal office, or
+                the relevant official authority for your situation.
+              </p>
+            </section>
+
+            {/* 4 — EXPANDED */}
+            <section>
+              <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
+                4. Business Listings
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 Businesses listed in the European Living Services Directory are
@@ -166,12 +192,37 @@ export default function TermsOfServicePage() {
                 disclosure requirements (§5a UWG), and these Terms will be
                 updated accordingly before any such placement goes live.
               </p>
+
+              <h3 className="font-semibold text-[var(--brand-text)] mt-4 mb-1">
+                Use of Listed Businesses at Your Own Risk
+              </h3>
+              <p className="text-[var(--brand-text-muted)]">
+                Listings are provided for your convenience. We are not
+                responsible for the quality, safety, legality, licensing, or
+                outcome of any goods or services provided by any business
+                listed in the Directory. Any interaction, transaction, or
+                agreement you enter into with a listed business is solely
+                between you and that business. We encourage you to perform
+                your own due diligence — including checking licensing,
+                reviews, and terms — before engaging any listed business.
+              </p>
+
+              <h3 className="font-semibold text-[var(--brand-text)] mt-4 mb-1">
+                Affiliate and Referral Disclosure
+              </h3>
+              <p className="text-[var(--brand-text-muted)]">
+                European Living does not currently participate in any
+                affiliate, referral, or commission-based program in
+                connection with the Directory or any other content on this
+                site. Should this change, any affiliate or sponsored links
+                will be clearly disclosed at the point they appear.
+              </p>
             </section>
 
-            {/* 4 */}
+            {/* 5 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                4. User-Submitted Content
+                5. User-Submitted Content
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 By submitting any content to European Living — including business
@@ -196,7 +247,7 @@ export default function TermsOfServicePage() {
             {/* 5 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                5. Third-Party Links
+                6. Third-Party Links
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 European Living contains links to external websites including
@@ -211,7 +262,7 @@ export default function TermsOfServicePage() {
             {/* 6 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                6. Intellectual Property
+                7. Intellectual Property
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 All original content on European Living — including articles,
@@ -229,26 +280,34 @@ export default function TermsOfServicePage() {
             {/* 7 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                7. Limitation of Liability
+                8. Limitation of Liability
               </h2>
               <p className="text-[var(--brand-text-muted)]">
-                To the fullest extent permitted by applicable law, European
-                Living and its operator shall not be liable for any direct,
-                indirect, incidental, consequential, or punitive damages arising
-                from your use of — or inability to use — this site or any
-                content, service, or information obtained through it.
+                European Living is a free, non-commercial resource maintained
+                independently by its operator, without payment or sponsorship
+                from any employer or third party. To the fullest extent
+                permitted by applicable law, European Living and its operator
+                shall not be liable for any direct, indirect, incidental,
+                consequential, or punitive damages arising from your use of —
+                or inability to use — this site or any content, service, or
+                information obtained through it.
               </p>
               <p className="mt-2 text-[var(--brand-text-muted)]">
                 This includes but is not limited to damages arising from reliance
                 on business listings, article content, PCS guidance, or any
-                external links provided on the site.
+                external links provided on the site, as well as any site
+                downtime, unavailability, data loss, or database corruption.
+                As a hobby project run by a single operator, we do not
+                guarantee any particular level of uptime, availability, or
+                data retention, though we take reasonable steps to keep the
+                site running and your data secure.
               </p>
             </section>
 
             {/* 8 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                8. Privacy
+                9. Privacy
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 Your use of European Living is also governed by our{' '}
@@ -267,7 +326,7 @@ export default function TermsOfServicePage() {
             {/* 9 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                9. Governing Law
+                10. Governing Law
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 These Terms are governed by the laws of the Federal Republic of
@@ -281,7 +340,7 @@ export default function TermsOfServicePage() {
             {/* 10 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                10. Changes to These Terms
+                11. Changes to These Terms
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 We reserve the right to update these Terms at any time. Changes
@@ -294,7 +353,7 @@ export default function TermsOfServicePage() {
             {/* 11 */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                11. Contact
+                12. Contact
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 Questions about these Terms can be directed to:

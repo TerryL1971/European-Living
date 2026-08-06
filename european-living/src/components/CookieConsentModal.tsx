@@ -24,12 +24,12 @@ const CookieConsentModal: React.FC = () => {
     // Check if user has already consented
     const hasConsented = localStorage.getItem('cookieConsent');
     const consentDate = localStorage.getItem('cookieConsentDate');
-    
+
     // Re-show banner if consent is older than 12 months (GDPR requirement)
     if (hasConsented && consentDate) {
       const consentAge = Date.now() - new Date(consentDate).getTime();
       const twelveMonths = 365 * 24 * 60 * 60 * 1000;
-      
+
       if (consentAge > twelveMonths) {
         // Consent expired, show banner again
         localStorage.removeItem('cookieConsent');
@@ -41,6 +41,12 @@ const CookieConsentModal: React.FC = () => {
           const saved = JSON.parse(hasConsented);
           setPreferences(saved);
           applyConsent(saved);
+          // Re-initialize analytics on return visits if the user previously
+          // opted in — applyConsent() alone only pushes a consent-mode
+          // update, it does not load the GA script itself.
+          if (saved.analytics) {
+            initGA();
+          }
         } catch (e) {
           console.error('Error parsing cookie preferences', e);
         }
@@ -87,13 +93,13 @@ const CookieConsentModal: React.FC = () => {
   };
 
   const handleAcceptAll = () => {
-  const allAccepted: CookiePreferences = {
-    necessary: true,
-    analytics: true,
-    marketing: true,
-  };
+    const allAccepted: CookiePreferences = {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+    };
     savePreferences(allAccepted);
-    initGA(); // ← ADD THIS LINE
+    initGA();
     setShowBanner(false);
     setShowSettings(false);
   };
@@ -112,7 +118,7 @@ const CookieConsentModal: React.FC = () => {
   const handleSavePreferences = () => {
     savePreferences(preferences);
     if (preferences.analytics) {
-      initGA(); // ← ADD THIS LINE
+      initGA();
     }
     setShowBanner(false);
     setShowSettings(false);
@@ -121,10 +127,10 @@ const CookieConsentModal: React.FC = () => {
   const savePreferences = (prefs: CookiePreferences) => {
     localStorage.setItem('cookieConsent', JSON.stringify(prefs));
     localStorage.setItem('cookieConsentDate', new Date().toISOString());
-    
+
     // Apply the consent immediately
     applyConsent(prefs);
-    
+
     // Dispatch event for other parts of app to respond
     window.dispatchEvent(
       new CustomEvent('cookieConsentUpdated', { detail: prefs })
@@ -151,13 +157,18 @@ const CookieConsentModal: React.FC = () => {
     <AnimatePresence>
       {showBanner && (
         <>
-          {/* Overlay backdrop - highest z-index to appear over everything */}
+          {/*
+            Overlay backdrop — visual dimming only. GDPR/EDPB guidance treats
+            clicking away from a consent banner as a passive, ambiguous action
+            that does NOT constitute valid consent, so this backdrop must
+            never trigger accept/reject on its own. Users must press an
+            actual button.
+          */}
           <motion.div
             className="fixed inset-0 bg-black/30 z-[100]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => !showSettings && handleAcceptAll()} // Click backdrop to accept (common UX)
           />
 
           {/* Settings Modal - appears when user clicks "Settings" */}
@@ -361,7 +372,6 @@ const CookieConsentModal: React.FC = () => {
               initial={{ y: 100, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 100, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
             >
               <div className="max-w-7xl mx-auto p-6">
                 <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
@@ -373,11 +383,11 @@ const CookieConsentModal: React.FC = () => {
                         🍪 Cookie Settings
                       </h3>
                       <p className="text-sm text-gray-600 leading-relaxed">
-                        We use cookies to provide you with an optimal website experience. 
-                        Further information and how you can object to the use of cookies at 
+                        We use cookies to provide you with an optimal website experience.
+                        Further information and how you can object to the use of cookies at
                         any time can be found in our{' '}
-                        <a 
-                          href="/privacy-policy" 
+                        <a
+                          href="/privacy-policy"
                           className="text-blue-600 hover:underline font-medium"
                           target="_blank"
                           rel="noopener noreferrer"

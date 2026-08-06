@@ -25,7 +25,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </h1>
             <p className="text-sm text-[var(--brand-text-muted)]">
-              Effective date: June 2026 · Last updated: June 2026
+              Effective date: June 2026 · Last updated: August 2026
             </p>
           </div>
 
@@ -54,10 +54,18 @@ export default function PrivacyPolicy() {
               </p>
               <ul className="list-disc pl-5 mt-2 space-y-1 text-[var(--brand-text-muted)]">
                 <li>Select your military base or location preference</li>
-                <li>Submit a business listing through the Submit Your Business form</li>
+                <li>Submit a business listing through the Submit Your Business form, including your name, email, phone number, business details, and an optional logo/photo image</li>
                 <li>Contact us through the contact form, email, or WhatsApp</li>
                 <li>Sign up for travel tips or email updates</li>
               </ul>
+              <p className="mt-2 text-[var(--brand-text-muted)]">
+                If you submit a business listing, we also record the date and
+                time you confirmed that submission through our verification
+                email, along with the IP address used to confirm it. We keep
+                this record as proof of your consent for us to publish the
+                listing, and to protect both you and us in the event that
+                consent is ever disputed.
+              </p>
               <p className="mt-2 text-[var(--brand-text-muted)]">
                 We also automatically collect limited technical information
                 when you visit the site, such as your IP address (anonymized),
@@ -83,6 +91,11 @@ export default function PrivacyPolicy() {
                 </li>
                 <li>
                   <strong>Vercel</strong> — website hosting and content delivery.
+                </li>
+                <li>
+                  <strong>Resend</strong> — sends the verification and
+                  confirmation emails used in our business listing consent
+                  process.
                 </li>
                 <li>
                   <strong>Formspree</strong> — processes contact form
@@ -138,7 +151,10 @@ export default function PrivacyPolicy() {
                 how visitors use the site — which pages are popular, how people
                 navigate, and general traffic patterns. We have enabled IP
                 anonymization. This data is used in aggregate and is not used
-                to personally identify you.
+                to personally identify you. Analytics cookies are only set
+                after you actively choose "Accept All" or enable them in
+                Cookie Settings — closing or clicking away from the cookie
+                banner does not set analytics cookies.
               </p>
 
               <h3 className="font-semibold text-[var(--brand-text)] mt-3 mb-1">
@@ -159,10 +175,32 @@ export default function PrivacyPolicy() {
               </p>
             </section>
 
-            {/* 4. Retention */}
+            {/* 4. Server logs — NEW */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                4. Data Retention
+                4. Server Log Files
+              </h2>
+              <p className="text-[var(--brand-text-muted)]">
+                Whenever you visit this site, our hosting provider (Vercel)
+                automatically collects and stores standard technical
+                information in server log files, such as your browser type
+                and version, the operating system used, the referring page,
+                and a shortened or anonymized IP address. This happens
+                automatically as part of how the internet works and is not
+                something we can turn off.
+              </p>
+              <p className="mt-2 text-[var(--brand-text-muted)]">
+                This data is processed on the legal basis of our legitimate
+                interest (Art. 6(1)(f) GDPR) in keeping the site secure,
+                stable, and functioning correctly, and is not combined with
+                other data to identify you personally.
+              </p>
+            </section>
+
+            {/* 5. Retention */}
+            <section>
+              <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
+                5. Data Retention
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 We retain personal data only as long as necessary for the
@@ -171,18 +209,19 @@ export default function PrivacyPolicy() {
               <ul className="list-disc pl-5 mt-2 space-y-1 text-[var(--brand-text-muted)]">
                 <li>Contact form messages: retained for up to 24 months, then deleted</li>
                 <li>Business listing submissions: retained for as long as the listing remains active, plus 12 months</li>
+                <li>Consent confirmation records (timestamp and IP address): retained for as long as the associated listing exists, as proof of consent</li>
                 <li>Analytics data: retained according to Google Analytics' default retention settings (currently 14 months)</li>
               </ul>
               <p className="mt-2 text-[var(--brand-text-muted)]">
                 You may request earlier deletion of your data at any time — see
-                Section 5.
+                Section 6.
               </p>
             </section>
 
-            {/* 5. GDPR rights */}
+            {/* 6. GDPR rights */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                5. Your Rights (GDPR)
+                6. Your Rights (GDPR)
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 If you are located in the European Economic Area, you have the
@@ -199,15 +238,15 @@ export default function PrivacyPolicy() {
               </ul>
               <p className="mt-2 text-[var(--brand-text-muted)]">
                 To exercise any of these rights, contact us using the details
-                in Section 7. We will respond within one month as required by
+                in Section 8. We will respond within one month as required by
                 the GDPR.
               </p>
             </section>
 
-            {/* 6. Children's privacy */}
+            {/* 7. Children's privacy */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                6. Children's Privacy
+                7. Children's Privacy
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 European Living is not directed at children, and we do not
@@ -217,10 +256,10 @@ export default function PrivacyPolicy() {
               </p>
             </section>
 
-            {/* 7. Contact */}
+            {/* 8. Contact */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                7. Contact Us
+                8. Contact Us
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 For privacy-related questions or to exercise your GDPR rights,
@@ -240,10 +279,10 @@ export default function PrivacyPolicy() {
               </div>
             </section>
 
-            {/* 8. Changes */}
+            {/* 9. Changes */}
             <section>
               <h2 className="text-base font-semibold text-[var(--brand-primary-dark)] mb-2 pb-1 border-b border-[var(--brand-border)]">
-                8. Changes to This Policy
+                9. Changes to This Policy
               </h2>
               <p className="text-[var(--brand-text-muted)]">
                 We may update this Privacy Policy from time to time. Changes
@@ -258,7 +297,7 @@ export default function PrivacyPolicy() {
           {/* Footer note */}
           <div className="mt-10 pt-6 border-t border-[var(--brand-border)]">
             <p className="text-xs text-[var(--brand-text-muted)]">
-              Effective date: June 2026 · Last updated: June 2026
+              Effective date: June 2026 · Last updated: August 2026
             </p>
             <div className="flex gap-4 mt-3 text-xs">
               <a href="/terms-of-service" className="text-[var(--brand-primary)] hover:underline">

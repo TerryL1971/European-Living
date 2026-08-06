@@ -100,7 +100,7 @@ export default function ImpressumPage() {
               Verantwortlich für den Inhalt / Editorial Responsibility
             </h2>
             <div className="text-sm text-[var(--brand-text)] space-y-1 leading-relaxed">
-              <p>Gemäß §55 Abs. 2 RStV:</p>
+              <p>Gemäß §18 Abs. 2 MStV (Medienstaatsvertrag):</p>
               <p className="font-medium">Terrell C Lombardi</p>
               <p>Untere Burggasse 4</p>
               <p>71063 Sindelfingen</p>
