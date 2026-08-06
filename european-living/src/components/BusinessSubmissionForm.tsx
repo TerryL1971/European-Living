@@ -142,8 +142,11 @@ export default function BusinessSubmissionForm() {
       if (formData.additionalNotes) notesArray.push(formData.additionalNotes);
       const notes = notesArray.join(' | ');
 
-      // Upload the logo/photo first, if one was chosen
-      let logo_url: string | null = null;
+      // Upload the logo/photo to PRIVATE staging first, if one was chosen.
+      // It only becomes publicly visible once the submitter confirms
+      // consent — see confirm-business-consent Edge Function, which moves
+      // it into public storage at that point.
+      let pending_logo_path: string | null = null;
       if (logoFile) {
         const fileExt = logoFile.name.split('.').pop();
         const baseSlug = formData.nearbyBases[0]; // e.g. 'stuttgart', 'ramstein'
@@ -153,19 +156,18 @@ export default function BusinessSubmissionForm() {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-+|-+$/g, '');
         const uniqueSuffix = crypto.randomUUID().slice(0, 6);
-        const filePath = `${baseSlug}-${nameSlug}-${uniqueSuffix}.${fileExt}`;
+        const filePath = `pending/${baseSlug}-${nameSlug}-${uniqueSuffix}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
-          .from('images')
+          .from('pending-images')
           .upload(filePath, logoFile);
 
         if (uploadError) {
           throw new Error(`Image upload failed: ${uploadError.message}`);
         }
 
-        const { data: publicUrlData } = supabase.storage
-          .from('images')
-          .getPublicUrl(filePath);
-        logo_url = publicUrlData.publicUrl;
+        // Store the private staging path, NOT a public URL — nothing in
+        // this bucket should be publicly readable until consent confirms.
+        pending_logo_path = filePath;
       }
 
       // Send to the consent-verification Edge Function instead of inserting directly.
@@ -189,7 +191,7 @@ export default function BusinessSubmissionForm() {
             english_fluency: formData.englishFluency,
             bases_served: formData.nearbyBases,
             notes: notes || null,
-            logo_url,
+            logo_url: pending_logo_path,
           },
         }
       );
@@ -427,7 +429,8 @@ export default function BusinessSubmissionForm() {
                     </label>
                     <p className="text-xs text-[var(--muted-foreground)] mt-2">
                       Recommended: at least 500×500px, square, JPG/PNG/WebP, up to 5MB. This is
-                      used as the thumbnail on your business card in the directory.
+                      used as the thumbnail on your business card in the directory. Your photo is
+                      kept private until you confirm the listing by email.
                     </p>
                   </div>
                 </div>

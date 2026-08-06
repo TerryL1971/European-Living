@@ -1,8 +1,9 @@
 // supabase/functions/confirm-business-consent/index.ts
 //
 // The link in the verification email points here. Confirms consent,
-// logs the IP + timestamp as proof, flips the listing live, and sends
-// the "you're confirmed" follow-up email.
+// logs the IP + timestamp as proof, moves any staged logo image into
+// public storage, flips the listing live, and sends the "you're
+// confirmed" follow-up email.
 //
 // Deploy: supabase functions deploy confirm-business-consent
 // Same secrets as request-business-consent (RESEND_API_KEY, SITE_URL,
@@ -40,7 +41,7 @@ Deno.serve(async (req) => {
 
   const { data: business, error: findError } = await supabase
     .from("businesses")
-    .select("id, name, submitted_by_email, submitted_by_name, consent_status")
+    .select("id, name, submitted_by_email, submitted_by_name, consent_status, pending_logo_path")
     .eq("consent_token", token)
     .single();
 
@@ -64,6 +65,40 @@ Deno.serve(async (req) => {
     "unknown";
   const now = new Date().toISOString();
 
+  // If a logo was staged during submission, move it from the private
+  // "pending-images" bucket into the public "images" bucket now that
+  // consent is confirmed. Only at this point does the image become
+  // publicly accessible.
+  let publicLogoUrl: string | null = null;
+  if (business.pending_logo_path) {
+    const { data: fileData, error: downloadError } = await supabase.storage
+      .from("pending-images")
+      .download(business.pending_logo_path);
+
+    if (downloadError || !fileData) {
+      console.error("Could not retrieve staged logo:", downloadError);
+      // Don't fail the whole confirmation over a missing image — the
+      // listing can still go live without a photo.
+    } else {
+      const publicPath = business.pending_logo_path.replace(/^pending\//, "");
+      const { error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(publicPath, fileData, { upsert: true });
+
+      if (uploadError) {
+        console.error("Could not publish staged logo:", uploadError);
+      } else {
+        const { data: publicUrlData } = supabase.storage
+          .from("images")
+          .getPublicUrl(publicPath);
+        publicLogoUrl = publicUrlData.publicUrl;
+
+        // Clean up the private staging copy now that it's published.
+        await supabase.storage.from("pending-images").remove([business.pending_logo_path]);
+      }
+    }
+  }
+
   const { error: updateError } = await supabase
     .from("businesses")
     .update({
@@ -73,6 +108,8 @@ Deno.serve(async (req) => {
       is_visible: true,
       status: "active", // existing frontend queries filter on this — keep it in sync
       confirmation_email_sent_at: now,
+      ...(publicLogoUrl ? { image_url: publicLogoUrl } : {}),
+      pending_logo_path: null,
     })
     .eq("id", business.id);
 

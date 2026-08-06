@@ -9,10 +9,9 @@ import BusinessImage from "./BusinessImage";
 
 export interface BusinessCardWithMapProps {
   business: Business;
-  featured?: boolean;
 }
 
-export default function BusinessCardWithMap({ business, featured = false }: BusinessCardWithMapProps) {
+export default function BusinessCardWithMap({ business }: BusinessCardWithMapProps) {
   const [reviewStats, setReviewStats] = useState<{ avgRating: number; count: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [showReviewBreakdown, setShowReviewBreakdown] = useState(false);
@@ -60,8 +59,8 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
   const hasLocation = business.latitude && business.longitude;
 
   return (
-    <div className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden ${featured ? 'border-2 border-[var(--brand-gold)]' : 'border border-gray-200'}`}>
-      {/* Image Section with Featured Badge */}
+    <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow overflow-hidden border border-gray-200">
+      {/* Image Section */}
       <div className="relative">
         <BusinessImage
           imageUrl={business.imageUrl}
@@ -69,12 +68,6 @@ export default function BusinessCardWithMap({ business, featured = false }: Busi
           businessName={business.name}
           className="w-full h-48"
         />
-        {/* Featured Badge - Top Right Corner */}
-        {featured && (
-          <div className="absolute top-3 right-3 bg-[var(--brand-gold)] text-[var(--brand-dark)] px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-            ⭐ FEATURED
-          </div>
-        )}
       </div>
 
       <div className="p-6">

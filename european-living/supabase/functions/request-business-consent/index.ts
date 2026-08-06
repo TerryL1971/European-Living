@@ -7,7 +7,8 @@
 // Deploy: supabase functions deploy request-business-consent
 // Required secrets (Project Settings > Edge Functions > Secrets):
 //   RESEND_API_KEY   - your Resend API key
-//   SITE_URL         - e.g. https://european-living.live (used in email copy)
+//   SITE_URL         - e.g. https://european-living.live (used in email copy
+//                       and to restrict CORS to your real domain)
 // Default secrets already available to every function: SUPABASE_URL,
 // SUPABASE_SERVICE_ROLE_KEY (or SUPABASE_SECRET_KEYS on newer projects -
 // check your project's Edge Function secrets list and adjust the two
@@ -25,11 +26,39 @@ function slugify(name: string): string {
   return `${base}-${suffix}`;
 }
 
+// CORS is now locked to the real site instead of "*". SITE_URL should be
+// set to exactly https://european-living.live (no trailing slash) in your
+// Edge Function secrets. Falls back to the production domain if SITE_URL
+// isn't set, rather than falling back to an open wildcard.
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") ?? "https://european-living.live";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*", // tighten to your domain in production
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+
+// --- Very simple in-memory rate limiting ---------------------------------
+// Edge Functions are stateless/ephemeral between cold starts, so this is
+// not a substitute for a real rate limiter (e.g. Supabase's built-in rate
+// limiting, or a KV-backed one) — but it stops the obvious case of someone
+// hammering this endpoint in a tight loop within a single warm instance,
+// and costs nothing to add. Consider Cloudflare/Supabase rate limiting or
+// an hCaptcha on the form itself if abuse becomes a real problem.
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 3; // per email, per window
+const recentRequestsByEmail = new Map<string, number[]>();
+
+function isRateLimited(email: string): boolean {
+  const now = Date.now();
+  const timestamps = (recentRequestsByEmail.get(email) ?? []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS,
+  );
+  timestamps.push(now);
+  recentRequestsByEmail.set(email, timestamps);
+  return timestamps.length > RATE_LIMIT_MAX_REQUESTS;
+}
+// ---------------------------------------------------------------------------
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -42,7 +71,8 @@ Deno.serve(async (req) => {
     const {
       submitted_by_name,
       submitted_by_email,
-      ...businessFields // name, category, address, phone, website, description, logo_url, etc.
+      logo_url, // may be a data URL / base64 payload now — see below
+      ...businessFields // name, category, address, phone, website, description, etc.
     } = body;
 
     if (!submitted_by_email || !submitted_by_name) {
@@ -52,12 +82,24 @@ Deno.serve(async (req) => {
       );
     }
 
+    if (isRateLimited(submitted_by_email)) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please wait a minute and try again." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Insert the pending, invisible business row.
+    // Insert the pending, invisible business row. Note: logo_url is
+    // intentionally NOT written here. The image is uploaded to a PRIVATE
+    // staging path by the client (see BusinessSubmissionForm.tsx change
+    // below) and only moved to public storage once consent is confirmed,
+    // in confirm-business-consent/index.ts. This avoids an unconfirmed
+    // submitter's photo sitting in public storage indefinitely.
     const { data: business, error: insertError } = await supabase
       .from("businesses")
       .insert({
@@ -68,6 +110,7 @@ Deno.serve(async (req) => {
         consent_status: "pending",
         is_visible: false,
         consent_requested_at: new Date().toISOString(),
+        pending_logo_path: logo_url ?? null, // path in the PRIVATE staging bucket, not a public URL
       })
       .select("id, consent_token")
       .single();

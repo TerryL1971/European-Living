@@ -118,13 +118,11 @@ export default function ServiceCategoryPage() {
     groupedBySubcategory[subcat].push(business);
   });
 
-  // Sort businesses: featured first, then alphabetically
+  // Sort businesses alphabetically only. Listings are never ranked or
+  // promoted by "featured" status, payment, or any relationship with the
+  // operator — see the Neutral Ordering policy in the Terms of Service.
   Object.keys(groupedBySubcategory).forEach((subcat) => {
-    groupedBySubcategory[subcat].sort((a, b) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return a.name.localeCompare(b.name);
-    });
+    groupedBySubcategory[subcat].sort((a, b) => a.name.localeCompare(b.name));
   });
 
   // Get ordered subcategories — canonical order now comes from
@@ -246,10 +244,9 @@ export default function ServiceCategoryPage() {
                     )}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {businesses.map((business) => (
-                        <BusinessCardWithMap 
-                          key={business.id} 
-                          business={business} 
-                          featured={business.featured || false}
+                        <BusinessCardWithMap
+                          key={business.id}
+                          business={business}
                         />
                       ))}
                     </div>
