@@ -1,4 +1,6 @@
 // src/pages/admin/FeaturedContentAdmin.tsx
+// admin url: /admin/featured-content
+
 import { useState, useEffect } from 'react';
 import { 
   getAllFeaturedContent, 
