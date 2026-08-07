@@ -18,7 +18,7 @@ type FormData = {
   image_url: string;
   link_url: string;
   cta_text: string;
-  type: 'article' | 'video' | 'offer' | 'advertisement';
+  type: 'article' | 'video';
   bases_served: string[];
   is_sponsored: boolean;
   sponsor_name: string;
@@ -109,7 +109,11 @@ export default function FeaturedContentAdmin() {
       image_url: item.image_url || '',
       link_url: item.link_url || '',
       cta_text: item.cta_text || 'Learn More',
-      type: item.type as 'article' | 'video' | 'offer' | 'advertisement',
+      // Legacy items saved before this cleanup may still have "offer" or
+      // "advertisement" stored in the database. Coerce anything outside the
+      // current allowed set to "article" so the edit form doesn't choke on
+      // a value the <select> no longer offers.
+      type: (item.type === 'article' || item.type === 'video') ? item.type : 'article',
       bases_served: item.bases_served,
       is_sponsored: item.is_sponsored || false,
       sponsor_name: item.sponsor_name || '',
@@ -269,13 +273,11 @@ export default function FeaturedContentAdmin() {
                         </label>
                         <select
                           value={formData.type}
-                          onChange={(e) => setFormData({ ...formData, type: e.target.value as 'article' | 'video' | 'offer' | 'advertisement' })}
+                          onChange={(e) => setFormData({ ...formData, type: e.target.value as 'article' | 'video' })}
                           className="w-full px-4 py-2 border border-[var(--border)] rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)]"
                         >
                           <option value="article">Article</option>
                           <option value="video">Video</option>
-                          <option value="offer">Offer</option>
-                          <option value="advertisement">Advertisement</option>
                         </select>
                       </div>
 

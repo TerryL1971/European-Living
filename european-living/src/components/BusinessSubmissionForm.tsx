@@ -37,6 +37,7 @@ export default function BusinessSubmissionForm() {
   const [error, setError] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     submitterName: '',
     businessName: '',
@@ -118,6 +119,12 @@ export default function BusinessSubmissionForm() {
 
     if (formData.nearbyBases.length === 0) {
       setError('Please select at least one nearby military base');
+      setSubmitting(false);
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError('Please confirm you agree to the Terms of Service and Privacy Policy before submitting.');
       setSubmitting(false);
       return;
     }
@@ -740,6 +747,42 @@ export default function BusinessSubmissionForm() {
             </div>
           </div>
 
+          {/* Consent Checkbox */}
+          <div className="bg-[var(--brand-bg-card)] rounded-lg shadow-md p-6 border border-[var(--border)]">
+            <label className="flex items-start cursor-pointer">
+              <input
+                type="checkbox"
+                required
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="w-5 h-5 text-[var(--brand-primary)] rounded focus:ring-2 focus:ring-[var(--brand-primary)] mt-0.5 flex-shrink-0"
+              />
+              <span className="ml-3 text-sm text-[var(--brand-dark)]">
+                I confirm I have the authority to submit this listing, and I agree to
+                European Living's{' '}
+                <a
+                  href="/terms-of-service"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--brand-primary)] hover:underline font-medium"
+                >
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a
+                  href="/privacy-policy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--brand-primary)] hover:underline font-medium"
+                >
+                  Privacy Policy
+                </a>
+                , including the use of the information and any image submitted above to
+                create this listing. *
+              </span>
+            </label>
+          </div>
+
           {/* Submit Button */}
           <div className="flex justify-end gap-4">
             <button
@@ -751,7 +794,7 @@ export default function BusinessSubmissionForm() {
             </button>
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !agreedToTerms}
               className="px-6 py-3 bg-[var(--brand-gold)] text-white rounded-lg font-semibold hover:bg-[var(--brand-primary)] transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {submitting ? (
