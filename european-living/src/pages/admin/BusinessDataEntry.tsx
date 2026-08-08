@@ -13,7 +13,8 @@ import {
   Plus,
   X,
   Eye,
-  EyeOff
+  EyeOff,
+  FileText
 } from 'lucide-react';
 import { supabase } from '../../services/supabaseClient';
 import React from 'react';
@@ -26,6 +27,9 @@ const BASES = [
   { id: 'grafenwoehr', name: 'USAG Bavaria' },
   { id: 'spangdahlem', name: 'Spangdahlem AB' },
 ];
+
+type ConsentMethod = 'email' | 'paper_form' | 'verbal_in_person';
+type ConsentStatus = 'pending' | 'confirmed' | 'revoked';
 
 interface Business {
   id: string;
@@ -54,7 +58,11 @@ interface Business {
   updatedAt?: string;
   city?: string;
   isVisible?: boolean;
-  consentStatus?: string;
+  consentStatus?: ConsentStatus;
+  consentMethod?: ConsentMethod;
+  consentProofUrl?: string;
+  consentNote?: string;
+  consentConfirmedAt?: string;
   submittedByName?: string;
   submittedByEmail?: string;
 }
@@ -87,6 +95,10 @@ interface BusinessRow {
   city?: string;
   is_visible?: boolean;
   consent_status?: string;
+  consent_method?: string;
+  consent_proof_url?: string;
+  consent_note?: string;
+  consent_confirmed_at?: string;
   submitted_by_name?: string;
   submitted_by_email?: string;
 }
@@ -119,7 +131,11 @@ function mapBusinessRow(row: BusinessRow): Business {
     updatedAt: row.updated_at,
     city: row.city,
     isVisible: row.is_visible,
-    consentStatus: row.consent_status,
+    consentStatus: row.consent_status as ConsentStatus,
+    consentMethod: (row.consent_method as ConsentMethod) || 'email',
+    consentProofUrl: row.consent_proof_url,
+    consentNote: row.consent_note,
+    consentConfirmedAt: row.consent_confirmed_at,
     submittedByName: row.submitted_by_name,
     submittedByEmail: row.submitted_by_email,
   };
@@ -164,6 +180,10 @@ const createEmptyBusiness = (): Business => ({
   googleMapsUrl: '',
   city: '',
   isVisible: false,
+  consentStatus: 'pending',
+  consentMethod: 'email',
+  consentProofUrl: '',
+  consentNote: '',
 });
 
 const normalizeSubcategory = (subcategory: string): string => {
@@ -179,6 +199,12 @@ const CONSENT_BADGE_STYLES: Record<string, string> = {
   confirmed: 'bg-green-100 text-green-800',
   pending: 'bg-amber-100 text-amber-800',
   revoked: 'bg-red-100 text-red-800',
+};
+
+const CONSENT_METHOD_LABELS: Record<ConsentMethod, string> = {
+  email: 'Email (double opt-in)',
+  paper_form: 'Paper Form',
+  verbal_in_person: 'Verbal, In-Person',
 };
 
 export default function BusinessDataEntry() {
@@ -247,6 +273,8 @@ export default function BusinessDataEntry() {
       if (filter === 'no-coordinates') return matchesSearch && (!b.latitude || !b.longitude);
       if (filter === 'no-contact') return matchesSearch && (!b.phone && !b.email && !b.website);
       if (filter === 'hidden') return matchesSearch && !b.isVisible;
+      if (filter === 'non-email-consent') return matchesSearch && b.consentMethod && b.consentMethod !== 'email';
+      if (filter === 'needs-proof') return matchesSearch && b.consentMethod && b.consentMethod !== 'email' && !b.consentProofUrl && b.consentStatus !== 'confirmed';
 
       return matchesSearch;
     });
@@ -290,8 +318,22 @@ export default function BusinessDataEntry() {
     if (data.googleMapsUrl && !isValidUrl(data.googleMapsUrl)) {
       errors.push('Google Maps URL is invalid.');
     }
+    if (data.consentProofUrl && !isValidUrl(data.consentProofUrl)) {
+      errors.push('Consent Proof URL is invalid.');
+    }
     if (!data.name || !data.location || !data.category) {
       errors.push('Name, Location, and Category are required fields.');
+    }
+    if (
+      data.consentMethod &&
+      data.consentMethod !== 'email' &&
+      data.consentStatus === 'confirmed' &&
+      !data.consentProofUrl &&
+      !data.consentNote
+    ) {
+      errors.push(
+        'For paper/verbal consent marked as Confirmed, add a Consent Proof URL (link to the scanned form in the consent-documents bucket) or at minimum a Consent Note describing how/when consent was obtained.'
+      );
     }
 
     return errors;
@@ -311,12 +353,27 @@ export default function BusinessDataEntry() {
     setSaveStatus('saving');
     setValidationErrors([]);
 
+    const previousBusiness = businesses.find(b => b.id === formData.id);
+
     // Detect whether visibility changed since the last load, so we know
     // whether to log a revoke/restore event after a successful save.
-    const previousBusiness = businesses.find(b => b.id === formData.id);
     const visibilityChanged = !isNewBusiness
       && previousBusiness !== undefined
       && previousBusiness.isVisible !== formData.isVisible;
+
+    // Detect a manual (non-email) consent confirmation happening right now,
+    // so we can stamp consent_confirmed_at and log it. The email flow
+    // stamps this itself via confirm-business-consent — this only fires
+    // for paper_form / verbal_in_person, which have no other path to
+    // "confirmed".
+    const isManualConsentConfirmation = !isNewBusiness
+      && formData.consentMethod !== 'email'
+      && formData.consentStatus === 'confirmed'
+      && previousBusiness?.consentStatus !== 'confirmed';
+
+    const consentConfirmedAtToSave = isManualConsentConfirmation
+      ? new Date().toISOString()
+      : formData.consentConfirmedAt;
 
     try {
       const payload = {
@@ -341,6 +398,20 @@ export default function BusinessDataEntry() {
         status: formData.status,
         bases_served: formData.basesServed,
         is_visible: formData.isVisible,
+        consent_method: formData.consentMethod || 'email',
+        consent_proof_url: formData.consentProofUrl || null,
+        consent_note: formData.consentNote || null,
+        // Only ever write consent_status / consent_confirmed_at here for
+        // non-email methods. Email-consented businesses are managed
+        // exclusively by the confirm-business-consent Edge Function —
+        // touching consent_status here for those would let the admin
+        // panel silently overwrite a value the automated flow owns.
+        ...(formData.consentMethod !== 'email'
+          ? {
+              consent_status: formData.consentStatus,
+              consent_confirmed_at: consentConfirmedAtToSave,
+            }
+          : {}),
         updated_at: new Date().toISOString()
       };
 
@@ -408,7 +479,23 @@ export default function BusinessDataEntry() {
           }
         }
 
-        setBusinesses(prev => prev.map(b => b.id === formData.id ? formData : b));
+        // Log the manual consent confirmation for the audit trail, same as
+        // the email flow logs its own "confirmed" event.
+        if (isManualConsentConfirmation) {
+          const { error: logError } = await supabase.from('business_consent_log').insert({
+            business_id: formData.id,
+            event_type: 'confirmed',
+            email: formData.submittedByEmail || formData.email || 'unknown',
+            note: `Manually confirmed via admin panel — method: ${formData.consentMethod}.${
+              formData.consentNote ? ` Note: ${formData.consentNote}` : ''
+            }`,
+          });
+          if (logError) {
+            console.error('Failed to log manual consent confirmation:', logError);
+          }
+        }
+
+        setBusinesses(prev => prev.map(b => b.id === formData.id ? { ...formData, consentConfirmedAt: consentConfirmedAtToSave } : b));
         setSaveStatus('saved');
         setTimeout(() => setSaveStatus('idle'), 2000);
       }
@@ -527,6 +614,12 @@ export default function BusinessDataEntry() {
   const completionPercentage = Math.round(((7 - missingFields.length) / 7) * 100);
   const pendingCount = businesses.filter(b => b.status === 'pending').length;
   const hiddenCount = businesses.filter(b => !b.isVisible).length;
+  const nonEmailConsentCount = businesses.filter(b => b.consentMethod && b.consentMethod !== 'email').length;
+  const needsProofCount = businesses.filter(
+    b => b.consentMethod && b.consentMethod !== 'email' && !b.consentProofUrl && b.consentStatus !== 'confirmed'
+  ).length;
+
+  const isNonEmailConsent = formData.consentMethod && formData.consentMethod !== 'email';
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -562,6 +655,33 @@ export default function BusinessDataEntry() {
           </div>
         </div>
 
+        {/* Standing reminder — shows up every time you load this page, not
+            just when you're already looking at the record in question. This
+            is the "don't forget where the paper form goes" catch. */}
+        {needsProofCount > 0 && !isNewBusiness && (
+          <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4 mb-6 flex items-start gap-3">
+            <FileText className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <p className="font-medium text-amber-900">
+                {needsProofCount} paper/verbal {needsProofCount === 1 ? 'consent is' : 'consents are'} still missing proof
+              </p>
+              <p className="text-sm text-amber-800 mt-0.5">
+                Upload the signed form to the "consent-documents" bucket and paste the link into
+                Consent Proof URL — or add a Consent Note — before marking these Confirmed.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setFilter('needs-proof');
+                setCurrentIndex(0);
+              }}
+              className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition text-sm font-semibold whitespace-nowrap"
+            >
+              Review Now
+            </button>
+          </div>
+        )}
+
         {!isNewBusiness && (
           <>
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -594,6 +714,8 @@ export default function BusinessDataEntry() {
                   <option value="no-coordinates">No Coordinates ({businesses.filter(b => !b.latitude || !b.longitude).length})</option>
                   <option value="no-contact">No Contact Info ({businesses.filter(b => !b.phone && !b.email && !b.website).length})</option>
                   <option value="hidden">Hidden ({hiddenCount})</option>
+                  <option value="non-email-consent">Paper/Verbal Consent ({nonEmailConsentCount})</option>
+                  <option value="needs-proof">Needs Proof Upload ({needsProofCount})</option>
                 </select>
               </div>
             </div>
@@ -691,6 +813,11 @@ export default function BusinessDataEntry() {
                         Consent: {formData.consentStatus}
                       </span>
                     )}
+                    {formData.consentMethod && (
+                      <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-blue-100 text-blue-800">
+                        {CONSENT_METHOD_LABELS[formData.consentMethod]}
+                      </span>
+                    )}
                     {(formData.submittedByName || formData.submittedByEmail) && (
                       <span className="text-xs text-gray-500">
                         Submitted by {formData.submittedByName || 'unknown'}
@@ -742,6 +869,108 @@ export default function BusinessDataEntry() {
 
                 resubmission needed. This is separate from the "Status" field below.
               </p>
+            </div>
+          )}
+
+          {/* Consent Record — method, proof, manual confirmation for
+              paper/verbal consent. The email double opt-in flow doesn't
+              need this section touched; it manages consent_status and
+              consent_confirmed_at itself via the confirm-business-consent
+              Edge Function. */}
+          {!isNewBusiness && (
+            <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+              <div className="flex items-center gap-2 mb-3">
+                <FileText className="w-4 h-4 text-gray-600" />
+                <p className="text-sm font-medium text-gray-700">Consent Record</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Consent Method
+                  </label>
+                  <select
+                    value={formData.consentMethod || 'email'}
+                    onChange={({ target }) => handleInputChange('consentMethod', target.value as ConsentMethod)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="email">Email (double opt-in)</option>
+                    <option value="paper_form">Paper Form</option>
+                    <option value="verbal_in_person">Verbal, In-Person</option>
+                  </select>
+                  {formData.consentMethod === 'email' && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Managed automatically by the email confirmation flow — consent status
+                      below is not editable for this method.
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Consent Status {isNonEmailConsent ? '' : '(read-only)'}
+                  </label>
+                  {isNonEmailConsent ? (
+                    <select
+                      value={formData.consentStatus || 'pending'}
+                      onChange={({ target }) => handleInputChange('consentStatus', target.value as ConsentStatus)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="revoked">Revoked</option>
+                    </select>
+                  ) : (
+                    <div className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-100 text-gray-500">
+                      {formData.consentStatus || 'pending'}
+                    </div>
+                  )}
+                </div>
+
+                {isNonEmailConsent && (
+                  <>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Consent Proof URL
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.consentProofUrl || ''}
+                        onChange={({ target }) => handleInputChange('consentProofUrl', target.value)}
+                        placeholder="Link to the scanned/signed form in the consent-documents bucket"
+                        className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          formData.consentProofUrl && !isValidUrl(formData.consentProofUrl)
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        }`}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Upload the signed form to the private "consent-documents" bucket in
+                        Supabase Storage, then paste its link here.
+                      </p>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Consent Note
+                      </label>
+                      <textarea
+                        value={formData.consentNote || ''}
+                        onChange={({ target }) => handleInputChange('consentNote', target.value)}
+                        rows={2}
+                        placeholder="e.g. Signed by owner Maria Schmidt at the shop, 12 Aug 2026, form filed same day"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    {formData.consentConfirmedAt && (
+                      <p className="md:col-span-2 text-xs text-gray-500">
+                        Confirmed at: {new Date(formData.consentConfirmedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           )}
 
